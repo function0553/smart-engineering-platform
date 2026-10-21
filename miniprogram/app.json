@@ -1,0 +1,6 @@
+{
+  "pages": ["pages/login/index", "pages/report/index", "pages/history/index", "pages/archives/index"],
+  "window": { "navigationBarTitleText": "智慧工程日报", "navigationBarBackgroundColor": "#111c30", "navigationBarTextStyle": "white", "backgroundColor": "#f3f5f9" },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

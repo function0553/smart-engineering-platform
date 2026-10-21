@@ -1,0 +1,13 @@
+.site-template-picker,.site-template-library{border:1px solid #d6dfeb;border-radius:7px;padding:16px;margin:16px 0}
+.site-template-picker{min-width:0}.site-template-picker legend{font-weight:650;padding:0 6px}
+.site-template-picker label{display:grid;gap:7px;margin:12px 0}.site-template-picker select{width:100%;min-width:0}
+.site-template-picker label.site-template-confirm{display:flex;align-items:flex-start;gap:10px;line-height:1.6}
+.site-template-confirm input{flex:0 0 auto;width:20px;min-height:20px;margin:3px 0}
+.site-template-library>summary{font-weight:650;cursor:pointer;min-height:44px;align-content:center}
+.site-template-list{padding:0;list-style:none}.site-template-list>li{display:flex;justify-content:space-between;align-items:start;gap:16px;padding:18px 0;border-bottom:1px solid #d6dfeb}
+.site-template-list>li:last-child{border-bottom:0}.site-template-list p{margin:6px 0;color:#596b82;overflow-wrap:anywhere}
+.site-template-list .site-record-actions{flex-shrink:0;flex-wrap:wrap}
+@media(max-width:760px){.site-template-picker,.site-template-library{padding:12px}.site-template-list>li{display:block}.site-template-list .site-record-actions{margin-top:12px}.site-template-picker input,.site-template-picker select{font-size:16px}}
+.site-record-form label.site-template-confirm{display:flex;flex-direction:row;align-items:flex-start;gap:10px;line-height:1.6}
+.site-record-form label.site-template-confirm input[type=checkbox]{flex:0 0 20px;width:20px;max-width:20px;height:20px;min-height:20px;margin:3px 0}
+.site-template-conflict,.site-template-close-confirm{padding:14px 0;border-block:1px solid #d6dfeb;margin:14px 0;overflow-wrap:anywhere}

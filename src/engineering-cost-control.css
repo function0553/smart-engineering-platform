@@ -1,0 +1,30 @@
+.eng-cost-control{min-width:0;color:var(--ink,#1c2739)}
+.eng-cost-control>h3,.eng-cost-control>section{margin-top:28px}
+.eng-cost-control .eng-heading{align-items:flex-start;gap:16px}
+.eng-cost-control p{line-height:1.7;max-width:75ch}
+.eng-cost-current{padding:12px 0 24px;border-bottom:1px solid var(--border,#e2e8f0);margin-bottom:24px}
+.eng-cost-record{padding:18px 0;border-bottom:1px solid var(--border,#e2e8f0)}
+.eng-cost-record .eng-heading{align-items:center}
+.eng-cost-record .eng-actions{margin-top:14px}
+.eng-cost-task{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--border,#e2e8f0)}
+.eng-cost-task small,.eng-cost-table small{display:block;margin-top:6px;color:var(--muted,#596b82);overflow-wrap:anywhere}
+.eng-cost-table{font-variant-numeric:tabular-nums}
+.eng-cost-form fieldset{min-width:0}
+.eng-cost-line{padding:20px 0;border-top:1px solid var(--border,#e2e8f0);margin-top:18px}
+.eng-cost-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.eng-cost-fields label{min-width:0}
+.eng-cost-control .eng-actions{flex-wrap:wrap}
+@media(max-width:720px){
+ .eng-cost-control .eng-heading,.eng-cost-task{flex-direction:column;align-items:stretch}
+ .eng-cost-fields{grid-template-columns:minmax(0,1fr)}
+ .eng-cost-control .eng-finance{grid-template-columns:minmax(0,1fr)}
+ .eng-cost-control .eng-table-wrap{overflow:visible}
+ .eng-cost-table,.eng-cost-table tbody,.eng-cost-table tr,.eng-cost-table td{display:block;min-width:0;width:auto}
+ .eng-cost-table thead{display:none}
+ .eng-cost-table tr{padding:16px 0;border-bottom:1px solid var(--border,#e2e8f0)}
+ .eng-cost-table td{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px;padding:7px 0;border:0;white-space:normal;overflow-wrap:anywhere}
+ .eng-cost-table td:before{content:attr(data-label);font-size:12px;color:var(--muted,#596b82)}
+ .eng-cost-table td small{grid-column:2}
+ .eng-cost-table td strong{font-weight:600}
+ .eng-cost-control .button{white-space:normal}
+}

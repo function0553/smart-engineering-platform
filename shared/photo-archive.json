@@ -1,0 +1,9 @@
+{
+  "projectName": "贵阳市供水管网改造工程三期施工I标",
+  "roadName": "甲秀南路",
+  "title": "开挖至回填影像资料",
+  "stages": ["路面拆除", "沟槽开挖", "沟槽验收", "垫层施工", "管道安装", "沟槽中粗砂回填", "压实度检测", "路面混凝土恢复"],
+  "maxPhotoBytes": 5242880,
+  "maxArchiveBytes": 25165824,
+  "maxStagePhotos": 6
+}

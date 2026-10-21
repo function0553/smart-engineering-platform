@@ -1,0 +1,19 @@
+import { AlertCircle, Check, FileText } from 'lucide-react';
+import {canDiscardSiteUpload,siteUploadCounts,type SiteUploadState,type SiteUploadPhase} from '../shared/site-upload-state.mjs';
+import './site-upload-queue.css';
+const names:Record<SiteUploadPhase,string>={queued:'仅本机待上传',hashing:'核对本地原件',uploading:'上传中',verifying:'服务端核对中',saved:'服务器已保存',paused:'已暂停',failed:'失败待处理','needs-file':'需重新选择原件'};
+const bytes=(n:number)=>n>=1048576?(n/1048576).toFixed(1)+' MiB':n>=1024?(n/1024).toFixed(1)+' KiB':n+' 字节';
+export type SiteUploadQueueProps={
+ state:SiteUploadState;busy:boolean;disabled?:boolean;showContinue?:boolean;
+ onPause?:()=>void;onRetry?:(fileKey?:string)=>void;onReselect?:(fileKey:string)=>void;onDiscard?:(fileKey:string)=>void;onVerify?:(fileKey:string)=>void;onClearSaved?:()=>void;
+};
+export function SiteUploadQueue({state,busy,disabled=false,showContinue=true,onPause,onRetry,onReselect,onDiscard,onVerify,onClearSaved}:SiteUploadQueueProps){
+ if(!state.items.length)return null;
+ const count=siteUploadCounts(state),canContinue=state.items.some(i=>i.fileAvailable&&['queued','paused','failed'].includes(i.phase));
+ return <section className="site-upload-queue" aria-label="本次原件保存队列"><header><div><h4>本次原件</h4><p role="status" aria-live="polite">已保存 {count.saved} / {count.total} 份 · 剩余 {count.remaining} 份{count.failed>0?' · '+count.failed+' 份失败':''}</p></div><div className="site-upload-queue-actions">{busy&&onPause&&<button type="button" className="button" disabled={disabled} onClick={onPause}>暂停本次上传</button>}{showContinue&&!busy&&onRetry&&canContinue&&<button type="button" className="button primary" disabled={disabled} onClick={()=>onRetry()}>保存并上传剩余文件</button>}{!busy&&onClearSaved&&count.saved>0&&<button type="button" className="text-button" disabled={disabled} onClick={onClearSaved}>收起已保存项</button>}</div></header>
+ <ol>{state.items.map((item,index)=>{const active=['hashing','uploading','verifying'].includes(item.phase),needsFile=!item.fileAvailable&&item.phase!=='saved'&&item.phase!=='verifying';return <li key={item.key} data-upload-key={item.key} data-upload-phase={item.phase} className={'site-upload-queue-item site-upload-queue-'+item.phase}>
+ <div className="site-upload-queue-icon" aria-hidden="true">{item.phase==='saved'?<Check size={19}/>:item.phase==='failed'?<AlertCircle size={19}/>:<FileText size={19}/>}</div><div className="site-upload-queue-main"><div className="site-upload-queue-title"><strong>{index+1}. {item.name}</strong><span>{names[item.phase]}</span></div><p>{bytes(item.size)}{item.stepId?' · 工序 '+Number(item.stepId.slice(4)):''}</p>{active&&<><progress aria-label={item.name+' '+names[item.phase]} max={Math.max(1,item.size)} value={Math.min(item.bytes,item.size)}/><p>{item.phase==='verifying'?'正在核对服务器原件，通过后才显示已保存。':Math.floor(item.bytes/Math.max(1,item.size)*100)+'% · '+bytes(item.bytes)+' / '+bytes(item.size)}</p></>}{item.phase==='saved'&&<p className="site-upload-queue-confirmed">服务器已确认，资料原件列表可查。</p>}{needsFile&&<p>请重新选择同一名称和大小的原件，继续时仍会核对摘要。</p>}{item.error&&<p className="site-upload-queue-error">{item.error}</p>}
+ <div className="site-upload-queue-actions">{needsFile&&onReselect&&<button type="button" className="button" disabled={disabled||busy} onClick={()=>onReselect(item.key)}>重新选择此原件</button>}{!needsFile&&['paused','failed'].includes(item.phase)&&onRetry&&<button type="button" className="button" disabled={disabled||busy||!item.fileAvailable} onClick={()=>onRetry(item.key)}>继续保存此文件</button>}{item.phase==='verifying'&&item.awaitingReadback&&onVerify&&<button type="button" className="button" disabled={disabled||busy} onClick={()=>onVerify(item.key)}>重新核对保存结果</button>}{canDiscardSiteUpload(item)&&onDiscard&&<button type="button" className="text-button" disabled={disabled||busy} onClick={()=>onDiscard(item.key)}>移除待上传项</button>}</div></div></li>;})}</ol>
+ {count.needsFile>0&&<p className="site-upload-queue-help">页面恢复后需要重新选择未完成的原文件；已保存原件仍在资料列表中。</p>}
+ </section>;
+}

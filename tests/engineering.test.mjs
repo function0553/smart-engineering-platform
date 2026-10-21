@@ -1,0 +1,136 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {createServer} from 'node:http';
+import {createApp} from '../server/app.mjs';
+
+const fixture=async t=>{
+ const server=createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const baseUrl='http://127.0.0.1:'+server.address().port;
+ const {app,store,vision}=createApp({database:':memory:',baseUrl,distPath:'__none__'});server.on('request',app);
+ t.after(async()=>{vision.close();server.closeAllConnections();await new Promise(r=>server.close(r));store.close();});
+ const call=async(path,body,cookie='',method=body===undefined?'GET':'POST',extra={})=>{const r=await fetch(baseUrl+'/api'+path,{method,headers:{Cookie:cookie,'Content-Type':'application/json','X-Workspace-Request':'1',...extra},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json(),cookie:r.headers.get('set-cookie')?.split(';')[0]};};
+ const admin=(await call('/setup',{organization:'工程隔离验证',username:'qa-admin',name:'管理员',password:'test-isolated-only-123'})).cookie;
+ const addUser=async(name,role='operator')=>{const r=await call('/users',{username:name,name,role,password:'test-isolated-only-123'},admin);assert.equal(r.status,201);const users=(await call('/users',undefined,admin)).body;const id=(Array.isArray(users)?users:users.items).find(u=>u.username===name).id;return {id,cookie:(await call('/login',{username:name,password:'test-isolated-only-123'})).cookie};};
+ const operator=await addUser('qa-operator'),outsider=await addUser('qa-outsider'),viewer=await addUser('qa-viewer','viewer');
+ const post=async(path,data,cookie=admin,method='POST')=>call('/engineering'+path,{requestId:randomUUID(),...data},cookie,method);
+ const projectData={code:randomUUID().slice(0,8),name:'合成测试工程',address:'测试场所',owner:'测试负责人',startDate:'2026-10-01',dueDate:'2026-12-31',budget:1000000,note:'非现场'};
+ const pr=await post('/projects',{data:projectData});assert.equal(pr.status,201,JSON.stringify(pr));const pid=pr.body.id,base='/projects/'+pid;
+ const state=await post(base+'/state',{version:1,state:'active',note:'测试开工'});assert.equal(state.status,200);
+ for(const [u,role] of [[operator,'manager'],[viewer,'manager']])assert.equal((await post(base+'/members',{userId:u.id,role},admin,'PUT')).status,200);
+ const detail=async(cookie=admin)=>(await call('/engineering'+base,undefined,cookie)).body;
+ const item=async(kind,data,cookie=operator.cookie)=>{const r=await post(base+'/items/'+kind,{data},cookie);assert.equal(r.status,201,JSON.stringify(r));return (await detail()).items.find(i=>i.id===r.body.id);};
+ const transition=async(row,state,cookie=admin)=>{const current=(await detail()).items.find(i=>i.id===row.id);return post(base+'/items/'+row.id+'/state',{version:current.version,state,note:'测试办理依据'},cookie);};
+ const approve=async row=>{assert.equal((await transition(row,'submitted',operator.cookie)).status,200);const r=await transition(row,'approved');assert.equal(r.status,200,JSON.stringify(r));};
+ return {call,post,admin,operator,outsider,viewer,store,base,pid,projectData,detail,item,transition,approve};
+};
+const task=(extra={})=>({title:'沟槽开挖',location:'K0+000—K0+100',owner:'测试班组',startDate:'2026-10-11',dueDate:'2026-10-20',predecessorId:'',progress:0,note:'合成任务',...extra});
+const material={title:'中砂',code:'M-01',specification:'中砂',unit:'吨',warehouse:'一号仓库',note:''};
+const contract=(extra={})=>({title:'材料采购合同',code:'HT01',counterparty:'测试供应商',direction:'expense',amount:100000,dueDate:'2026-12-31',note:'测试依据',...extra});
+const cost=(extra={})=>({title:'材料付款',direction:'expense',category:'material',settlementId:'',amount:10000,occurredDate:'2026-10-11',voucher:'TEST-01',note:'测试凭证说明',...extra});
+
+test('engineering enforces project membership, financial isolation, read-only override, mobile authorization and CSRF',async t=>{
+ const f=await fixture(t);
+ assert.equal((await f.call('/engineering')).status,401);
+ assert.equal((await f.detail(f.outsider.cookie)).error,'项目不存在或未授权');
+ assert.equal((await f.call('/engineering',undefined,f.outsider.cookie)).body.projects.length,0);
+ assert.equal((await f.post(f.base+'/items/tasks',{data:task()},f.viewer.cookie)).status,403);
+ await f.post(f.base+'/members',{userId:f.operator.id,role:'engineer'},f.admin,'PUT');
+ assert.equal((await f.post(f.base+'/items/contracts',{data:contract()},f.operator.cookie)).status,403);
+ assert.equal((await f.detail(f.operator.cookie)).finance,null);
+ assert.equal('budget' in (await f.detail(f.operator.cookie)).project.data,false);
+ assert.equal((await f.post(f.base+'/members',{userId:f.operator.id,role:'manager'},f.operator.cookie,'PUT')).status,403);
+ assert.equal((await f.call('/engineering'+f.base+'/items/tasks',{requestId:randomUUID(),data:task()},f.admin,'POST',{'X-Workspace-Request':''})).status,403);
+ const login=await f.call('/mobile/login',{username:'qa-operator',password:'test-isolated-only-123'});
+ const response=await f.call('/mobile/engineering'+f.base,undefined,'','GET',{Authorization:'Bearer '+login.body.token});assert.equal(response.status,200);
+ await f.post(f.base+'/members',{userId:f.operator.id,role:'remove'},f.admin,'PUT');
+ assert.equal((await f.call('/mobile/engineering'+f.base,undefined,'','GET',{Authorization:'Bearer '+login.body.token})).status,404);
+});
+test('engineering validates references, dates, task dependencies, progress and optimistic versions',async t=>{
+ const f=await fixture(t),a=await f.item('tasks',task()),b=await f.item('tasks',task({title:'管道安装',predecessorId:a.id}));
+ assert.equal((await f.transition(b,'active')).status,409);
+ assert.equal((await f.post(f.base+'/items/'+a.id,{version:1,data:task({predecessorId:b.id})},f.admin,'PUT')).status,409);
+ assert.equal((await f.transition(a,'active')).status,200);
+ assert.equal((await f.transition(a,'completed')).status,409);
+ assert.equal((await f.post(f.base+'/items/'+a.id,{version:1,data:task({progress:100})},f.admin,'PUT')).status,409);
+ assert.equal((await f.post(f.base+'/items/'+a.id,{version:2,data:task({progress:100})},f.admin,'PUT')).status,409);
+ const progress=await f.post(f.base+'/progress',{taskId:a.id,taskVersion:2,effectiveDate:'2026-10-01',progress:100,note:'独立日期进度依据'},f.operator.cookie);assert.equal(progress.status,201,JSON.stringify(progress));
+ assert.equal((await f.post(f.base+'/progress/'+progress.body.id+'/state',{version:1,state:'approved',note:'核验完成依据'},f.admin)).status,200);
+ assert.equal((await f.transition(a,'completed')).status,200);assert.equal((await f.transition(b,'active')).status,200);
+ assert.equal((await f.post(f.base+'/items/tasks',{data:task({dueDate:'2026-09-01'})})).status,400);
+ const other=await f.post('/projects',{data:{...f.projectData,code:'OTHER'}});await f.post('/projects/'+other.body.id+'/state',{version:1,state:'active',note:'开工'});
+ assert.equal((await f.post('/projects/'+other.body.id+'/items/tasks',{data:task({predecessorId:a.id})})).status,400);
+});
+test('quality safety requires rectify, review and authorized verification; blocks closing the project',async t=>{
+ const f=await fixture(t);await f.post(f.base+'/members',{userId:f.operator.id,role:'engineer'},f.admin,'PUT');
+ const row=await f.item('issues',{title:'临边防护缺失',category:'safety',severity:'high',location:'测试部位',owner:'测试班组',dueDate:'2026-10-12',taskId:'',note:'测试问题'});
+ assert.equal((await f.transition(row,'closed')).status,409);
+ assert.equal((await f.transition(row,'rectifying',f.operator.cookie)).status,200);
+ assert.equal((await f.transition(row,'review',f.operator.cookie)).status,200);
+ assert.equal((await f.transition(row,'closed',f.operator.cookie)).status,403);
+ assert.equal((await f.post(f.base+'/state',{version:2,state:'completed',note:'完工'})).status,409);
+ assert.equal((await f.transition(row,'closed')).status,200);
+ assert.equal((await f.post(f.base+'/state',{version:2,state:'completed',note:'完工'})).status,200);
+ assert.equal((await f.post(f.base+'/items/tasks',{data:task()})).status,409);
+ assert.equal((await f.post(f.base+'/state',{version:3,state:'archived',note:'归档'})).status,200);
+ assert.equal((await f.post(f.base+'/state',{version:4,state:'active',note:'恢复'})).status,409);
+});
+test('financial self-approval denied and approved documents immutable',async t=>{
+ const f=await fixture(t),c=await f.item('contracts',contract());
+ assert.equal((await f.transition(c,'submitted',f.operator.cookie)).status,200);
+ assert.equal((await f.transition(c,'approved',f.operator.cookie)).status,409);
+ assert.equal((await f.transition(c,'approved')).status,200);
+ assert.equal((await f.post(f.base+'/items/'+c.id,{version:3,data:contract({amount:1})},f.admin,'PUT')).status,409);
+ assert.equal((await f.transition(c,'closed')).status,409);
+});
+test('financial last editor cannot approve another user created document',async t=>{
+ const f=await fixture(t),c=await f.item('contracts',contract());
+ assert.equal((await f.post(f.base+'/items/'+c.id,{version:1,data:contract({amount:120000})},f.admin,'PUT')).status,200);
+ assert.equal((await f.transition(c,'submitted',f.operator.cookie)).status,200);
+ assert.equal((await f.transition(c,'approved',f.admin)).status,409);
+ assert.equal((await f.transition(c,'approved',f.operator.cookie)).status,409);
+ await f.post(f.base+'/members',{userId:f.outsider.id,role:'manager'},f.admin,'PUT');
+ assert.equal((await f.transition(c,'approved',f.outsider.cookie)).status,200);
+});
+test('procurement receipt, issue and return conserve stock; repeated request does not duplicate inventory',async t=>{
+ const f=await fixture(t),m=await f.item('materials',material),p=await f.item('purchases',{title:'中砂采购',supplier:'测试供应商',materialId:m.id,quantity:10000,unitPrice:25000,contractId:'',dueDate:'2026-10-20',note:'合成采购'});await f.approve(p);
+ const payload={requestId:randomUUID(),materialId:m.id,kind:'receive',quantity:10000,referenceId:p.id,note:'验收测试单'};
+ const a=await f.call('/engineering'+f.base+'/stock',payload,f.admin);assert.equal(a.status,201);assert.equal(a.body.balance,10000);
+ const retry=await f.call('/engineering'+f.base+'/stock',payload,f.admin);assert.equal(retry.body.replayed,true);assert.equal(retry.body.id,a.body.id);
+ assert.equal((await f.call('/engineering'+f.base+'/stock',{...payload,quantity:1},f.admin)).status,409);
+ assert.equal((await f.post(f.base+'/stock',{...payload,requestId:randomUUID(),quantity:1})).status,409);
+ assert.equal((await f.post(f.base+'/stock',{materialId:m.id,kind:'issue',quantity:10001,note:'领料'})).status,409);
+ const issued=await f.post(f.base+'/stock',{materialId:m.id,kind:'issue',quantity:7000,note:'领料'});assert.equal(issued.body.balance,3000);
+ assert.equal((await f.post(f.base+'/stock',{materialId:m.id,kind:'return',quantity:7001,referenceId:issued.body.id,note:'退料'})).status,409);
+ assert.equal((await f.post(f.base+'/stock',{materialId:m.id,kind:'return',quantity:2000,referenceId:issued.body.id,note:'退料'})).body.balance,5000);
+ assert.equal((await f.detail()).stock.length,3);
+ assert.equal((await f.transition(p,'closed')).status,200);
+ assert.equal((await f.post(f.base+'/items/'+m.id,{version:1,data:{...material,unit:'袋'}},f.admin,'PUT')).status,409);
+});
+test('settlement and cost approval enforce totals, budget and direction; contract closes only once fully paid',async t=>{
+ const f=await fixture(t),c=await f.item('contracts',contract());await f.approve(c);
+ const s=await f.item('settlements',{title:'全额结算',contractId:c.id,amount:100000,dueDate:'2026-10-25',note:'验收依据'});await f.approve(s);
+ const excess=await f.item('settlements',{title:'重复结算',contractId:c.id,amount:1,dueDate:'2026-10-25',note:'多结算测试'});await f.transition(excess,'submitted',f.operator.cookie);assert.equal((await f.transition(excess,'approved')).status,409);await f.transition(excess,'draft');await f.transition(excess,'cancelled');
+ assert.equal((await f.post(f.base+'/items/costs',{data:cost({direction:'income',settlementId:s.id})},f.operator.cookie)).status,409);
+ const a=await f.item('costs',cost({settlementId:s.id,amount:60000}));await f.approve(a);
+ const b=await f.item('costs',cost({settlementId:s.id,amount:50000}));await f.transition(b,'submitted',f.operator.cookie);assert.equal((await f.transition(b,'approved')).status,409);
+ await f.transition(b,'draft');let bv=(await f.detail()).items.find(x=>x.id===b.id);await f.post(f.base+'/items/'+b.id,{version:bv.version,data:cost({settlementId:s.id,amount:40000})},f.operator.cookie,'PUT');await f.approve(b);
+ assert.equal((await f.transition(c,'closed')).status,200);
+ const view=await f.detail();assert.equal(view.finance.expense,100000);assert.equal(view.finance.payable,100000);
+ assert.equal((await f.post(f.base,{version:2,data:{...f.projectData,budget:90000}},f.admin,'PUT')).status,409);
+ const over=await f.item('costs',cost({amount:1000000}));await f.transition(over,'submitted',f.operator.cookie);assert.equal((await f.transition(over,'approved')).status,409);
+});
+test('document linking preserves author ACL, archive bytes and explicit project selection',async t=>{
+ const f=await fixture(t),aid=randomUUID(),stamp=new Date().toISOString();
+ f.store.db.prepare('INSERT INTO photo_archives VALUES(?,?,?,?,?,?,?,?,?,?)').run(aid,f.operator.id,'测试作者','测试资料册','原项目名','测试道路','{}',1,stamp,stamp);
+ assert.equal((await f.post(f.base+'/documents',{kind:'photo',documentId:aid},f.operator.cookie)).status,200);
+ assert.equal((await f.detail()).documents.length,1);assert.equal((await f.detail(f.viewer.cookie)).documents.length,0);
+ assert.equal(f.store.db.prepare('SELECT project_name FROM photo_archives WHERE id=?').get(aid).project_name,'原项目名');
+ assert.equal((await f.post(f.base+'/documents',{kind:'photo',documentId:randomUUID()},f.operator.cookie)).status,404);
+});
+test('crew entry requires manager and exit blocks premature project completion',async t=>{
+ const f=await fixture(t);await f.post(f.base+'/members',{userId:f.operator.id,role:'engineer'},f.admin,'PUT');
+ const r=await f.item('crews',{title:'测试人员',company:'测试分包',team:'安装班',job:'管道工',startDate:'2026-10-11',training:'EDU-001',note:''});
+ assert.equal((await f.transition(r,'active',f.operator.cookie)).status,403);assert.equal((await f.transition(r,'active')).status,200);
+ assert.equal((await f.post(f.base+'/state',{version:2,state:'completed',note:'结束'})).status,409);assert.equal((await f.transition(r,'exited')).status,200);
+ assert.equal((await f.post(f.base+'/state',{version:2,state:'completed',note:'结束'})).status,200);
+});

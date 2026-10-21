@@ -1,0 +1,20 @@
+.eng-boq{min-width:0;color:var(--ink,#1c2739)}
+.eng-boq p{line-height:1.65;overflow-wrap:anywhere}
+.eng-boq .eng-toolbar select{max-width:100%}
+.eng-boq .eng-heading h2,.eng-boq-history h3{margin:0 0 8px}
+.eng-boq-help{color:#596b82;font-size:13px;line-height:1.65;margin:12px 0}
+.eng-boq-summary{display:flex;flex-wrap:wrap;gap:20px 40px;margin:22px 0;padding:18px 0;border-block:1px solid #e2e8f0;font-variant-numeric:tabular-nums}
+.eng-boq-summary div{min-width:150px}.eng-boq-summary dt{font-size:13px;color:#596b82;margin-bottom:8px}.eng-boq-summary dd{margin:0;font-size:18px;font-weight:600}
+.eng-boq-warning,.eng-boq-pending{padding:14px 16px;border:1px solid #dcc98a;border-radius:7px;background:#fff9e8;color:#65501b;line-height:1.65}
+.eng-boq-pending{margin:16px 0}.eng-boq-pending p{margin:0 0 12px}
+.eng-boq-empty{padding:22px 0;color:#596b82}
+.eng-boq-table{min-width:850px;font-variant-numeric:tabular-nums}.eng-boq-table th{white-space:normal}.eng-boq-table td{overflow-wrap:anywhere}.eng-boq-table td:first-child{min-width:130px}.eng-boq-table td:nth-child(n+3){font-variant-numeric:tabular-nums}
+.eng-boq-history article{padding:22px 0;border-top:1px solid #e2e8f0}.eng-boq-history article:first-child{margin-top:20px}.eng-boq-history .eng-heading{margin-bottom:8px}.eng-boq-history small{font-size:13px;color:#596b82}.eng-boq-history-amount{display:flex;gap:16px 28px;flex-wrap:wrap;font-variant-numeric:tabular-nums}.eng-boq-reference small{display:block;overflow-wrap:anywhere}.eng-boq .eng-actions .button{min-height:44px}
+.eng-form.eng-boq-form .eng-boq-edit-lines{margin-top:24px}.eng-form.eng-boq-form .eng-boq-edit-lines fieldset{border:0;border-top:1px solid #d6dfeb;padding:18px 0 24px;margin:0}.eng-boq-edit-lines legend{padding:0 10px 0 0;font-weight:600;font-size:14px}.eng-boq-line-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.eng-boq-line-grid input[readonly]{background:#f3f5f9;color:#596b82}.eng-boq-form .eng-actions{justify-content:space-between}.eng-boq-form strong{font-variant-numeric:tabular-nums}.eng-boq-form label{font-size:14px}
+.eng-boq-measure-balance{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 20px;margin:16px 0;font-variant-numeric:tabular-nums}.eng-boq-measure-balance dt{color:#596b82;font-size:12px}.eng-boq-measure-balance dd{margin:5px 0 0;font-size:14px;overflow-wrap:anywhere}.eng-measure-grid .eng-boq-select-line{grid-column:1/-1}.eng-boq-select-line select{max-width:100%}
+.eng-boq :is(input,select,textarea,button):focus-visible,.eng-boq-form :is(input,select,textarea,button):focus-visible{outline:2px solid #83aafa;outline-offset:2px}
+@media(max-width:760px){
+  .eng-boq-line-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eng-boq-summary{gap:18px 24px}.eng-boq-summary div{min-width:125px}.eng-boq-summary dd{font-size:16px}
+  .eng-boq-table{min-width:0;display:block}.eng-boq-table thead{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}.eng-boq-table tbody{display:block}.eng-boq-table tr{display:block;padding:14px 16px;border-bottom:1px solid #e2e8f0}.eng-boq-table tr:last-child{border-bottom:0}.eng-boq-table td{display:grid;grid-template-columns:112px minmax(0,1fr);gap:4px 12px;border:0;padding:7px 0!important;min-width:0!important;font-size:13px}.eng-boq-table td::before{content:attr(data-label);color:#596b82;grid-column:1;grid-row:1/4}.eng-boq-table td>*{grid-column:2}.eng-boq-table td small{margin:0}.eng-boq-history .eng-actions{gap:10px}.eng-boq-history .button{flex:1 0 auto}.eng-boq-measure-balance{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:430px){.eng-boq-line-grid{grid-template-columns:1fr}.eng-boq-form .eng-actions{align-items:stretch;flex-direction:column}.eng-boq-form .eng-form-footer{flex-wrap:wrap}.eng-boq-form .eng-form-footer .button{flex:1;min-height:44px}.eng-boq-history-amount{gap:6px;flex-direction:column}.eng-boq-table td{grid-template-columns:104px minmax(0,1fr)}.eng-boq-measure-balance{gap:12px}.eng-boq-summary{gap:18px}.eng-boq-summary div{min-width:115px}}

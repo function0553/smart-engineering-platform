@@ -1,0 +1,9 @@
+import { resolve } from 'node:path';
+import { createApp } from './app.mjs';
+const host = process.env.HOST || '127.0.0.1';
+const port = Number(process.env.PORT || 5186);
+const baseUrl = process.env.BASE_URL || `http://127.0.0.1:${port}`;
+if (host !== '127.0.0.1' && !process.env.BASE_URL) throw new Error('对外监听前必须配置 BASE_URL');
+const { app, store, vision, ppe } = createApp({ database: process.env.DATABASE_PATH || resolve('.data/workspace.sqlite'), filesDir: process.env.MODELS_PATH || resolve('.data/models'), baseUrl, development: process.env.NODE_ENV !== 'production' });
+const server = app.listen(port, host, () => console.log(`智慧工程平台已启动：${baseUrl}`));
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { vision.close(); ppe.close(); server.close(() => { store.close(); process.exit(0); }); });

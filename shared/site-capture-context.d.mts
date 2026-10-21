@@ -1,0 +1,10 @@
+export type SiteCaptureContextValue={wbsId:string;taskId:string;recordDate:string};
+export type SiteCaptureScope={backend:string;userId:string;projectId:string};
+export type SiteCaptureWbsOption={id:string;label:string};
+export type SiteCaptureTaskOption={id:string;label:string;wbsIds:string[]};
+export type SavedSiteCaptureContext={confirmedOn:string;context:SiteCaptureContextValue};
+export type CaptureStorage=Pick<Storage,'getItem'|'setItem'>;
+export function siteCaptureContextKey(scope:SiteCaptureScope):string;
+export function readSiteCaptureContext(storage:CaptureStorage,scope:SiteCaptureScope):{saved:SavedSiteCaptureContext|null;warning:string};
+export function saveSiteCaptureContext(storage:CaptureStorage,scope:SiteCaptureScope,context:SiteCaptureContextValue,today:string):{saved:boolean;warning:string};
+export function resolveSiteCaptureContext(saved:SavedSiteCaptureContext|null,options:{today:string;wbs:SiteCaptureWbsOption[];tasks:SiteCaptureTaskOption[];batch?:SiteCaptureContextValue|null}):{context:SiteCaptureContextValue;notices:string[];locked:boolean;blockedReason:string};

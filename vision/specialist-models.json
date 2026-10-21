@@ -1,0 +1,15 @@
+{
+  "smoking": {
+    "id": "ppyoloe-smoking-3136b301bc46-e58d54a287d7",
+    "provider": "PaddleDetection PP-Human",
+    "source": "https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.9/deploy/pipeline/docs/tutorials/pphuman_action.md",
+    "url": "https://bj.bcebos.com/v1/paddledet/models/pipeline/ppyoloe_crn_s_80e_smoking_visdrone.zip",
+    "sha256": "81919c2730d77be8eaf845d43fadf2b252eaabc77fb0bea0c52b1d678c929fff",
+    "license": "PaddleDetection / Apache-2.0",
+    "files": [
+      { "name": "model.pdmodel", "size": 2406689, "sha256": "e58d54a287d78a9fccd3d832853a6f778c3109a88abbc7d910c92002c7fc5428" },
+      { "name": "model.pdiparams", "size": 29968179, "sha256": "3136b301bc46098aa7fbe3511a6919cb885ca1c8f8070ec73ad573c05eac4db9" },
+      { "name": "infer_cfg.yml", "size": 1117, "sha256": "16577ec5a93a1f92cd6daea652cbb9597955b438cf0061d9e907d8de0bb34a81" }
+    ]
+  }
+}

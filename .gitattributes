@@ -1,0 +1,3 @@
+# Preserve the frozen release bytes, including migrated CRLF sources.
+* -text
+*.md text eol=lf

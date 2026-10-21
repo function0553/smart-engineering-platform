@@ -1,0 +1,13 @@
+export type MobileRoute={view:string;projectId:string;module:string;itemId:string};
+export type EngineeringModule={id:string;name:string;description:string;group:string};
+export type ProjectQueueRow={id:string;module:string;title:string;state:string;label:string;actorId:string;overdue:boolean;date:string;itemId:string;recordId:string};
+export const engineeringGroups:{id:string;name:string;modules:string[][]}[];
+export const engineeringModules:EngineeringModule[];
+export function financialModule(id:string):boolean;
+export function visibleEngineeringGroups(role:string):typeof engineeringGroups;
+export function moduleInfo(id:string):EngineeringModule;
+export function readMobileRoute(hash:string,fallbackProject?:string):MobileRoute;
+export function mobileRouteHash(route:MobileRoute):string;
+export function siteWorkspaceIdentity(role:string,permission?:{enabled?:boolean;expired?:boolean;template?:string;actions?:string[]},projectState?:string):{label:string;actions:string[];ready:boolean};
+export function projectQueue(detail:any,extras?:any,today?:string):ProjectQueueRow[];
+export function pendingCountFor(module:string,detail:any,extras?:any,today?:string):number;

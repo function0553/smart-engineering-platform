@@ -1,0 +1,8 @@
+<view class="page login-page">
+  <view class="page-title">智慧工程日报</view><view class="subtitle">填写施工情况，自动生成 Word</view>
+  <view class="sheet"><view class="label">后台地址</view><input value="{{server}}" data-key="server" bindinput="input" disabled="{{busy}}" placeholder="https://您的后台域名" /><view class="hint">开发者工具本机联调可使用 127.0.0.1；真机需要可访问的后台。</view>
+    <view class="label">平台账号</view><input value="{{username}}" data-key="username" bindinput="input" disabled="{{busy}}" placeholder="已有平台账号" />
+    <view class="label">密码</view><input password value="{{password}}" data-key="password" bindinput="input" disabled="{{busy}}" placeholder="请输入密码" />
+    <view wx:if="{{error}}" class="error" aria-role="alert">{{error}}</view><button class="primary" loading="{{busy}}" disabled="{{busy}}" bindtap="login">登录</button>
+  </view>
+</view>

@@ -1,0 +1,15 @@
+[
+  {"key":"number","label":"日报编号","maxLength":60,"kind":"text"},
+  {"key":"unit","label":"监理单位","maxLength":120,"kind":"text","required":true},
+  {"key":"contractor","label":"施工单位","maxLength":120,"kind":"text"},
+  {"key":"weather","label":"天气 / 气温","maxLength":100,"kind":"text"},
+  {"key":"recorder","label":"记录人","maxLength":60,"kind":"text","required":true},
+  {"key":"chief","label":"总监 / 专业监理工程师","maxLength":100,"kind":"text"},
+  {"key":"construction","label":"当日施工情况","maxLength":2000,"kind":"textarea","required":true},
+  {"key":"inspection","label":"巡视、旁站及平行检验","maxLength":2000,"kind":"textarea","required":true},
+  {"key":"materials","label":"材料、设备进场与见证取样","maxLength":2000,"kind":"textarea"},
+  {"key":"acceptance","label":"工序及隐蔽工程验收记录","maxLength":2000,"kind":"textarea"},
+  {"key":"qualitySafety","label":"质量、安全问题及处理","maxLength":2000,"kind":"textarea"},
+  {"key":"rectification","label":"通知、整改及复查情况","maxLength":2000,"kind":"textarea"},
+  {"key":"coordination","label":"协调事项及其他记录","maxLength":2000,"kind":"textarea"}
+]

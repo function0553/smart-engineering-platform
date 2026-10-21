@@ -1,0 +1,12 @@
+{
+  "projectName": "贵阳市供水管网改造工程三期施工Ⅰ标段",
+  "region": "经开区",
+  "weatherLocation": { "name": "贵阳市经开区", "latitude": 26.51, "longitude": 106.68 },
+  "sections": [
+    { "name": "经开区中曹南郊互联互通", "kind": "pipeline", "designQuantity": "4287" },
+    { "name": "经开区乐街小区", "kind": "pipeline", "designQuantity": "4837.8" },
+    { "name": "经开区香江花园", "kind": "pipeline", "designQuantity": "3740" },
+    { "name": "水表更换", "kind": "meter", "designQuantity": "112566" }
+  ],
+  "operations": [["路面破碎","m"],["沟槽开挖","m"],["切缝","m"],["土石方外运","m"],["砂垫层","m"],["回填砂","m"],["DN500管安装","m"],["DN400管安装","m"],["DN300管安装","m"],["DN200管安装","m"],["DN150管安装","m"],["DN100管安装","m"],["DN63管安装","m"],["路面混凝土恢复","m"],["井","座"],["探坑","座"],["路缘石安装","m"],["雨篦子","座"],["雨污井","座"]]
+}

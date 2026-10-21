@@ -1,0 +1,59 @@
+<view class="screen archives-screen">
+  <view class="heading"><view><view class="title">施工影像资料</view><view class="help">{{user.role === 'admin' ? '管理员 · 全部资料册' : (readOnly ? '只读 · 我的资料册' : '我的资料册 · 原图与汇总 Word')}}</view></view><button class="link back-report" bindtap="backToReport" disabled="{{busy || uploading}}">返回日报</button></view>
+  <view wx:if="{{error}}" class="error" role="alert">{{error}}</view>
+  <view wx:if="{{notice}}" class="notice">{{notice}}</view>
+  <block wx:if="{{mode === 'list'}}">
+    <view class="search-row"><input value="{{query}}" placeholder="搜索道路、工程、资料册名称" maxlength="100" bindinput="searchInput" bindconfirm="search" confirm-type="search" /><button class="secondary" bindtap="search" disabled="{{loading}}">搜索</button></view>
+    <view class="list-tools"><button wx:if="{{!readOnly}}" class="primary" bindtap="newArchive" disabled="{{loading || !user}}">{{newDraftAvailable ? '继续本机未保存草稿' : '新建资料册'}}</button><button class="link" bindtap="refresh" disabled="{{loading}}">刷新</button><button wx:if="{{query}}" class="link" bindtap="clearSearch" disabled="{{loading}}">清空搜索</button></view>
+    <view wx:if="{{loading}}" class="loading">正在加载资料册…</view>
+    <view wx:elif="{{!items.length}}" class="empty"><view class="empty-title">{{query ? '没有找到匹配资料册' : '暂无施工影像资料'}}</view><view class="help">{{query ? '调整道路或工程名称后重新搜索。' : (readOnly ? '当前账号暂无可查看的资料册。' : '新建资料册，按路段和工序上传现场原图，再生成汇总 Word。')}}</view></view>
+    <view wx:else class="archive-list">
+      <button wx:for="{{items}}" wx:key="id" class="archive-row" data-id="{{item.id}}" bindtap="openArchive"><view class="archive-row-title">{{item.roadName}} · {{item.title}}</view><view class="archive-row-project">{{item.projectName}}</view><view class="help">{{item.authorName}} · {{item.updatedText}} · 填写版次 {{item.version}}</view><view class="row-open">打开资料册 →</view></button>
+    </view>
+    <view wx:if="{{total > 0}}" class="pagination"><button class="secondary" bindtap="previous" disabled="{{loading || !offset}}">上一页</button><text>{{pageNumber}} 页 · 共 {{total}} 册</text><button class="secondary" bindtap="next" disabled="{{loading || !hasNext}}">下一页</button></view>
+  </block>
+  <block wx:else>
+    <view class="editor-tools"><button class="link" bindtap="backToList" disabled="{{busy || uploading}}">← 资料册列表</button><text class="help">{{archive ? '填写版次 ' + archive.version : '本机未保存'}}</text></view>
+    <view wx:if="{{loading}}" class="loading">正在打开资料册…</view>
+    <block wx:else>
+      <view wx:if="{{conflict}}" class="error">服务器填写已更新，本机草稿仍保留。<button class="link" bindtap="reloadArchive" disabled="{{busy || uploading}}">重新加载服务器内容</button></view>
+      <view wx:if="{{readOnly}}" class="read-only help">此账号可查看原图和下载历史 Word，填写与上传不可用。</view>
+      <view wx:if="{{hasPendingExport && !readOnly}}" class="upload-notice">上一份 Word 的生成结果尚未确认，请重试生成以获取同一版本。<button class="link" bindtap="reloadArchive" disabled="{{busy || uploading}}">重新加载并查看服务器历史版本</button></view>
+      <view class="sheet">
+        <view class="section-title">资料册信息</view>
+        <view class="field"><text class="label">资料册名称</text><input value="{{base.title}}" maxlength="100" data-scope="base" data-key="title" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view>
+        <view class="field"><text class="label">工程名称</text><input value="{{base.projectName}}" maxlength="150" data-scope="base" data-key="projectName" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view>
+        <view class="field field-last"><text class="label">道路名称</text><input value="{{base.roadName}}" maxlength="80" data-scope="base" data-key="roadName" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view>
+      </view>
+      <view class="sheet segment-sheet">
+        <view class="section-title">路段与施工工序</view>
+        <picker range="{{segments}}" range-key="name" value="{{selectedSegment}}" bindchange="selectSegment" disabled="{{busy || uploading}}"><view class="picker-value">{{selectedSegment + 1}} / {{segments.length}} · {{segments[selectedSegment].name}}<text>切换路段</text></view></picker>
+        <view wx:if="{{!readOnly}}" class="segment-actions"><button class="link" bindtap="addSegment" disabled="{{busy || uploading || segments.length >= 32}}">＋ 添加路段</button><button class="link danger" bindtap="removeSegment" disabled="{{busy || uploading || segments.length <= 1}}">删除当前路段</button></view>
+        <view class="two-columns"><view class="field"><text class="label">起点桩号</text><input placeholder="K0+000" value="{{current.start}}" maxlength="40" data-scope="segment" data-key="start" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view><view class="field"><text class="label">终点桩号</text><input placeholder="K0+100" value="{{current.end}}" maxlength="40" data-scope="segment" data-key="end" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view></view>
+        <view class="field"><text class="label">施工内容（无桩号时填写）</text><input placeholder="例如：探坑、阀门井施工" value="{{current.content}}" maxlength="100" data-scope="segment" data-key="content" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view>
+        <view class="field field-last"><text class="label">路段完成日期（可留空）</text><view class="date-row"><picker mode="date" value="{{current.completedAt}}" data-scope="segment" bindchange="changeDate" disabled="{{readOnly || busy || uploading}}"><view class="picker-value">{{current.completedAt || '未填写'}}<text wx:if="{{!readOnly}}">选择日期</text></view></picker><button wx:if="{{!readOnly && current.completedAt}}" class="link" data-scope="segment" bindtap="clearDate" disabled="{{busy || uploading}}">清空</button></view></view>
+      </view>
+      <view class="photo-summary"><view class="section-title">工序原图</view><view class="help">服务器 {{photoCount}} / 120 张 · {{photoBytesText}} / 24MB{{pendingCount ? ' · 本机待上传 ' + pendingCount + ' 张' : ''}}</view><view wx:if="{{!readOnly}}" class="help">PNG/JPEG 原图，每张不超过5MB，每道工序最多6张。说明在上传前填写；生成后各个 Word 版本独立保留。</view></view>
+      <view wx:if="{{uploadNotice}}" class="upload-notice">{{uploadNotice}}</view>
+      <view wx:for="{{stageViews}}" wx:key="id" wx:for-item="stage" wx:for-index="stageIndex" class="stage-block">
+        <view class="stage-heading"><text class="stage-number">{{stageIndex + 1}}</text><view class="stage-name"><text class="label">工序名称</text><input value="{{stage.name}}" maxlength="50" data-scope="stage" data-key="name" data-index="{{stageIndex}}" bindinput="input" disabled="{{readOnly || busy || uploading}}" /></view><button wx:if="{{!readOnly}}" class="link danger remove-stage" data-index="{{stageIndex}}" bindtap="removeStage" disabled="{{busy || uploading || stageViews.length <= 1}}">删除</button></view>
+        <view class="stage-date"><text class="label">工序完成日期</text><view class="date-row"><picker mode="date" value="{{stage.completedAt}}" data-scope="stage" data-index="{{stageIndex}}" bindchange="changeDate" disabled="{{readOnly || busy || uploading}}"><view class="picker-value">{{stage.completedAt || '未填写'}}<text wx:if="{{!readOnly}}">选择</text></view></picker><button wx:if="{{!readOnly && stage.completedAt}}" class="link" data-scope="stage" data-index="{{stageIndex}}" bindtap="clearDate" disabled="{{busy || uploading}}">清空</button></view></view>
+        <view wx:if="{{!stage.count}}" class="stage-empty help">{{readOnly ? '此工序暂无原图。' : '此工序尚未上传现场原图。'}}</view>
+        <view wx:for="{{stage.photos}}" wx:key="id" wx:for-item="photo" class="photo-item">
+          <image wx:if="{{photo.path}}" src="{{photo.path}}" mode="widthFix" data-id="{{photo.id}}" bindtap="previewPhoto" />
+          <view wx:elif="{{photo.failed}}" class="photo-failed"><view class="help">原图暂时无法加载</view><button class="secondary" data-id="{{photo.id}}" bindtap="retryPhoto">重试加载原图</button></view>
+          <view wx:else class="photo-loading help">正在读取原图…</view>
+          <view class="photo-caption">{{photo.caption || photo.name}}</view><view class="photo-tools"><text class="help">{{photo.width}} × {{photo.height}} · 原图</text><button wx:if="{{!readOnly}}" class="link danger" data-id="{{photo.id}}" bindtap="removePhoto" disabled="{{busy || uploading}}">移除</button></view>
+        </view>
+        <view wx:for="{{stage.pendingPhotos}}" wx:key="id" wx:for-item="photo" class="photo-item pending-image"><image src="{{photo.path}}" mode="widthFix" data-id="{{photo.id}}" bindtap="previewPhoto" /><view class="photo-caption">{{photo.caption || photo.name}}</view><view class="help">本机原图草稿 · 待服务器确认</view><view wx:if="{{photo.lastError}}" class="pending-error">{{photo.lastError}}</view><button wx:if="{{!readOnly}}" class="link danger" data-id="{{photo.id}}" bindtap="removePending" disabled="{{busy || uploading}}">移除待上传原图</button></view>
+        <block wx:if="{{!readOnly}}"><view class="field upload-caption"><text class="label">所选照片说明（上传前填写，可留空）</text><input value="{{stage.caption}}" placeholder="本次选中原图共用此说明" maxlength="500" data-scope="caption" data-stage-id="{{stage.id}}" bindinput="input" disabled="{{busy || uploading}}" /></view><button class="secondary upload-button" data-stage-id="{{stage.id}}" bindtap="addPhotos" disabled="{{busy || uploading || conflict || stage.count >= 6 || photoCount + pendingCount >= 120}}">{{uploading ? '原图正在上传…' : '拍照 / 选择原图'}} · {{stage.count}} / 6</button></block>
+      </view>
+      <button wx:if="{{!readOnly}}" class="secondary add-stage" bindtap="addStage" disabled="{{busy || uploading || stageViews.length >= 16}}">＋ 添加工序（{{stageViews.length}} / 16）</button>
+      <view wx:if="{{pendingCount && !readOnly}}" class="queue-panel"><view class="section-title">待上传原图 · {{pendingCount}} 张</view><view class="help">原图已保存在本机，网络恢复后点击重试上传。回复丢失时仍使用原编号重试，避免重复图。</view><button class="primary" bindtap="retryUploads" disabled="{{busy || uploading || conflict}}">{{uploading ? '正在确认上传…' : '重试上传原图'}}</button><view wx:for="{{pendingPhotos}}" wx:key="id" class="queue-row"><text class="help">{{item.name}}</text><button class="link danger" data-id="{{item.id}}" bindtap="removePending" disabled="{{busy || uploading}}">移除</button></view></view>
+      <view class="sheet versions-sheet"><view class="section-title">历史 Word 版本</view><view wx:if="{{!exports.length}}" class="help">{{readOnly ? '此资料册暂无已生成的 Word。' : '上传原图后点击生成；每次生成独立保存，后续修改不会覆盖已有版本。'}}</view><view wx:for="{{exports}}" wx:key="id" class="word-version"><view><view class="version-title">{{item.createdText}}</view><view class="help">{{item.photoCount}} 张原图 · 填写版次 {{item.version}} · {{item.shortId}}</view></view><button class="secondary" data-id="{{item.id}}" bindtap="downloadWord" disabled="{{busy || uploading}}">下载 Word</button></view></view>
+      <view wx:if="{{savedFile}}" class="file-actions"><button class="secondary" bindtap="openWord">查看 Word</button><button class="primary" bindtap="shareWord">转发文件</button></view>
+      <view wx:if="{{!readOnly}}" class="draft help">{{draftNotice}}</view>
+      <view wx:if="{{!readOnly}}" class="bottom"><button class="secondary" bindtap="saveArchive" disabled="{{busy || uploading || conflict}}">{{busy ? '正在处理…' : '保存填写'}}</button><button class="primary" bindtap="generate" disabled="{{busy || uploading || conflict || pendingCount}}">{{busy ? '正在处理…' : '生成汇总 Word'}}</button></view>
+    </block>
+  </block>
+</view>

@@ -1,0 +1,7 @@
+.login-page { padding:70rpx 36rpx 50rpx; }
+.page-title { font-size:44rpx; font-weight:600; margin-bottom:18rpx; }
+.subtitle { color:#596b82; line-height:1.7; }
+.login-page .sheet { margin-top:40rpx; padding:30rpx; background:white; border:1rpx solid #e2e8f0; border-radius:12rpx; }
+.login-page .label:not(:first-child) { margin-top:28rpx; }
+.hint { color:#596b82; font-size:24rpx; line-height:1.7; margin-top:14rpx; }
+.login-page .primary { margin-top:32rpx; width:100%; }

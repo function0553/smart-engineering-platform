@@ -1,0 +1,49 @@
+{
+  "sourceSha256": "e7ba13069e3dceeb4f8dd2a95e1f43a8807cb6f8752e0ab468552e76e56da1bd",
+  "roles": {
+    "region": {
+      "pPr": "<w:pPr><w:pStyle w:val=\"2\"/><w:rPr><w:rFonts w:hint=\"default\" w:eastAsia=\"宋体\" w:cs=\"宋体\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr></w:pPr>",
+      "rPr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:cs=\"宋体\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr>",
+      "valuePr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:cs=\"宋体\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr>"
+    },
+    "section": {
+      "pPr": "<w:pPr><w:pStyle w:val=\"2\"/><w:rPr><w:rFonts w:hint=\"eastAsia\" w:cs=\"宋体\"/><w:b/><w:bCs/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr></w:pPr>",
+      "rPr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:cs=\"宋体\"/><w:b/><w:bCs/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/><w:lang w:val=\"en-US\" w:eastAsia=\"zh-CN\"/></w:rPr>",
+      "valuePr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:cs=\"宋体\"/><w:b/><w:bCs/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr>"
+    },
+    "metric": {
+      "pPr": "<w:pPr><w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr></w:pPr>",
+      "rPr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:b/><w:bCs/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr>",
+      "valuePr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr>"
+    },
+    "normal": {
+      "pPr": "<w:pPr><w:pStyle w:val=\"2\"/><w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:b w:val=\"0\"/><w:bCs w:val=\"0\"/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr></w:pPr>",
+      "rPr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:b w:val=\"0\"/><w:bCs w:val=\"0\"/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr>",
+      "valuePr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\" w:cs=\"宋体\"/><w:b w:val=\"0\"/><w:bCs w:val=\"0\"/><w:color w:val=\"000000\"/><w:sz w:val=\"28\"/><w:szCs w:val=\"28\"/></w:rPr>"
+    },
+    "title": {
+      "pPr": "<w:pPr><w:jc w:val=\"center\"/><w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\"/><w:sz w:val=\"32\"/><w:szCs w:val=\"32\"/></w:rPr></w:pPr>",
+      "rPr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\"/><w:sz w:val=\"32\"/><w:szCs w:val=\"32\"/></w:rPr>",
+      "valuePr": "<w:rPr><w:rFonts w:hint=\"eastAsia\" w:ascii=\"宋体\" w:hAnsi=\"宋体\"/><w:sz w:val=\"32\"/><w:szCs w:val=\"32\"/></w:rPr>"
+    }
+  },
+  "inventory": {
+    "[Content_Types].xml": "1c37dc569764b26b173bb28507369d59f3b5ff7d81e2e4b0942ef7d3a8170ac7",
+    "_rels/.rels": "514e1846381cb6bcfff105a4b0a17d666cf0ed1f0c120bff73b82226ab7ed977",
+    "customXml/_rels/item1.xml.rels": "80482f86e196171d66001e0e74d1900408a3aaf2463e54005d251b5f2db9a0b0",
+    "customXml/item1.xml": "b30b8fd758aa47aada70ee7d8d8287349d6a21eb03c79bcb2e8930a1789022cc",
+    "customXml/itemProps1.xml": "2da8949cb27fbd700c99bc3991c46296a972e5645e955fc0bf156acede174a51",
+    "docProps/app.xml": "925f091e0bd7729390b9ab0b330a624de100c81ed358065f5f8814056e83b8c5",
+    "docProps/core.xml": "ec9723ae5e6a2ea1ac6c8ad311486787a6c7651526785eaf44b9f57361aea2dd",
+    "docProps/custom.xml": "0a6ed421bdd4b0e62cf8deca33e00d5d930d877f850528f4e1ad8220451e8147",
+    "word/_rels/document.xml.rels": "2834743de4c8b73e268d7f0e466181044a1b3bc2ca7a6adb02f9c23df0b17573",
+    "word/document.xml": "971c2944f0af133a26f4083d1c1c50d9c4623d129ea408cab942b389297202a2",
+    "word/endnotes.xml": "0bb3317d3770f08a4713efc1ec7e2cd753cfbe7b8d4e5eebfd957501cd005ec9",
+    "word/fontTable.xml": "a80e4d9c045e9d169029b7d4e87c3ea5a45fd9d70c61c06d908c28cb73dc6145",
+    "word/footnotes.xml": "7619b10643cc92d5ddc3197069896ebc643eb3ffeb4f16425ec926525de28af4",
+    "word/numbering.xml": "67bb232785061984172f1cc1433dd53fb5a27d29d426a6c8ad73911af1eadd88",
+    "word/settings.xml": "f41da971355927c2aa4c551180ff1023058f9f999a64c70c133fe0b4f1b51799",
+    "word/styles.xml": "6b9e99aa4c8e5e14c0d13bb4cf757ad6ad25966cf25b5bc8426b64eae4588aba",
+    "word/theme/theme1.xml": "7d4ec24357ffff70f050526ccf97d956f696f7e9565b5f8c9028731116af577f"
+  }
+}

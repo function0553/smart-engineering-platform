@@ -1,0 +1,9 @@
+{
+  "appid": "touristappid",
+  "projectname": "smart-engineering-daily-report",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "./",
+  "libVersion": "3.17.0",
+  "setting": { "es6": true, "enhance": true, "minified": true, "urlCheck": true },
+  "packOptions": { "ignore": [{ "type": "file", "value": "README.md" }, { "type": "file", "value": "package.json" }] }
+}

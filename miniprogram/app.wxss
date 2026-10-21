@@ -1,0 +1,17 @@
+page { background:#f3f5f9; color:#1c2739; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; font-size:28rpx; }
+view, input, textarea, button { box-sizing:border-box; }
+button { font-size:28rpx; border-radius:10rpx; line-height:1.5; margin:0; }
+button::after { border:0; }
+.primary { background:#2563eb; color:#fff; padding:22rpx 28rpx; font-weight:600; }
+.primary[disabled] { background:#cbd5e1; color:#475569; }
+.secondary { background:#e8edf5; color:#26374e; padding:18rpx 24rpx; }
+.link { background:transparent; color:#2563eb; padding:14rpx 0; text-align:left; }
+.danger { color:#b42318; }
+.label { display:block; color:#475569; font-size:26rpx; margin-bottom:12rpx; }
+input, textarea { width:100%; background:#fff; border:1rpx solid #cbd5e1; border-radius:8rpx; padding:18rpx; font-size:28rpx; }
+input { height:82rpx; }
+textarea { min-height:160rpx; }
+.field { margin-bottom:28rpx; }
+.help { color:#596b82; font-size:24rpx; line-height:1.7; }
+.error { color:#b42318; background:#fff1f0; padding:20rpx; border:1rpx solid #f3b5b0; margin:20rpx 0; }
+.notice { color:#1c573e; background:#eef8f2; padding:20rpx; margin:20rpx 0; line-height:1.7; }

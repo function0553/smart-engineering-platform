@@ -1,0 +1,20 @@
+.site-upload-queue{margin:18px 0;padding:16px 0;border-top:1px solid #d6dfeb;border-bottom:1px solid #d6dfeb;color:#20354d}
+.site-upload-queue>header{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap}
+.site-upload-queue h4{font-size:16px;margin:0 0 6px;font-weight:650}
+.site-upload-queue p{font-size:14px;line-height:1.6;margin:4px 0;color:#465970;overflow-wrap:anywhere}
+.site-upload-queue ol{padding:0;margin:12px 0 0;list-style:none}
+.site-upload-queue-item{display:flex;gap:10px;padding:14px 0;border-top:1px solid #e2e8f0}
+.site-upload-queue-icon{padding-top:3px;flex:0 0 auto;color:#596b82}
+.site-upload-queue-saved .site-upload-queue-icon{color:#23734e}
+.site-upload-queue-failed .site-upload-queue-icon{color:#a4262c}
+.site-upload-queue-main{flex:1;min-width:0}
+.site-upload-queue-title{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:6px 12px}
+.site-upload-queue-title strong{font-size:15px;overflow-wrap:anywhere;min-width:0}
+.site-upload-queue-title>span{font-size:14px;font-weight:650;flex:0 0 auto}
+.site-upload-queue progress{display:block;width:100%;height:8px;margin:10px 0 6px;accent-color:#2563eb}
+.site-upload-queue .site-upload-queue-confirmed{color:#23734e}
+.site-upload-queue .site-upload-queue-error{color:#a4262c}
+.site-upload-queue-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:6px}
+.site-upload-queue-actions>button{min-height:44px;white-space:normal}
+.site-upload-queue-help{margin-top:12px!important}
+@media(max-width:760px){.site-upload-queue{padding:14px 0}.site-upload-queue-title strong{font-size:16px}.site-upload-queue>header>.site-upload-queue-actions{width:100%}.site-upload-queue>header>.site-upload-queue-actions>.button{flex:1}}

@@ -1,0 +1,9 @@
+function clone(x) { return JSON.parse(JSON.stringify(x)); }
+function draftKey(server,id) { return 'daily-report:draft:v1:'+server+':'+id; }
+function textDraft(report) { const {photos,...text}=report; return {...clone(text),photos:[]}; }
+function checkReport(x) {
+  const strings=(v,keys)=>v && keys.every(k=>typeof v[k]==='string');
+  return strings(x,['projectName','region','reportDate','number','weather','nextPlan','otherItems']) && (x.weatherAuto===undefined || typeof x.weatherAuto==='boolean') && (x.weatherLocation===undefined || strings(x.weatherLocation,['name']) && Number.isFinite(x.weatherLocation.latitude) && Math.abs(x.weatherLocation.latitude)<=90 && Number.isFinite(x.weatherLocation.longitude) && Math.abs(x.weatherLocation.longitude)<=180) && Array.isArray(x.sections) && x.sections.length>0 && x.sections.length<=12 && x.sections.every(s=>strings(s,['name','kind','designQuantity','todayProgress','cumulativeProgress','todayNotes','machinery','workers','security','tomorrow','procedures','difficulties']) && ['pipeline','meter'].includes(s.kind) && Array.isArray(s.works) && s.works.length<=40 && s.works.every(w=>strings(w,['name','quantity','unit']))) && Array.isArray(x.photos) && x.photos.length<=12 && x.photos.every(p=>strings(p,['name','caption','mime','base64']) && ['image/png','image/jpeg'].includes(p.mime) && Number.isInteger(p.width) && Number.isInteger(p.height) && p.width>0 && p.height>0 && p.width<=16000 && p.height<=16000 && /^[A-Za-z0-9+/]*={0,2}$/.test(p.base64) && p.base64.length<=6990508) && x.photos.reduce((n,p)=>n+p.base64.length*3/4,0)<=20*1024*1024+12;
+}
+function emptySection() { return {name:'新增施工片区',kind:'pipeline',designQuantity:'',todayProgress:'',cumulativeProgress:'',works:[],todayNotes:'',machinery:'',workers:'',security:'',tomorrow:'',procedures:'',difficulties:''}; }
+module.exports={clone,draftKey,textDraft,checkReport,emptySection};
