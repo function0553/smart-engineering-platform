@@ -1,7 +1,7 @@
 {
   "name": "smart-office-platform",
   "private": true,
-  "version": "0.6.0-rc.38",
+  "version": "0.6.0-rc.39",
   "type": "module",
   "engines": {
     "node": ">=24.14.0 <25"

@@ -231,6 +231,8 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
   const schemaVersion = z.object({ requestId: uuid, version }).strict();
   // The library is a read-only projection of the existing record store. It shares
   // both record ACL and imported-daily source constraints with the original routes.
+  function photoWordBasis(c){return hash(JSON.stringify({data:c.record.data,snapshot:c.record.snapshot,project:c.project.data,files:files(c.record.id).map(f=>({id:f.id,recordId:f.record_id,projectId:f.project_id,name:f.name,mime:f.mime,sha256:f.sha256,bytes:f.byte_count,step:f.step_id,representative:f.representative,removedAt:f.removed_at})),pending:db.prepare("SELECT id FROM engineering_site_uploads WHERE record_id=? AND state='uploading' ORDER BY id").all(c.record.id)}));}
+  const photoWordReaders=new Map();
   const library = mountSiteDocumentLibrary(app, {
     db, store, auth, mobileAuth, writer, baseUrl, categories:siteRecordCategories, session,
     liveActor(sess,actorId){const actor=db.prepare('SELECT u.id,u.role,u.name,u.active FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.hash=? AND s.user_id=? AND s.expires_at>? AND u.active=1').get(sess,actorId,Date.now());if(!actor)fail(401,'登录已失效，请重新登录');return actor;},
@@ -267,6 +269,17 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
       }return rows;
     },
     optionsFor(actor,pid){const projects=pid?[acl(actor,pid).project]:db.prepare('SELECT * FROM engineering_projects ORDER BY created_at DESC,id').all(),wbs=[];for(const project of projects){permissions.requireAction(actor,project.id,'read');for(const node of db.prepare('SELECT id,data FROM engineering_wbs WHERE project_id=? ORDER BY created_at,id').all(project.id)){if(Object.keys(siteRecordCategories).some(category=>permissions.can(actor,project.id,'read',{category,wbsId:node.id})))wbs.push({id:node.id,title:JSON.parse(node.data).title,projectId:project.id});}}return {projects:projects.map(p=>({id:p.id,name:JSON.parse(p.data).name})),wbs};},
+    photoWordBasisFor(actor,record){
+      const c={...acl(actor,record.project_id),record},context=snapshot(record.project_id,record.data,actor,record);
+      if(!sameSiteContext(context,record.snapshot))fail(409,'施工部位或任务归属已变化，请核对资料后重新打包');
+      return hash(JSON.stringify({basis:photoWordBasis(c),context,projectState:c.project.state,templateSha256:sitePhotoTemplateHash,layoutSha256:sitePhotoLayoutHash}));
+    },
+    generateCurrentPhotoWord(req,record){
+      const base=req.path.startsWith('/api/mobile/')?'/api/mobile/engineering':'/api/engineering';
+      const reader=photoWordReaders.get(base);if(!reader)fail(503,'照片表格服务尚未就绪');
+      const scoped={actor:req.actor,headers:req.headers,path:base+'/projects/'+record.project_id+'/site-records/'+record.id+'/photo-table',params:{pid:record.project_id,rid:record.id}};
+      return reader(scoped,{version:record.version},null,true,'',true);
+    },
     filesFor:files,exportsFor:wordExports,originalPath:finalPath,
     wordBytes(rid,eid){const row=db.prepare('SELECT document FROM engineering_site_word_exports WHERE record_id=? AND id=?').get(rid,eid);if(!row)fail(503,'Word历史版本缺失，资料包未生成');return Buffer.from(row.document);},
   });
@@ -296,7 +309,6 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
     function contextCorrection(c){return ['submitted','approved'].includes(permissions.review(c.record.id)?.state)?'施工部位或任务归属已变化，请先退回补充，再核对草稿并重新提交':'施工部位或任务归属已变化，请核对修改草稿后保存';}
     function evidence(c){return hash(JSON.stringify({data:c.record.data,snapshot:c.record.snapshot,files:files(c.record.id).filter(f=>!f.removed_at).map(f=>({id:f.id,sha256:f.sha256,bytes:f.byte_count,step:f.step_id,representative:f.representative}))}));}
     // Keep the generated table bound to the exact evidence read before asynchronous image conversion.
-    function photoWordBasis(c){return hash(JSON.stringify({data:c.record.data,snapshot:c.record.snapshot,project:c.project.data,files:files(c.record.id).map(f=>({id:f.id,recordId:f.record_id,projectId:f.project_id,name:f.name,mime:f.mime,sha256:f.sha256,bytes:f.byte_count,step:f.step_id,representative:f.representative,removedAt:f.removed_at})),pending:db.prepare("SELECT id FROM engineering_site_uploads WHERE record_id=? AND state='uploading' ORDER BY id").all(c.record.id)}));}
     function checkPhotoWordBasis(c,basis){if(basis&&photoWordBasis(c)!==basis)fail(409,'照片及工序依据已变化，请刷新核对后重新操作');}
     function ready(c,actor){
       if(c.project.state!=='active'||c.record.state!=='draft')fail(409,'仅施工中的资料草稿可以提交复核');
@@ -601,20 +613,20 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
       }));
     });
     function canGenerate(c,actor){return permissions.enabled(c.project.id)?permissions.can(actor,c.project.id,'download',c.record.data,c.record.created_by):owner(c,actor);}
-    const createPhotoWord = async (req,b,operationKey,readOnly=false,preflightAction='') => {
-      const check=c=>{if(preflightAction)permissions.requireAction(req.actor,c.project.id,preflightAction,c.record.data,c.record.created_by);else if(!canGenerate(c,req.actor)) fail(403,'没有生成照片Word权限');};
-      const initial=access(req, !readOnly||!permissions.enabled(req.params.pid));check(initial);
+    const createPhotoWord = async (req,b,operationKey,readOnly=false,preflightAction='',libraryReadOnly=false) => {
+      const check=c=>{if(libraryReadOnly)permissions.requireAction(req.actor,c.project.id,'download',c.record.data,c.record.created_by);else if(preflightAction)permissions.requireAction(req.actor,c.project.id,preflightAction,c.record.data,c.record.created_by);else if(!canGenerate(c,req.actor)) fail(403,'没有生成照片Word权限');};
+      const initial=access(req, !libraryReadOnly&&(!readOnly||!permissions.enabled(req.params.pid)));check(initial);
       if(!readOnly&&permissions.enabled(initial.project.id)&&permissions.review(initial.record.id)?.state==='submitted')fail(409,'待复核期间不能新增Word历史，可下载当前表格');
       if(!readOnly&&db.prepare('SELECT 1 FROM engineering_requests WHERE actor_id=? AND request_id=?').get(req.actor.id,b.requestId)) {
         return mutate(req,b,operationKey,check,()=>{throw new Error('unreachable replay');});
       }
-      if(initial.project.state!=='active' || !['draft','archived'].includes(initial.record.state) || initial.record.data.category!=='work_photos') fail(409,'仅施工中项目的照片草稿或已归档照片可以生成Word');
+      if((!libraryReadOnly&&(initial.project.state!=='active' || !['draft','archived'].includes(initial.record.state))) || initial.record.data.category!=='work_photos') fail(409,'仅施工中项目的照片草稿或已归档照片可以生成Word');
       checkVersion(initial.record,b.version);
       if(!sameSiteContext(snapshot(initial.project.id,initial.record.data,req.actor,initial.record),initial.record.snapshot))fail(409,contextCorrection(initial));
       if(db.prepare("SELECT 1 FROM engineering_site_uploads WHERE record_id=? AND state='uploading'").get(initial.record.id)) fail(409,'请先完成或取消所有待上传原件');
       const basisFingerprint=photoWordBasis(initial);
       const active=files(initial.record.id).filter(f=>!f.removed_at);
-      if(!active.length || active.some(f=>!f.step_id)) fail(409,'请先上传照片并为每份原件选择所属工序');
+      if((!libraryReadOnly&&!active.length) || active.some(f=>!f.step_id)) fail(409,'请先上传照片并为每份原件选择所属工序');
       for(const f of active){const p=finalPath(f.id);if(!existsSync(p)||lstatSync(p).isSymbolicLink()||statSync(p).size!==f.byte_count||fileHash(p)!==f.sha256)fail(503,'照片原件存储或摘要异常，请检查原件');}
       const selected=active.filter(f=>f.representative);
       if(siteWorkSteps.some(s=>active.some(f=>f.step_id===s.id) && !selected.some(f=>f.step_id===s.id))) fail(409,'已有照片的每道工序须选择一张A4代表图');
@@ -633,11 +645,11 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
       const finalCheck=c=>{
         checkVersion(c.record,b.version);
         checkPhotoWordBasis(c,basisFingerprint);
-        if(c.project.state!=='active'||!['draft','archived'].includes(c.record.state)||c.project.data!==initial.project.data)fail(409,'项目或资料已变化，请刷新后生成');
+        if((libraryReadOnly?(c.project.state!==initial.project.state||c.record.state!==initial.record.state):(c.project.state!=='active'||!['draft','archived'].includes(c.record.state)))||c.project.data!==initial.project.data)fail(409,'项目或资料已变化，请刷新后生成');
         if(!sameSiteContext(snapshot(c.project.id,c.record.data,req.actor,c.record),c.record.snapshot))fail(409,contextCorrection(c));
         for(const f of selected){const p=finalPath(f.id);if(!existsSync(p)||lstatSync(p).isSymbolicLink()||statSync(p).size!==f.byte_count||fileHash(p)!==f.sha256)fail(503,'代表照片存储或摘要异常，请检查原件');}
       };
-      if(readOnly)return store.transaction(()=>{const c=currentAccess(req,!permissions.enabled(req.params.pid));check(c);finalCheck(c);return {document,name:'现场施工步骤照片_'+c.record.data.recordDate+'_当前表格.docx',version:c.record.version,basisFingerprint};});
+      if(readOnly)return store.transaction(()=>{const c=currentAccess(req,!libraryReadOnly&&!permissions.enabled(req.params.pid));check(c);finalCheck(c);return {document,name:'现场施工步骤照片_'+c.record.data.recordDate+'_当前表格.docx',version:c.record.version,basisFingerprint,...(libraryReadOnly?{templateSha256:sitePhotoTemplateHash,layoutSha256:sitePhotoLayoutHash,representativeFileIds:selected.map(f=>f.id),missingSteps:siteWorkSteps.filter(s=>evidence.missingSteps.includes(s.id)).map(s=>({id:s.id,name:s.name}))}:{})};});
       const result=mutate(req,b,operationKey,check,c=>{
         finalCheck(c);
         const same=db.prepare('SELECT id,sequence FROM engineering_site_word_exports WHERE record_id=? AND snapshot=?').get(c.record.id,snapshotJson);
@@ -650,6 +662,7 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
         return {id:c.record.id,exportId:id,sequence,version:c.record.version};
       });return result;
     };
+    photoWordReaders.set(base,createPhotoWord);
     function createSupervisionWord(req,b,operationKey) {
       return mutate(req,b,operationKey,c=>{if(!canGenerate(c,req.actor))fail(403,'没有生成监理日报Word权限');},c=>{
         if(c.project.state!=='active'||!['draft','archived'].includes(c.record.state)||c.record.data.category!=='supervision_daily'||!c.record.data.supervision)fail(409,'请先保存监理日报在线正文');

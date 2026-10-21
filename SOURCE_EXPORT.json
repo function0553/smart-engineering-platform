@@ -1,8 +1,8 @@
 {
-  "version": "0.6.0-rc.38",
-  "androidVersion": "0.3.34",
-  "androidVersionCode": 40,
-  "releaseSourceFreezeSha256": "80ac90cbf0bd53222847120dd0181c532c695e25af57f7d39c1304cdc638e731",
+  "version": "0.6.0-rc.39",
+  "androidVersion": "0.3.35",
+  "androidVersionCode": 41,
+  "releaseSourceFreezeSha256": "cacf1be2304dea7d0daf6e9151b31f49451e0435bc2ed2b6c689214be800812e",
   "sourceFiles": [
     {
       "path": "THIRD_PARTY_NOTICES.txt",
@@ -12,7 +12,7 @@
     },
     {
       "path": "android/AndroidManifest.xml",
-      "sha256": "7fe75c82ab09f9c548011a2441f3701da2682dc590f411ae5c5c9bfa918c1a42",
+      "sha256": "d3ad6797630ae82ad3dd20b6c07c66d5694f44671e597bc29ae4191ce0c9bb5a",
       "bytes": 1439,
       "source": "release-snapshot"
     },
@@ -120,13 +120,13 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "c9fc1a13e086be832b15ee9e19eb1af6cb2afd6add453f915ea240e95f91a01e",
+      "sha256": "8b6063c5d8092b046d95fa6993d40430c293426cbe88ea7a3e45a488192c877b",
       "bytes": 96330,
       "source": "release-snapshot"
     },
     {
       "path": "package.json",
-      "sha256": "d04dee3db5aa8eff5a81f8a12ae75bc381fdff0ddf578b175d4d9aa31c9c8cc7",
+      "sha256": "d0a1e46fb14c9190eabb1e362504f312e463ca8d40faaa0cae9f8b5f7fade9d8",
       "bytes": 993,
       "source": "release-snapshot"
     },
@@ -246,8 +246,8 @@
     },
     {
       "path": "server/engineering-site-records.mjs",
-      "sha256": "9f73f2228129e5a6927c4ed0e03ee2f25a55b15fd4ece053b31b857ced795420",
-      "bytes": 102840,
+      "sha256": "7600a06848141bbc95f35ef5b754f7b7441ded58ef214f344ec248858bcf43e2",
+      "bytes": 104462,
       "source": "release-snapshot"
     },
     {
@@ -288,8 +288,8 @@
     },
     {
       "path": "server/mobile-updates/manifest.json",
-      "sha256": "1635e10cc702e4600adb2420721a3ac779145940c463d72d931ca34fd11ba391",
-      "bytes": 676,
+      "sha256": "b83dec300dbbf85de7f522f65f493231cb4014ef78fbfb4855db4e3585295350",
+      "bytes": 667,
       "source": "release-snapshot"
     },
     {
@@ -348,8 +348,8 @@
     },
     {
       "path": "server/site-document-library.mjs",
-      "sha256": "cc75c1be3eab4a00e0adfb4e619fa5486b8f913d65dead7b70f5531bbd219126",
-      "bytes": 21975,
+      "sha256": "85fdee6e428781d7bc48dcf6b58bcff25a384ec1d4af4dd5699451e5af90b8c5",
+      "bytes": 26130,
       "source": "release-snapshot"
     },
     {
@@ -678,8 +678,8 @@
     },
     {
       "path": "src/EngineeringSiteRecords.tsx",
-      "sha256": "3d08b379fe87d7f68c8d350276d8c09f83c829695364af7097c22bb57ee99e4e",
-      "bytes": 125716,
+      "sha256": "921a63cb591faa592e47c1e7bdfb887f2610cbf0e91ea87b3be4b7daba1369d8",
+      "bytes": 125826,
       "source": "release-snapshot"
     },
     {
@@ -756,8 +756,8 @@
     },
     {
       "path": "src/SiteDocumentLibrary.tsx",
-      "sha256": "66b800c759645866d058d3b649b8fd6e89344332c419736f18ad018972bf814f",
-      "bytes": 26166,
+      "sha256": "e3d1d9fc20a901dc873a317f787ae44187c516561930322a919d79736f2e793f",
+      "bytes": 26429,
       "source": "release-snapshot"
     },
     {
@@ -1398,8 +1398,14 @@
     },
     {
       "path": "tests/site-document-library.test.mjs",
-      "sha256": "04049352745639a42e51370f4f5651099babd0dddd882f1b66f4c9cdeadc338d",
-      "bytes": 30266,
+      "sha256": "ee7aace9e6499604159fba6af7fe4216810cd007b3edf0b3f684af76de880428",
+      "bytes": 36055,
+      "source": "release-snapshot"
+    },
+    {
+      "path": "tests/site-library-auto-word-review.test.mjs",
+      "sha256": "0f485b37c535c99a8467fa032795e0d0a0d1ee779893d49c1d878c43a19c428c",
+      "bytes": 16741,
       "source": "release-snapshot"
     },
     {
@@ -1595,258 +1601,6 @@
       "source": "release-snapshot"
     },
     {
-      "path": "miniprogram/README.md",
-      "sha256": "56cbaf14ab8b8bbfa904c10961d578cc8db63185a861b7a399e491444f844abc",
-      "bytes": 9702,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/app.js",
-      "sha256": "77a7b30904e6afa54998f7b33e57eca5c56afce9c6ca70b4ed41d08cc0e4c015",
-      "bytes": 25,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/app.json",
-      "sha256": "81e2d7d0117def8cb07ec96faf52a398cdbd4f4133f5b552ceb3af04ea25b662",
-      "bytes": 332,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/app.wxss",
-      "sha256": "4ff03079e0c5dccdfd3bd9170c941b00a33ff8171e0dbbd9dbf48e7f0decf21e",
-      "bytes": 1203,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/config.js",
-      "sha256": "65d50dd8b626cfc38ccb4d03a29f3c72550eecf351237474b1fc9c1d0945aae2",
-      "bytes": 161,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/archives/index.js",
-      "sha256": "7e1636f363aedefd97adbbcb0b7694797f588f34951c58f027bea6d8e931e2f9",
-      "bytes": 29964,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/archives/index.json",
-      "sha256": "ffd51b3f5390f76c41becc7532be80c7e86b25e6bf39fc095af4d68cebb8e5e7",
-      "bytes": 78,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/archives/index.wxml",
-      "sha256": "d9f03bb7d1b17ef24c6379ca56b02669249243725b6099cd94a658dfb6e466d5",
-      "bytes": 12664,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/archives/index.wxss",
-      "sha256": "3e2c9f8e4016eb105cfaa41ed2f1f6da0827e7ee41fce44d56734168a200699c",
-      "bytes": 5422,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/history/index.js",
-      "sha256": "cd48a5b54f5abf129e84efdb3e5e826fac1b60029d8d679a9d3465e9a57e2c31",
-      "bytes": 6102,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/history/index.json",
-      "sha256": "117d9c1af20e335252ee3b4fdd6833ddee86e9fa1b6ea238b8f2ade1cb2dc6de",
-      "bytes": 42,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/history/index.wxml",
-      "sha256": "7c4a19531235262b94895005b67d8f8c3843049ad1b59a5b78e7585de583acd6",
-      "bytes": 5403,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/history/index.wxss",
-      "sha256": "1785f9aa821c31c0336a77261569914b86bcc5aa1855dcba77328202f6668a1a",
-      "bytes": 1600,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/login/index.js",
-      "sha256": "bbc7b280feb85f6a201db711db2cc37a37f859a5f9b799708051b5bb00204ced",
-      "bytes": 950,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/login/index.json",
-      "sha256": "d7fe1842146d540ce1470aebfe16aca317326199d37cd92d1d91ab484980ac46",
-      "bytes": 51,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/login/index.wxml",
-      "sha256": "f069e2d0b0da03c76032d14633f5567440df7e974ab41b56759617d213a22bc5",
-      "bytes": 966,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/login/index.wxss",
-      "sha256": "029528eebc7677f055a274ba15606aa54a6ec76d29773962e6edca63497630ae",
-      "bytes": 480,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/report/index.js",
-      "sha256": "f5d77e8a78e89cbab28d277917a886435966ba6fbadb3b5ddf16b581be5c43cd",
-      "bytes": 13960,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/report/index.json",
-      "sha256": "853874aa5debe22daefc0399cc1b4e6914e8f958114d903ed936918099873771",
-      "bytes": 45,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/report/index.wxml",
-      "sha256": "bb5061f5d298ad8e1dc2caeaa34ec1b4ad5c509a09ff98bd794b02770a2fe0c8",
-      "bytes": 12399,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/pages/report/index.wxss",
-      "sha256": "1e602332782901d7f3dc65c3c34380e0de7caf08c482be775d4e423c5335f06f",
-      "bytes": 3013,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/project.config.json",
-      "sha256": "85aceb71fa1c31823482bbcd30a25c3975ac0ee3e1d8f6bf454450e2aaef51b9",
-      "bytes": 369,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/sitemap.json",
-      "sha256": "5af2e5f0b9f956776ee88705692efc9d83aaee070fd7a4cfa1326a70b846667b",
-      "bytes": 53,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/api.js",
-      "sha256": "9bc50d00bbf60c75b8d90a013e16ce01515f20a2616df9b310b10a80946c8700",
-      "bytes": 2860,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/archive-draft.js",
-      "sha256": "2c319c3d90c73a915adef137314b38afb4afded0147fd5bb3d244399f475e145",
-      "bytes": 1740,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/draft.js",
-      "sha256": "3c21a802ca31e2c7bf405799af68ec0fee2b4c20d79d428aa59f64f570ffe6b5",
-      "bytes": 2451,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/photo-archives.js",
-      "sha256": "f0896f57d7f6c5cdbc59fb4dd33903953fc6a3c2aed16f5c0d77938bcb843b4e",
-      "bytes": 3441,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/report.js",
-      "sha256": "736ea5f8f70fb095eb86a176f351230638c7f44f3718cfaf9a48518c89772162",
-      "bytes": 1911,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "miniprogram/utils/submission.js",
-      "sha256": "58d3c45cacd30cdb5091bf673690b7141695111cb930b1c9bd82572e82711f41",
-      "bytes": 3384,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/README.md",
-      "sha256": "13b3e7588bf976ea7d125384db790d42ae14a34feafc27c462e6899807131394",
-      "bytes": 6067,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/AppDelegate.swift",
-      "sha256": "281e5837c17288efc2a2e6f84be67fcb117c4367743ace2a708a8d26db35b637",
-      "bytes": 1119,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/DownloadIntegrity.swift",
-      "sha256": "d8c98a33ca144da9733be0fa2267aa9506b7ba9bf5b9dae595a9ed58e17a4505",
-      "bytes": 863,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/EngineeringViewController.swift",
-      "sha256": "4f95c12c052ecf50dce1fe8c4af8f97caa101a2f42ce9c71120545111f2c0df0",
-      "bytes": 20476,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/IOSAppUpdater.swift",
-      "sha256": "ebcb29eedaf649b20ceba12e55a094270b4bc6549ed53dc8c5ef9f8c03c94280",
-      "bytes": 5044,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/Info.plist",
-      "sha256": "9caf600f4ae612c3a735914d9811d7c440e735bf45d6e54b8ffbf6db399256dd",
-      "bytes": 2641,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/PlatformPolicy.swift",
-      "sha256": "9d993c0f4df152b9bc3f560f86479e4be435968160395f76fc3b679baa81a767",
-      "bytes": 1062,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/PrivacyInfo.xcprivacy",
-      "sha256": "285d5a4faccf0bb986a8918c1ba78c19e86d777eb2438522ae5b190cabd4f1cd",
-      "bytes": 1898,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/Server252CA.cer",
-      "sha256": "00b399b6bfb60d9125193449e39c282f0f7eea805c297018e51867dc4bb7ab0c",
-      "bytes": 1069,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/ServerTrust.swift",
-      "sha256": "9f8de3c0d86f72f24d300dcf6587359f7439f2c59a7b89538aefd31d99072f28",
-      "bytes": 698,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/SmartEngineering/SimulatorFixture.swift",
-      "sha256": "7c1036f4a2715c26218a9e49ac7f0e998ed892c12d5179b791a96519d4d5535d",
-      "bytes": 1678,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/Tests/main.swift",
-      "sha256": "5fcfb918518e34bc30671fa2fe762f6582dc03e55227a863ff11364f788e7741",
-      "bytes": 5622,
-      "source": "explicit-supplement"
-    },
-    {
-      "path": "ios/UITests/EngineeringUITests.swift",
-      "sha256": "689e9251a1317e5883221c581bd46c25ea426b65a6431a00663cb193d37ceca3",
-      "bytes": 2203,
-      "source": "explicit-supplement"
-    },
-    {
       "path": "scripts/dev.mjs",
       "sha256": "074a5ec85c6b40fae35e8520d20bb5c50843b01a1ca0c679b6f101ad095dc39d",
       "bytes": 518,
@@ -1905,9 +1659,334 @@
       "sha256": "736125c0f9282d9cfe33fd704d308ba87a1c3197499c75408c0e6031b1179519",
       "bytes": 2288,
       "source": "explicit-supplement"
+    },
+    {
+      "path": "scripts/check-site-library-native.py",
+      "sha256": "760d476c8af6e88f014f6c9559bd24c4f6342fbce50cea68a4fad66621dea34b",
+      "bytes": 41224,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "scripts/build-auto-word-android.py",
+      "sha256": "30ac96a0c320237e76c5e70e350fffa4a5401f25d553790a65e15c7aeffe4892",
+      "bytes": 5052,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "scripts/freeze-auto-word-release.py",
+      "sha256": "227e2f5fb7855a36c969ffb2831f84b1fad8cb1df0c15f461e4da74df49ae139",
+      "bytes": 3787,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/preflight_rc39.py",
+      "sha256": "46026054edfc3b8a4cfac1086133b6f28fc1e00a382149bcc225dda45b728a9e",
+      "bytes": 2761,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/release_rc39.py",
+      "sha256": "a6031c63ef60ffa384850b7e1f775a008740a9468efa02d3f20d19cb31ae31ef",
+      "bytes": 23522,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/verify_runtime_rc39.py",
+      "sha256": "27bab1f21cf3d6de3128947cee6ddcd28013b09c2ffb285aab8b1cce14f3183a",
+      "bytes": 1798,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/verify_status_rc39.py",
+      "sha256": "ce25244967a43fd97d68d4013068639e8fed0475ef61c24e7c5fda0dd064afff",
+      "bytes": 2285,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/verify_site_library_rc39.py",
+      "sha256": "5e4f2898bd8eedf87c705f949ebe9ecb983f24a1607fc744b6a993d58ad51799",
+      "bytes": 1947,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "ops/deploy252/close_rc39.py",
+      "sha256": "0c4d03ba81b9697849a313d4971021d3cacb6cad7f84ce52385b8d5eee5276bb",
+      "bytes": 3747,
+      "source": "explicit-supplement"
+    },
+    {
+      "path": "miniprogram/README.md",
+      "sha256": "56cbaf14ab8b8bbfa904c10961d578cc8db63185a861b7a399e491444f844abc",
+      "bytes": 9702,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/app.js",
+      "sha256": "77a7b30904e6afa54998f7b33e57eca5c56afce9c6ca70b4ed41d08cc0e4c015",
+      "bytes": 25,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/app.json",
+      "sha256": "81e2d7d0117def8cb07ec96faf52a398cdbd4f4133f5b552ceb3af04ea25b662",
+      "bytes": 332,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/app.wxss",
+      "sha256": "4ff03079e0c5dccdfd3bd9170c941b00a33ff8171e0dbbd9dbf48e7f0decf21e",
+      "bytes": 1203,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/config.js",
+      "sha256": "65d50dd8b626cfc38ccb4d03a29f3c72550eecf351237474b1fc9c1d0945aae2",
+      "bytes": 161,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/archives/index.js",
+      "sha256": "7e1636f363aedefd97adbbcb0b7694797f588f34951c58f027bea6d8e931e2f9",
+      "bytes": 29964,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/archives/index.json",
+      "sha256": "ffd51b3f5390f76c41becc7532be80c7e86b25e6bf39fc095af4d68cebb8e5e7",
+      "bytes": 78,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/archives/index.wxml",
+      "sha256": "d9f03bb7d1b17ef24c6379ca56b02669249243725b6099cd94a658dfb6e466d5",
+      "bytes": 12664,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/archives/index.wxss",
+      "sha256": "3e2c9f8e4016eb105cfaa41ed2f1f6da0827e7ee41fce44d56734168a200699c",
+      "bytes": 5422,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/history/index.js",
+      "sha256": "cd48a5b54f5abf129e84efdb3e5e826fac1b60029d8d679a9d3465e9a57e2c31",
+      "bytes": 6102,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/history/index.json",
+      "sha256": "117d9c1af20e335252ee3b4fdd6833ddee86e9fa1b6ea238b8f2ade1cb2dc6de",
+      "bytes": 42,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/history/index.wxml",
+      "sha256": "7c4a19531235262b94895005b67d8f8c3843049ad1b59a5b78e7585de583acd6",
+      "bytes": 5403,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/history/index.wxss",
+      "sha256": "1785f9aa821c31c0336a77261569914b86bcc5aa1855dcba77328202f6668a1a",
+      "bytes": 1600,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/login/index.js",
+      "sha256": "bbc7b280feb85f6a201db711db2cc37a37f859a5f9b799708051b5bb00204ced",
+      "bytes": 950,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/login/index.json",
+      "sha256": "d7fe1842146d540ce1470aebfe16aca317326199d37cd92d1d91ab484980ac46",
+      "bytes": 51,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/login/index.wxml",
+      "sha256": "f069e2d0b0da03c76032d14633f5567440df7e974ab41b56759617d213a22bc5",
+      "bytes": 966,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/login/index.wxss",
+      "sha256": "029528eebc7677f055a274ba15606aa54a6ec76d29773962e6edca63497630ae",
+      "bytes": 480,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/report/index.js",
+      "sha256": "f5d77e8a78e89cbab28d277917a886435966ba6fbadb3b5ddf16b581be5c43cd",
+      "bytes": 13960,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/report/index.json",
+      "sha256": "853874aa5debe22daefc0399cc1b4e6914e8f958114d903ed936918099873771",
+      "bytes": 45,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/report/index.wxml",
+      "sha256": "bb5061f5d298ad8e1dc2caeaa34ec1b4ad5c509a09ff98bd794b02770a2fe0c8",
+      "bytes": 12399,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/pages/report/index.wxss",
+      "sha256": "1e602332782901d7f3dc65c3c34380e0de7caf08c482be775d4e423c5335f06f",
+      "bytes": 3013,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/project.config.json",
+      "sha256": "85aceb71fa1c31823482bbcd30a25c3975ac0ee3e1d8f6bf454450e2aaef51b9",
+      "bytes": 369,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/sitemap.json",
+      "sha256": "5af2e5f0b9f956776ee88705692efc9d83aaee070fd7a4cfa1326a70b846667b",
+      "bytes": 53,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/api.js",
+      "sha256": "9bc50d00bbf60c75b8d90a013e16ce01515f20a2616df9b310b10a80946c8700",
+      "bytes": 2860,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/archive-draft.js",
+      "sha256": "2c319c3d90c73a915adef137314b38afb4afded0147fd5bb3d244399f475e145",
+      "bytes": 1740,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/draft.js",
+      "sha256": "3c21a802ca31e2c7bf405799af68ec0fee2b4c20d79d428aa59f64f570ffe6b5",
+      "bytes": 2451,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/photo-archives.js",
+      "sha256": "f0896f57d7f6c5cdbc59fb4dd33903953fc6a3c2aed16f5c0d77938bcb843b4e",
+      "bytes": 3441,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/report.js",
+      "sha256": "736ea5f8f70fb095eb86a176f351230638c7f44f3718cfaf9a48518c89772162",
+      "bytes": 1911,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "miniprogram/utils/submission.js",
+      "sha256": "58d3c45cacd30cdb5091bf673690b7141695111cb930b1c9bd82572e82711f41",
+      "bytes": 3384,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/README.md",
+      "sha256": "13b3e7588bf976ea7d125384db790d42ae14a34feafc27c462e6899807131394",
+      "bytes": 6067,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/AppDelegate.swift",
+      "sha256": "281e5837c17288efc2a2e6f84be67fcb117c4367743ace2a708a8d26db35b637",
+      "bytes": 1119,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/DownloadIntegrity.swift",
+      "sha256": "d8c98a33ca144da9733be0fa2267aa9506b7ba9bf5b9dae595a9ed58e17a4505",
+      "bytes": 863,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/EngineeringViewController.swift",
+      "sha256": "4f95c12c052ecf50dce1fe8c4af8f97caa101a2f42ce9c71120545111f2c0df0",
+      "bytes": 20476,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/IOSAppUpdater.swift",
+      "sha256": "ebcb29eedaf649b20ceba12e55a094270b4bc6549ed53dc8c5ef9f8c03c94280",
+      "bytes": 5044,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/Info.plist",
+      "sha256": "9caf600f4ae612c3a735914d9811d7c440e735bf45d6e54b8ffbf6db399256dd",
+      "bytes": 2641,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/PlatformPolicy.swift",
+      "sha256": "9d993c0f4df152b9bc3f560f86479e4be435968160395f76fc3b679baa81a767",
+      "bytes": 1062,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/PrivacyInfo.xcprivacy",
+      "sha256": "285d5a4faccf0bb986a8918c1ba78c19e86d777eb2438522ae5b190cabd4f1cd",
+      "bytes": 1898,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/Server252CA.cer",
+      "sha256": "00b399b6bfb60d9125193449e39c282f0f7eea805c297018e51867dc4bb7ab0c",
+      "bytes": 1069,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/ServerTrust.swift",
+      "sha256": "9f8de3c0d86f72f24d300dcf6587359f7439f2c59a7b89538aefd31d99072f28",
+      "bytes": 698,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/SmartEngineering/SimulatorFixture.swift",
+      "sha256": "7c1036f4a2715c26218a9e49ac7f0e998ed892c12d5179b791a96519d4d5535d",
+      "bytes": 1678,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/Tests/main.swift",
+      "sha256": "5fcfb918518e34bc30671fa2fe762f6582dc03e55227a863ff11364f788e7741",
+      "bytes": 5622,
+      "source": "previous-reviewed-supplement"
+    },
+    {
+      "path": "ios/UITests/EngineeringUITests.swift",
+      "sha256": "689e9251a1317e5883221c581bd46c25ea426b65a6431a00663cb193d37ceca3",
+      "bytes": 2203,
+      "source": "previous-reviewed-supplement"
     }
   ],
   "supplementalFiles": [
+    "scripts/dev.mjs",
+    "scripts/build-mobile-update-manifest.py",
+    "scripts/build-site-library-android.py",
+    "scripts/freeze-site-library-release.py",
+    "ops/deploy252/portable_252.py",
+    "ops/deploy252/close_rc38.py",
+    "ops/deploy252/preflight_rc38.py",
+    "ops/deploy252/release_rc38.py",
+    "ops/deploy252/verify_runtime_rc38.py",
+    "ops/deploy252/verify_status_rc38.py",
+    "scripts/check-site-library-native.py",
+    "scripts/build-auto-word-android.py",
+    "scripts/freeze-auto-word-release.py",
+    "ops/deploy252/preflight_rc39.py",
+    "ops/deploy252/release_rc39.py",
+    "ops/deploy252/verify_runtime_rc39.py",
+    "ops/deploy252/verify_status_rc39.py",
+    "ops/deploy252/verify_site_library_rc39.py",
+    "ops/deploy252/close_rc39.py",
     "miniprogram/README.md",
     "miniprogram/app.js",
     "miniprogram/app.json",
@@ -1949,17 +2028,7 @@
     "ios/SmartEngineering/ServerTrust.swift",
     "ios/SmartEngineering/SimulatorFixture.swift",
     "ios/Tests/main.swift",
-    "ios/UITests/EngineeringUITests.swift",
-    "scripts/dev.mjs",
-    "scripts/build-mobile-update-manifest.py",
-    "scripts/build-site-library-android.py",
-    "scripts/freeze-site-library-release.py",
-    "ops/deploy252/portable_252.py",
-    "ops/deploy252/close_rc38.py",
-    "ops/deploy252/preflight_rc38.py",
-    "ops/deploy252/release_rc38.py",
-    "ops/deploy252/verify_runtime_rc38.py",
-    "ops/deploy252/verify_status_rc38.py"
+    "ios/UITests/EngineeringUITests.swift"
   ],
   "controlledAssetsExcluded": [
     {
@@ -1991,7 +2060,8 @@
       "reason": "user-authored template with personal document properties; photo template also contains real site images"
     }
   ],
-  "exclusionCount": 22,
+  "exclusionCount": 15,
+  "obsoleteTrackedFilesRemoved": [],
   "sourceCodeUnchangedFromFrozenSnapshot": true,
   "sourceOnlyDoesNotIncludeControlledAssets": true,
   "generatedFiles": [
@@ -2004,9 +2074,9 @@
   ],
   "scan": {
     "passed": true,
-    "knownTaskCredentialValuesChecked": 6,
+    "knownTaskCredentialValuesChecked": 7,
     "privateKeyMarkers": 0,
-    "syntheticTestLiteralMatchesReviewed": 48
+    "syntheticTestLiteralMatchesReviewed": 49
   },
-  "androidApkSha256": "20227eef728c70f68fa42555265f255650a3459fb147ec63b836c254af7161c5"
+  "androidApkSha256": "3c41056571607a07df47ec097b3863a6dcc9ef558b46064f7fb77cde1db6c049"
 }
