@@ -19,6 +19,12 @@ from urllib.parse import parse_qs, urlsplit
 from attendance_store import Store, AttendanceResetBusy
 from gb_voice import Speaker
 from face_liveness import Liveness
+from voice_audio import prepare_voice
+
+
+def speaker_for(config):
+    return Speaker(base=config.get('voice_base_url','http://127.0.0.1:12981'),
+                   device=config.get('device_id','34020000001320000012'),channel=config.get('channel_id'))
 
 
 class Attendance:
@@ -54,8 +60,7 @@ class Attendance:
         self.sequence = 0
         self.session = uuid.uuid4().hex
         self.seen = {}
-        self.speaker = Speaker(device=config.get('device_id', '34020000001320000012'),
-                               channel=config.get('channel_id'))
+        self.speaker = speaker_for(config)
         self.last_liveness = []
         self.state = {'connected': False, 'frames_processed': 0, 'last_error': None,
                       'last_face_count': 0, 'last_frame_received': None}
@@ -250,11 +255,9 @@ class Attendance:
         if len(raw) > 5*1024*1024:
             raise ValueError('photo_too_large')
         image = decode_image(raw)
-        if request.get('voice_text') != request['name'].strip() + '打卡成功':
-            raise ValueError('name_voice_mismatch')
-        audio = base64.b64decode(request['voice_pcma_base64'], validate=True)
         with self.pipeline_lock:
             embedding, _ = self.pipeline.embed(image)
+        audio = prepare_voice(self.config, request['name'], request)
         return self.store.enroll(request['person_id'], request['name'], embedding,
                                  self.model['modelId'], audio, hashlib.sha256(raw).hexdigest())
 

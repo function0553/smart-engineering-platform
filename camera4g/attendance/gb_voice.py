@@ -7,13 +7,21 @@ import json
 import threading
 import time
 import urllib.request
+from urllib.parse import urlsplit
 
 from attendance_store import voice_ready
 
 
 class Speaker:
     def __init__(self, base='http://127.0.0.1:12981', device='34020000001320000012', channel=None):
+        parsed = urlsplit(base)
+        if (parsed.scheme not in ('http','https') or not parsed.hostname or parsed.username
+                or parsed.password or parsed.path not in ('','/') or parsed.query or parsed.fragment):
+            raise ValueError('invalid_voice_base_url')
+        parsed.port  # Validate port before starting camera threads.
+        base = base.rstrip('/')
         self.base, self.device = base, device
+        self.websocket_url = ('wss://' if parsed.scheme == 'https' else 'ws://') + parsed.netloc + '/gb28181/api/talk/start'
         self.channel = channel or device
         self.lock = threading.Lock()
         self.prepare_gate = threading.Lock()
@@ -140,7 +148,7 @@ class Speaker:
                 time.sleep(.1)
             else:
                 raise RuntimeError('broadcast_readiness_timeout')
-            ws = websocket.create_connection(self.base.replace('http:', 'ws:') + '/gb28181/api/talk/start',
+            ws = websocket.create_connection(self.websocket_url,
                                               timeout=5, http_no_proxy=['127.0.0.1', 'localhost'])
             ws.send(json.dumps({'type': 'startBroadcast', 'deviceId': self.device,
                                 'channelId': self.channel, 'sessionId': session}))
