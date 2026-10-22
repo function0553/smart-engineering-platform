@@ -16,6 +16,7 @@ import { mountDailyReportSubmissionRoutes } from './daily-report-submissions.mjs
 import { mountPhotoArchiveRoutes } from './photo-archives.mjs';
 import { mountAppUpdateRoutes } from './app-update.mjs';
 import { mountPpeRoutes } from './ppe.mjs';
+import { mountCameraAttendance } from './camera4g-attendance.mjs';
 import { mountEngineeringRoutes } from './engineering.mjs';
 import { mountEngineeringAttachmentRoutes } from './engineering-attachments.mjs';
 import { mountEngineeringSiteRecordRoutes,siteRecordsPending } from './engineering-site-records.mjs';
@@ -31,7 +32,7 @@ const password = z.string().min(6, '密码至少 6 位').max(128);
 const displayName = z.string().trim().min(1).max(60);
 const emptyHash = passwordHash(randomBytes(32).toString('hex'));
 
-export function createApp({ database = resolve('.data/workspace.sqlite'), baseUrl = 'http://127.0.0.1:5186', development = false, distPath = resolve('dist'), filesDir = resolve('.data/models'), updateDir = resolve('server/mobile-updates'), weatherService = createWeatherService(), ppeOptions = {} } = {}) {
+export function createApp({ database = resolve('.data/workspace.sqlite'), baseUrl = 'http://127.0.0.1:5186', development = false, distPath = resolve('dist'), filesDir = resolve('.data/models'), updateDir = resolve('server/mobile-updates'), weatherService = createWeatherService(), ppeOptions = {}, attendanceOptions = {} } = {}) {
   const store = openStore(database);
   const app = express();
   const origin = new URL(baseUrl);
@@ -56,6 +57,7 @@ export function createApp({ database = resolve('.data/workspace.sqlite'), baseUr
   app.put(/^\/api\/(?:mobile\/)?engineering\/projects\/[0-9a-fA-F-]{36}\/boq\/[0-9a-fA-F-]{36}$/, express.json({ limit: '1mb' }));
   app.post(/^\/api\/(?:mobile\/)?engineering\/projects\/[0-9a-fA-F-]{36}\/value-plans$/, express.json({ limit: '512kb' }));
   app.put(/^\/api\/(?:mobile\/)?engineering\/projects\/[0-9a-fA-F-]{36}\/value-plans\/[0-9a-fA-F-]{36}$/, express.json({ limit: '512kb' }));
+  app.use('/api/camera4g-attendance/people/enroll', express.json({ limit: '8mb' }));
   app.use(express.json({ limit: '128kb' }));
   app.use('/api', (req, res, next) => {
     if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method) && !req.path.startsWith('/ingest/')) {
@@ -267,6 +269,7 @@ export function createApp({ database = resolve('.data/workspace.sqlite'), baseUr
   siteRecordService=mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth, writer,filesDir,baseUrl });
   mountAppUpdateRoutes(app, updateDir);
   const ppe = mountPpeRoutes(app, { auth }, ppeOptions);
+  const cameraAttendance = mountCameraAttendance(app, {store,auth}, {development,...attendanceOptions});
   mountReportWeather(app, { auth, mobileAuth, service:weatherService });
   mountSecurityRoutes(app, { store, auth, admin, integrationAuth });
   const vision = mountVisionRoutes(app, { store, auth, admin, directory: resolve(filesDir, 'vision-private') });
@@ -287,5 +290,5 @@ export function createApp({ database = resolve('.data/workspace.sqlite'), baseUr
     console.error('Request failed', { path: req.path, name: error.name, code: error.code || 'internal_error' });
     res.status(500).json({ error: '服务暂时无法处理该请求，请稍后重试' });
   });
-  return { app, store, vision, ppe };
+  return { app, store, vision, ppe, cameraAttendance };
 }
