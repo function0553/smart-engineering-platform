@@ -33,6 +33,8 @@ npm run build:android
 
 ## 源码与资产边界
 
+4G 球机算法部署、对外接口和交接说明见 [GPU 与 252 部署交接](camera4g/docs/GPU_252_HANDOFF_20261022.md)。**服务启动脚本**见 [camera4g/deploy](camera4g/deploy/README.md)：GPU 运行打卡、安全帽及反光背心算法，252 后端调用 GPU HTTPS 接口，本次不新增前端。
+
 - 业务代码来自本次冻结快照，文件摘要见 `SOURCE_EXPORT.json`。
 - 测试使用隔离生成的合成数据；不含生产数据库、真实图片视频、账号密码、用户历史或手机草稿。
 - 四份原始运行DOCX作为受控资产排除，恢复要求见上文。

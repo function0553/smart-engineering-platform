@@ -1,4 +1,6 @@
 {
+  "bind": {"host": "127.0.0.1", "port": 28982},
+  "gpu_id": 1,
   "root": "/data/4g-camera-inference",
   "model_directory": "/path/to/verified/scrfd-arcface-models",
   "liveness_model_directory": "/path/to/hyc/camera4g/attendance/models/liveness",

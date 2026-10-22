@@ -1,0 +1,17 @@
+[Unit]
+Description=252 existing backend startup script
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=smart-engineering
+Environment=CAMERA4G_252_ENV=/etc/camera4g/private/platform.env
+ExecStart=/bin/bash /opt/hyc/camera4g/deploy/start-252.sh
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

@@ -4,6 +4,7 @@ import base64
 from datetime import datetime, timezone
 import hashlib
 import hmac
+import ipaddress
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
@@ -28,7 +29,7 @@ class Attendance:
         self.camera_id = config.get('camera_id', 'camera-02')
         self.camera_name = config.get('camera_name', self.camera_id)
         if shared is None:
-            self.pipeline = FacePipeline(config['model_directory'], provider='cuda', gpu_id=1)
+            self.pipeline = FacePipeline(config['model_directory'], provider='cuda', gpu_id=config.get('gpu_id', 1))
             self.model = self.pipeline.info()
             self.pipeline_lock = threading.Lock()
             self.store = Store(config['database'], self.model['modelId'], config.get('attendance_policy'))
@@ -384,12 +385,24 @@ class Handler(BaseHTTPRequestHandler):
     do_GET = do_POST = do_OPTIONS = do_DELETE = safe_route
 
 
+def bind_address(config):
+    bind = config.get('bind', {'host': '127.0.0.1', 'port': 28982})
+    host, port = bind.get('host'), bind.get('port')
+    if not isinstance(host, str) or ipaddress.ip_address(host).version != 4:
+        raise ValueError('invalid_bind_host')
+    if type(port) is not int or not 1024 <= port <= 65535:
+        raise ValueError('invalid_bind_port')
+    return host, port
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True)
     args = parser.parse_args()
-    app = AttendanceHub(json.loads(Path(args.config).read_text()))
-    server = ThreadingHTTPServer(('127.0.0.1', 28982), Handler)
+    config = json.loads(Path(args.config).read_text(encoding='utf-8'))
+    address = bind_address(config)
+    app = AttendanceHub(config)
+    server = ThreadingHTTPServer(address, Handler)
     server.daemon_threads = True
     server.app = app
     def shutdown(*_):

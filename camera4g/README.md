@@ -1,6 +1,8 @@
 # 4G 球机：安全帽、反光背心检测与打卡
 
-本目录为现有工程的选定源码快照（2026-10-22，北京时间），上传目标为 Gitee `systemaths/hyc`。PPE、打卡业务逻辑及模型保持原文件内容，逐文件来源和 SHA-256 见 `SOURCE_EXPORT.json`。运行时测试夹具补齐了服务已要求的 `voice_gate`、`camera_id` 属性，使其与现有初始化契约一致。本次提交用于源码归档，不代表重新部署或现场验收。
+本目录为 4G 球机算法服务，上传目标为 Gitee `systemaths/hyc`。安全帽、反光背心检测和人脸打卡在 GPU 运行，由 252 后端接入；本次不新增前端。2026-10-22 增补跨服务器 HTTPS 接入、启动脚本和交接说明，来源与后续修改摘要见 `SOURCE_EXPORT.json`。源码交付不代表远端上线或现场验收。
+
+**先读：[GPU 算法服务与 252 后端交接文档](docs/GPU_252_HANDOFF_20261022.md)。启动脚本：[GPU 算法服务启动脚本](deploy/start-gpu.sh)、[252 既有后端启动脚本](deploy/start-252.sh)，用途与命令见 [启动脚本清单](deploy/README.md)。**
 
 ## 目录
 
@@ -12,6 +14,7 @@
 | `attendance/models/liveness/` | 双尺度 Minivision ONNX 活体模型、哈希清单 |
 | `voice-adapter/` | Monibuca 5.1.6 的实际语音补丁文件及版本/摘要依据 |
 | `docs/` | 历史 PPE 后端接入契约；历史地址和状态需按实际部署复核 |
+| `deploy/` | GPU/252 启动脚本、systemd、GPU HTTPS 网关和配置模板 |
 | `licenses/` | 随附第三方许可；组件范围见 `THIRD_PARTY_NOTICES.md` |
 
 ## PPE 安装和配置
@@ -30,9 +33,9 @@ python ppe/server.py --config /path/to/private/video.json
 
 现有打卡规则使用北京时间：08:00 起记录，09:05:00（含）前正常，之后迟到；同一人员每天保留首次打卡。PPE 匿名轨迹不作为实名打卡身份。
 
-打卡启动方式：`python attendance/attendance_service.py --config /path/to/private/attendance.json`。服务要求 `ATTENDANCE_ADMIN_TOKEN`，当前 HTTP 绑定 `127.0.0.1:28982`。配置结构示例见 `attendance/config.example.json`，私有流地址和数据库另行配置，示例不含实际账号密码。
+打卡启动方式：`bash deploy/start-gpu.sh attendance`，或直接 `python attendance/attendance_service.py --config /path/to/private/attendance.json`。监听用 `bind.host`/`bind.port` 配置；要求 ATTENDANCE_ADMIN_TOKEN。推荐由 GPU TLS 网关提供 `https://实际GPU域名:29482`；默认回环监听只供 GPU 本机网关使用，不是 252 调用地址。配置见 `attendance/config.example.json`。
 
-当前工作目录未找到打卡所依赖的 `facekit.core`、`face_engine.alignment.face_align` 源码及其 SCRFD/ArcFace 模型，部署方必须恢复既有匹配版本；未用名称相同的其他包替代。其他运行依赖包含 PyAV、NumPy、OpenCV、CUDA 版 ONNX Runtime、paramiko 和 websocket-client，具体版本以已验证环境为准；PPE 依赖清单不能当作完整打卡环境清单。现有打卡代码指定 GPU 1，PPE 可单独使用 GPU 0。
+当前工作目录未找到打卡所依赖的 `facekit.core`、`face_engine.alignment.face_align` 源码及其 SCRFD/ArcFace 模型，部署方必须恢复既有匹配版本；未用名称相同的其他包替代。其他运行依赖包含 PyAV、NumPy、OpenCV、CUDA 版 ONNX Runtime、paramiko 和 websocket-client，具体版本以已验证环境为准；PPE 依赖清单不能当作完整打卡环境清单。打卡 gpu_id 默认 1、可配置；PPE 使用独立 device_id。
 
 活体模型已随附，`liveness_model_directory` 指向本目录的 `attendance/models/liveness`。RGB 活体输出需现场验证。语音依赖本次适配的 Monibuca 广播接口和现场听音验证文件；`submitted_unverified` 仅表示已提交，不能代替确认听到。
 

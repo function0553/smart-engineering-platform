@@ -1,6 +1,6 @@
-import { readFileSync } from 'node:fs';
-import { isAbsolute } from 'node:path';
 import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+import { privateConfig, upstreamBase } from './camera4g-upstream.mjs';
 import { Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
@@ -40,24 +40,12 @@ function latestIsFresh(body) {
 
 function loadConfig(options) {
   try {
-    let raw = options.config;
-    if (!raw) {
-      const path = process.env.PPE_CONFIG_FILE;
-      if (!path || !isAbsolute(path)) return null;
-      const bytes = readFileSync(path);
-      if (bytes.length > 65536) return null;
-      raw = JSON.parse(bytes.toString('utf8'));
-    }
+    const raw = privateConfig(options, 'PPE_CONFIG_FILE');
     if (!object(raw)) return null;
     const cameraId = raw.cameraId || 'camera-01';
     if (!/^[a-zA-Z0-9_-]{1,80}$/.test(cameraId)) return null;
     const bases = ['apiBaseUrl', 'previewBaseUrl'].map((key, i) => {
-      const value = raw[key] || `http://127.0.0.1:${i ? 28880 : 28878}`;
-      const url = new URL(value);
-      if (url.protocol !== 'http:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash) throw unavailable();
-      if (!['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) throw unavailable();
-      if (!options.development && url.origin !== `http://127.0.0.1:${i ? 28880 : 28878}`) throw unavailable();
-      return url;
+      return upstreamBase(raw[key], { development: options.development, loopbackPort: i ? 28880 : 28878 });
     });
     const cameraToken = raw.cameraToken, previewPassword = raw.previewPassword, previewUsername = raw.previewUsername || 'viewer';
     if (![cameraToken, previewPassword, previewUsername].every(s => typeof s === 'string' && s.length > 0 && s.length <= 2048 && !/[\r\n\0]/.test(s))) return null;
@@ -212,7 +200,7 @@ export function mountPpeRoutes(app, { auth }, options = {}) {
       const release = () => { if (!released) { released = true; active--; activeRequests.delete(request); clearTimeout(timer); signal?.removeEventListener('abort', abort); } };
       const abort = () => request?.destroy(unavailable());
       try {
-        request = httpRequest(url, { method, headers: { authorization, ...(range ? { range } : {}), 'accept-encoding': 'identity' }, lookup: url.hostname === 'localhost' ? (_hostname, _options, done) => done(null, '127.0.0.1', 4) : undefined }, response => {
+        request = (url.protocol === 'https:' ? httpsRequest : httpRequest)(url, { method, headers: { authorization, ...(range ? { range } : {}), 'accept-encoding': 'identity' }, lookup: url.hostname === 'localhost' ? (_hostname, _options, done) => done(null, '127.0.0.1', 4) : undefined }, response => {
           response.once('end', release); response.once('close', release);
           response.once('aborted', () => { if (!signal?.aborted) onFailure?.(); });
           response.once('error', () => { if (!signal?.aborted) onFailure?.(); });

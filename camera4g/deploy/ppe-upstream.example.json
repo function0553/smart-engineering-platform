@@ -1,0 +1,10 @@
+{
+  "cameraId": "camera-01",
+  "cameraName": "4G安全帽与反光背心",
+  "apiBaseUrl": "https://gpu.example.com:29478",
+  "previewBaseUrl": "https://gpu.example.com:29480",
+  "cameraToken": "REPLACE_CAMERA_TOKEN_AT_LEAST_32_CHARS",
+  "previewUsername": "viewer",
+  "previewPassword": "REPLACE_PREVIEW_PASSWORD_AT_LEAST_32_CHARS",
+  "allowedUserIds": []
+}

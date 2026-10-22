@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "scope": "GPU algorithm deployment and external 252 backend integration; no new frontend",
+  "targeted_node_tests": {
+    "command": "node --test tests/ppe.test.mjs tests/ppe-overlay.test.mjs",
+    "passed": 28,
+    "failed": 0,
+    "includes": [
+      "HTTPS JSON and HLS with certificate validation",
+      "untrusted certificate rejected",
+      "remote cleartext and unsafe upstream URL rejection",
+      "authentication, permissions and media URL rewrite regressions"
+    ]
+  },
+  "attendance_tests": {
+    "command": "python -m unittest test_attendance test_attendance_policy test_attendance_runtime test_face_liveness test_ssh_http test_voice_prepare test_deployment_config",
+    "passed": 34,
+    "failed": 0
+  },
+  "startup_scripts": {
+    "bash_syntax": "passed",
+    "synthetic_dispatch_smoke": "passed",
+    "gpu_components_checked": [
+      "ppe",
+      "preview",
+      "attendance"
+    ],
+    "cpu_ppe_config_rejected": true,
+    "invalid_component_rejected": true,
+    "platform_dispatch": "passed",
+    "platform_cleartext_base_rejected": true,
+    "actual_services_started": false
+  },
+  "full_repository_tests": {
+    "command": "npm test",
+    "passed": false,
+    "exit_code": 1,
+    "observed_failures": [
+      "Missing controlled server/templates/daily-report.docx and other DOCX runtime assets",
+      "Missing tests/assets/daily-report-qa.png",
+      "Controlled model set required by vision-runtime tests is absent"
+    ],
+    "scope_note": "Unchanged business/test files and excluded assets; not repaired or substituted in this algorithm-service change"
+  },
+  "source_export_hash_verification": {
+    "passed": true,
+    "files": 69,
+    "updated_entries": [
+      "attendance/attendance_service.py",
+      "docs/PPE_BACKEND_20261009.md"
+    ]
+  },
+  "model_hash_verification": {
+    "passed": true,
+    "files": [
+      "ppe/models/reference-v0.3/buildvision-hazards-v0.3.onnx",
+      "attendance/models/liveness/2.7_80x80_MiniFASNetV2.onnx",
+      "attendance/models/liveness/4_0_0_80x80_MiniFASNetV1SE.onnx"
+    ]
+  },
+  "remote_servers_contacted": false,
+  "remote_deployment_performed": false,
+  "gpu_runtime_verified": false,
+  "nginx_config_validated_on_target": false,
+  "field_acceptance_performed": false,
+  "pending_deployment_inputs": [
+    "Actual GPU HTTPS host or IP and port mapping",
+    "TLS certificate and 252 egress allow rule",
+    "Private tokens and existing camera/media routes",
+    "Matching facekit/face_engine sources and SCRFD/ArcFace models",
+    "252 controlled runtime templates/data paths"
+  ]
+}

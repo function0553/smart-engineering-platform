@@ -205,8 +205,12 @@
     {
       "file": "attendance/attendance_service.py",
       "source": "camera_npu/server_transition/add_camera_20261019/attendance_service.py",
-      "bytes": 20466,
-      "sha256": "0f10da474f501039e0e634f215b924305f3a23090d2527ac4aaf449c8f8e872b"
+      "bytes": 20961,
+      "sha256": "3266eaa010533ac35c2600fa3fff1c871d52b0e7b9495226658c64fd597d5dee",
+      "exported_sha256": "0f10da474f501039e0e634f215b924305f3a23090d2527ac4aaf449c8f8e872b",
+      "exported_bytes": 20466,
+      "modified_on": "2026-10-22",
+      "modification": "GPU/252 deployment and external API configuration update"
     },
     {
       "file": "attendance/attendance_store.py",
@@ -411,8 +415,12 @@
     {
       "file": "docs/PPE_BACKEND_20261009.md",
       "source": "后端接入说明_4G安全帽反光背心_20261009.md",
-      "bytes": 25546,
-      "sha256": "590f02a305027945902ab2344cd78c6b1ba443ebb882d3ae0523dafb337242da"
+      "bytes": 25838,
+      "sha256": "87e1a0665708e663829b8bb9a566d6fe05f5125da87b833ff89f81f7df0494fd",
+      "exported_sha256": "590f02a305027945902ab2344cd78c6b1ba443ebb882d3ae0523dafb337242da",
+      "exported_bytes": 25546,
+      "modified_on": "2026-10-22",
+      "modification": "GPU/252 deployment and external API configuration update"
     },
     {
       "file": "ppe/offline_verification.json",
@@ -478,5 +486,116 @@
     "preview/prepare_router_config.py",
     "preview/preview_server.py"
   ],
-  "production_code_and_models_unchanged": true
+  "production_code_and_models_unchanged": true,
+  "deployment_update": {
+    "date": "2026-10-22",
+    "timezone": "Asia/Shanghai",
+    "scope": "GPU algorithm service, 252 backend HTTPS integration, startup scripts and handoff; no new frontend",
+    "original_export_entries_modified": [
+      "attendance/attendance_service.py",
+      "docs/PPE_BACKEND_20261009.md"
+    ],
+    "files": [
+      {
+        "file": ".gitattributes",
+        "bytes": 112,
+        "sha256": "130414361f60a41e5f651a9906d65f854abda2d46171a020f6e1ab2545edc27a"
+      },
+      {
+        "file": "README.md",
+        "bytes": 3482,
+        "sha256": "c2d0a6e703652be9fe32f56a2b6b2334bbe263ccfd1dbf5f88e2030b41986ef2"
+      },
+      {
+        "file": "camera4g/README.md",
+        "bytes": 5155,
+        "sha256": "9345e3b2286ed40cdf36182956b95be739a4a52234e20ecb22db7ad3e595760e"
+      },
+      {
+        "file": "camera4g/attendance/attendance_service.py",
+        "bytes": 20961,
+        "sha256": "3266eaa010533ac35c2600fa3fff1c871d52b0e7b9495226658c64fd597d5dee"
+      },
+      {
+        "file": "camera4g/attendance/config.example.json",
+        "bytes": 791,
+        "sha256": "dae475050bdf5ba5caa999b68da063c983b36f0fae5a1e81c1cbc7f55527180a"
+      },
+      {
+        "file": "camera4g/attendance/test_deployment_config.py",
+        "bytes": 911,
+        "sha256": "6da225c8c03dc47968914bd1a51aed01eda3752fa7f66429b1e62bc4c73d5c09"
+      },
+      {
+        "file": "camera4g/deploy/README.md",
+        "bytes": 1006,
+        "sha256": "5581aac5a18cb8aad8ad2e3be710b340215ae91a2c4f7db963ba4431e40329e3"
+      },
+      {
+        "file": "camera4g/deploy/camera4g-gpu@.service.example",
+        "bytes": 383,
+        "sha256": "f76f1045558b9d1b2401a64406ff6540277ed38bc6cc807366c1876e1ecd8271"
+      },
+      {
+        "file": "camera4g/deploy/camera4g-platform.service.example",
+        "bytes": 381,
+        "sha256": "9cbfed8d279ca1578d416b980436a1898d835b76c47000a17fb09567442e6916"
+      },
+      {
+        "file": "camera4g/deploy/gpu-gateway.nginx.conf.example",
+        "bytes": 1624,
+        "sha256": "1ea7add357b5ed01baeab6282bc788c5428a179848ad85d68bda474fb3759126"
+      },
+      {
+        "file": "camera4g/deploy/gpu.env.example",
+        "bytes": 704,
+        "sha256": "a189f76fc1bf5f180a5da15cd157cf5b8590281b72e22c7b576594d23cc59c69"
+      },
+      {
+        "file": "camera4g/deploy/platform.env.example",
+        "bytes": 523,
+        "sha256": "62b75011b1abbe55d70e715f55ef35f7e766171c1dc02ed6c17073792aaee6e8"
+      },
+      {
+        "file": "camera4g/deploy/ppe-upstream.example.json",
+        "bytes": 359,
+        "sha256": "5d0f3f725998202f16b2d7ef76ae1c7a2f1c9e8083ccdecdfac3cdc282688c8c"
+      },
+      {
+        "file": "camera4g/deploy/start-252.sh",
+        "bytes": 1558,
+        "sha256": "a4c52e764ee771399f4000ba0d3f1986a92589ec9f73bd53e36bbc56918cb09e"
+      },
+      {
+        "file": "camera4g/deploy/start-gpu.sh",
+        "bytes": 1506,
+        "sha256": "07595ddc643bb2ba7960937942e9e4c3bf34ab22f48c952c43b91f5ccf01b534"
+      },
+      {
+        "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
+        "bytes": 10117,
+        "sha256": "ef041e05d6b8d0bef5a2a437e893eedab9c0607860ac208d7584ddce020757cf"
+      },
+      {
+        "file": "camera4g/docs/PPE_BACKEND_20261009.md",
+        "bytes": 25838,
+        "sha256": "87e1a0665708e663829b8bb9a566d6fe05f5125da87b833ff89f81f7df0494fd"
+      },
+      {
+        "file": "server/camera4g-upstream.mjs",
+        "bytes": 1480,
+        "sha256": "9265bf885be485662110c61f611f0bb0d48c578b3de544e47618915c96be871c"
+      },
+      {
+        "file": "server/ppe.mjs",
+        "bytes": 24380,
+        "sha256": "e85fed0ce57806c3b15624c435ef6edbb2842bb691e0d7363b22bc91065bf9d5"
+      },
+      {
+        "file": "tests/ppe.test.mjs",
+        "bytes": 31365,
+        "sha256": "594cd686481ed33927399e57c84fd4588671788c845b12821041814d20fa502f"
+      }
+    ]
+  }
 }

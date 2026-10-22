@@ -1,13 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer, request } from 'node:http';
+import { createServer as createSecureServer, globalAgent as httpsAgent } from 'node:https';
+import { execFileSync } from 'node:child_process';
 import { randomBytes, createHash } from 'node:crypto';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import express from 'express';
 import { mountPpeRoutes } from '../server/ppe.mjs';
 import { openStore } from '../server/store.mjs';
+import { upstreamBase } from '../server/camera4g-upstream.mjs';
 
 const wait = ms => new Promise(done => setTimeout(done, ms));
 const digest = value => createHash('sha256').update(value).digest('hex');
@@ -25,10 +28,10 @@ const result = () => ({
 });
 
 async function fixture(t, extra = {}) {
-  const upstream = createServer(), seen = [], state = { code: 200, delay: 0, slow: false, ended: 0, cancelled: 0, custom: null };
+  const upstream = extra.tls ? createSecureServer(extra.tls) : createServer(), seen = [], state = { code: 200, delay: 0, slow: false, ended: 0, cancelled: 0, custom: null };
   const secret = randomBytes(24).toString('hex'), password = randomBytes(24).toString('hex');
   await new Promise(done => upstream.listen(0, '127.0.0.1', done));
-  const upstreamBase = `http://127.0.0.1:${upstream.address().port}`;
+  const upstreamBase = `${extra.tls ? 'https' : 'http'}://127.0.0.1:${upstream.address().port}`;
   const basic = 'Basic ' + Buffer.from('viewer:' + password).toString('base64');
   upstream.on('request', async (req, res) => {
     seen.push({ path: req.url, authorization: req.headers.authorization, cookie: req.headers.cookie, range: req.headers.range, method: req.method });
@@ -310,7 +313,7 @@ test('latest results require schema/session/epoch/sequence/valid receive time wh
   const invalidHistory = await f.call('/api/ppe/cameras/camera-01/history'); assert.equal(invalidHistory.status, 502); assert.deepEqual(await invalidHistory.json(), { error: 'ppe_invalid_response' });
 });
 
-test('missing or invalid private config stays unavailable without crashing; production forbids nonfixed network targets', async t => {
+test('missing or invalid private config stays unavailable; remote cleartext and nonfixed loopback HTTP are refused', async t => {
   const directory = mkdtempSync(join(tmpdir(), 'ppe-config-test-'));
   t.after(() => { assert.equal(dirname(resolve(directory)), resolve(tmpdir())); rmSync(directory, { recursive: true, force: true }); });
   const prior = process.env.PPE_CONFIG_FILE; delete process.env.PPE_CONFIG_FILE;
@@ -324,4 +327,34 @@ test('missing or invalid private config stays unavailable without crashing; prod
   const privateFile = await fixture(t, { config: null }); assert.equal(privateFile.adapter.configured, true, 'Absolute private configuration is supported without embedding credentials in source');
   assert.equal((await (await privateFile.call('/api/ppe/cameras')).json()).configured, true);
   const fixedPort = await fixture(t, { development: false }); assert.equal(fixedPort.adapter.configured, false, 'A test listener port must never become a production target');
+});
+
+test('252 accepts explicit GPU HTTPS origins while rejecting cleartext remote addresses, credentials and URL paths', () => {
+  assert.equal(upstreamBase('https://gpu.example.com:29478').origin, 'https://gpu.example.com:29478');
+  assert.equal(upstreamBase('https://192.168.1.200:29478').hostname, '192.168.1.200');
+  assert.equal(upstreamBase('http://127.0.0.1:28878', { loopbackPort: 28878 }).port, '28878');
+  for (const value of [undefined, 'http://gpu.example.com:29478', 'http://192.168.1.200:28878', 'https://user:pass@gpu.example.com', 'https://gpu.example.com/api', 'https://gpu.example.com/?url=x', 'https://gpu.example.com/#x', 'https://0.0.0.0:29478']) assert.throws(() => upstreamBase(value));
+});
+
+test('GPU TLS upstream verifies certificates and proxies JSON and HLS with server-side credentials', async t => {
+  const directory = mkdtempSync(join(tmpdir(), 'ppe-tls-test-'));
+  t.after(() => { assert.equal(dirname(resolve(directory)), resolve(tmpdir())); rmSync(directory, { recursive: true, force: true }); });
+  const cert = join(directory, 'cert.pem'), key = join(directory, 'key.pem');
+  const openssl = process.env.OPENSSL_BINARY || (process.platform === 'win32' ? 'C:/Program Files/Git/usr/bin/openssl.exe' : 'openssl');
+  execFileSync(openssl, ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost,IP:127.0.0.1', '-keyout', key, '-out', cert], { stdio: 'ignore' });
+  const f = await fixture(t, { development: false, tls: { key: readFileSync(key), cert: readFileSync(cert) } });
+  assert.equal(f.adapter.configured, true);
+  assert.equal((await f.call('/api/ppe/cameras/camera-01/status')).status, 503, 'An untrusted GPU certificate must be rejected');
+  assert.equal(f.seen.length, 0);
+  const prior = httpsAgent.options.ca;
+  httpsAgent.options.ca = readFileSync(cert);
+  t.after(() => { if (prior === undefined) delete httpsAgent.options.ca; else httpsAgent.options.ca = prior; });
+  const response = await f.call('/api/ppe/cameras/camera-01/status');
+  assert.equal(response.status, 200); f.noSecrets(await response.json());
+  const playlist = await f.call('/ppe-live/camera-01/media/hls/raw-main/index.m3u8');
+  assert.equal(playlist.status, 200);
+  const body = await playlist.text(); f.noSecrets(body);
+  assert.ok(body.includes('/ppe-live/camera-01/media/hls/raw-main/'));
+  assert.equal(f.seen[0].authorization, `Bearer ${f.secret}`);
+  assert.equal(f.seen[1].authorization, 'Basic ' + Buffer.from('viewer:' + f.password).toString('base64'));
 });
