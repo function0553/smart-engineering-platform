@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import sqlite3
+import shutil
 import tempfile
 import unittest
 
@@ -74,6 +75,33 @@ class ChangeTests(unittest.TestCase):
         with self.assertRaises(sqlite3.IntegrityError):
             self.store.checkin('p1','camera-02','obs1','2026-10-22T02:00:00Z',.9,.1)
         self.assertEqual(self.store.records(), [])
+
+    def test_restored_backup_exposes_changed_anchor_even_when_sequence_catches_up(self):
+        self.store.checkin('p1','camera-02','one','2026-10-22T02:00:00Z',.9,.1)
+        backup=self.path.with_name('backup.sqlite');shutil.copyfile(self.path,backup)
+        self.store.claim_voice('camera-02')
+        self.store.finish_voice(self.store.records()[0]['attendance_id'],'submitted_unverified',{})
+        previous=self.store.changes()
+        self.assertEqual(previous['next_cursor'],3)
+        shutil.copyfile(backup,self.path)
+        for date in ['23','24','25']:
+            self.store.checkin('p1','camera-02',date,f'2026-10-{date}T02:00:00Z',.9,.1)
+        restored=self.store.changes(3)
+        self.assertEqual(restored['stream_id'],previous['stream_id'])
+        self.assertNotEqual(restored['after_digest'],previous['events'][-1]['digest'])
+
+    def test_cursor_digest_binds_prefix_even_if_last_event_is_identical_after_restore(self):
+        self.store.checkin('p1','camera-02','one','2026-10-22T02:00:00Z',.9,.1)
+        backup=self.path.with_name('backup.sqlite');shutil.copyfile(self.path,backup)
+        self.store.checkin('p1','camera-02','B','2026-10-23T02:00:00Z',.9,.1)
+        self.store.claim_voice('camera-02')
+        previous=self.store.changes();self.assertEqual(previous['next_cursor'],3)
+        shutil.copyfile(backup,self.path)
+        self.store.checkin('p1','camera-02','C','2026-10-24T02:00:00Z',.9,.1)
+        self.store.claim_voice('camera-02')
+        current=self.store.changes()
+        self.assertEqual(current['events'][-1]['record'],previous['events'][-1]['record'])
+        self.assertNotEqual(current['events'][-1]['digest'],previous['events'][-1]['digest'])
 
 
 if __name__ == '__main__':

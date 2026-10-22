@@ -1,0 +1,7 @@
+# Versions read from the existing GPU attendance Python 3.10 runtime, 2026-10-22.
+av==16.0.1
+numpy==2.2.6
+opencv-python-headless==4.12.0.88
+Pillow==12.3.0
+onnxruntime-gpu==1.23.2
+websocket-client==1.8.0

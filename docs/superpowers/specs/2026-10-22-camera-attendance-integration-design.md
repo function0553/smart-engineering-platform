@@ -1,6 +1,6 @@
 # GPU 打卡恢复与 252 服务接入设计
 
-日期：2026-10-22（北京时间）。状态：根据用户补充完成设计，等待书面设计确认；尚未实施。
+日期：2026-10-22（北京时间）。状态：用户确认开始改动，已实施代码并进行专项验证；远端未上线。
 
 ## 用户需求和服务分工
 
@@ -19,8 +19,8 @@
 - 现用引擎根目录与 PYTHONPATH：`/data/edge-face/releases/20260924-scrfd-arcface`。
 - 原版源码包含 `facekit/core.py`、`face_engine/alignment/face_align.py`、SCRFD 检测与 ArcFace 识别实现。
 - 现用模型目录：该引擎目录下的 `models`。
-- SCRFD：`det_10g.onnx`，16,923,827 bytes，SHA-256 `5838f7fe053675b1c7a08b633df49e7af5495cee0493c7dcf66697200b85b5b91`。
-- ArcFace：`w600k_r50.onnx`，174,383,860 bytes，SHA-256 `4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56ee56bc9ebdefc619e43`。
+- SCRFD：`det_10g.onnx`，16,923,827 bytes，SHA-256 `5838f7fe053675b1c7a08b633df49e7af5495cee0493c7dcf6697200b85b5b91`。
+- ArcFace：`w600k_r50.onnx`，174,383,860 bytes，SHA-256 `4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43`。
 - 现有 Python：`/data/4g-camera-inference/venv/bin/python`。
 
 实施时恢复最小必需源码、依赖版本和来源摘要，核查源码与模型许可。允许发布的文件随源码交付；若模型不允许在该仓库再分发，提供从受控原部署恢复和校验的脚本，不用替代模型掩盖缺失。检查项及结果写入交接。
@@ -43,7 +43,7 @@
 
 新增独立增量接口 `GET /api/attendance/changes?after=<sequence>&limit=<1..500>`，默认 limit=200。参数严格验证，拒绝负数、非整数、重复或未知参数。
 
-返回结构：`{stream_id, events, next_cursor, has_more}`。event 包含单调递增 sequence、kind、attendance_id 及无生物特征的记录快照；kind 为 checkin、voice_update、test_reset。
+返回结构：`{stream_id, after_digest, events, next_cursor, has_more}`，各事件附带绑定此前所有事件的累积哈希链 digest，252 验证上一游标摘要以发现同 stream_id 备份回滚。event 包含单调递增 sequence、kind、attendance_id 及无生物特征的记录快照；kind 为 checkin、voice_update、test_reset。
 
 ### 增量日志和迁移
 

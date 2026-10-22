@@ -11,6 +11,10 @@ set +a
 : "${GPU_PYTHON:?请指定 GPU Python 虚拟环境的绝对路径}"
 [[ "$GPU_PYTHON" = /* && -x "$GPU_PYTHON" ]] || { echo 'GPU_PYTHON 必须是可执行文件绝对路径' >&2; exit 1; }
 export PYTHONUNBUFFERED=1
+if [[ -n "${GPU_CUDA_LIBRARY_PATH_FILE:-}" ]]; then
+  [[ -r "$GPU_CUDA_LIBRARY_PATH_FILE" ]] || { echo 'CUDA 动态库路径文件不可读' >&2; exit 1; }
+  export LD_LIBRARY_PATH="$(cat -- "$GPU_CUDA_LIBRARY_PATH_FILE")${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
 case "${1:-}" in
   ppe)
     : "${VIDEO_CONFIG:?缺少 VIDEO_CONFIG}"
@@ -26,6 +30,7 @@ case "${1:-}" in
   attendance)
     : "${ATTENDANCE_CONFIG:?缺少 ATTENDANCE_CONFIG}"
     : "${ATTENDANCE_ADMIN_TOKEN:?缺少 ATTENDANCE_ADMIN_TOKEN}"
+    export PYTHONPATH="$REPO_ROOT/camera4g/attendance/vendor_original${PYTHONPATH:+:$PYTHONPATH}"
     cd "$REPO_ROOT/camera4g/attendance"
     exec "$GPU_PYTHON" attendance_service.py --config "$ATTENDANCE_CONFIG" "${@:2}"
     ;;

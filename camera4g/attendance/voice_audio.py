@@ -4,10 +4,25 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import subprocess
 import threading
+import time
 
 MAX_OUTPUT = 256 * 1024
+
+
+def _terminate(process):
+    if os.name == 'posix':
+        try:os.killpg(process.pid,signal.SIGKILL)
+        except ProcessLookupError:pass
+    elif process.poll() is None:
+        try:subprocess.run(['taskkill','/PID',str(process.pid),'/T','/F'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=1)
+        except (OSError,subprocess.SubprocessError):process.kill()
+    if process.poll() is None:
+        process.kill()
+    try:process.wait(timeout=1)
+    except subprocess.TimeoutExpired:pass
 
 
 def prepare_voice(config, name, request=None):
@@ -27,29 +42,31 @@ def prepare_voice(config, name, request=None):
             raise ValueError('invalid_voice_prepare_timeout')
         chunks = []
         try:
-            with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                  stderr=subprocess.DEVNULL, shell=False,
-                                  env={**os.environ,'PYTHONIOENCODING':'utf-8'}) as process:
-                def read_output():
-                    data = process.stdout.read(MAX_OUTPUT+1)
-                    chunks.append(data)
-                    if len(data) > MAX_OUTPUT:
-                        process.kill()
-                reader = threading.Thread(target=read_output, daemon=True)
-                reader.start()
-                try:
-                    process.stdin.write(json.dumps({'name':name},ensure_ascii=False).encode())
-                    process.stdin.close()
-                    process.wait(timeout=timeout)
-                    reader.join(2)
-                    if reader.is_alive() or process.returncode != 0 or not chunks or len(chunks[0]) > MAX_OUTPUT:
-                        raise RuntimeError('gpu_voice_prepare_failed')
-                    value = json.loads(chunks[0])
-                finally:
-                    if process.poll() is None:
-                        process.kill()
-                        process.wait()
-                    reader.join(2)
+            process = subprocess.Popen(command,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,shell=False,start_new_session=os.name=='posix',
+                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name=='nt' else 0,
+                env={**os.environ,'PYTHONIOENCODING':'utf-8'})
+            def read_output():
+                data=process.stdout.read(MAX_OUTPUT+1)
+                chunks.append(data)
+                if len(data)>MAX_OUTPUT:_terminate(process)
+            reader=threading.Thread(target=read_output,daemon=True)
+            reader.start()
+            deadline=time.monotonic()+timeout
+            try:
+                process.stdin.write(json.dumps({'name':name},ensure_ascii=False).encode())
+                process.stdin.close()
+                process.wait(timeout=max(.001,deadline-time.monotonic()))
+                reader.join(max(0,deadline-time.monotonic()))
+                if reader.is_alive() or process.returncode!=0 or not chunks or len(chunks[0])>MAX_OUTPUT:
+                    raise RuntimeError('gpu_voice_prepare_failed')
+                value=json.loads(chunks[0])
+            finally:
+                _terminate(process)
+                reader.join(.5)
+                if not process.stdin.closed:process.stdin.close()
+                # Never wait on a buffered pipe lock held by a surviving descendant.
+                if not reader.is_alive():process.stdout.close()
         except (OSError, subprocess.SubprocessError, json.JSONDecodeError) as error:
             raise RuntimeError('gpu_voice_prepare_failed') from error
     if not isinstance(value,dict) or value.get('voice_text') != name + '打卡成功':

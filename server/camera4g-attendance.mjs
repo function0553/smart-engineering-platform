@@ -5,7 +5,7 @@ import { attendanceMirror, cleanPerson, word } from './camera4g-attendance-store
 
 const ROOT='/api/camera4g-attendance', MAX=8*1024*1024;
 const integer=(value,fallback,low,high)=>value===undefined?fallback:Number.isSafeInteger(value)&&value>=low&&value<=high?value:NaN;
-const safeError=error=>['attendance_stream_changed','attendance_invalid_response','attendance_concurrent_sync','attendance_cursor_rejected','attendance_upstream_unauthorized','attendance_upstream_unavailable','attendance_timeout','attendance_closed','attendance_not_configured'].includes(error?.message)?error.message:'attendance_unavailable';
+const safeError=error=>['attendance_stream_changed','attendance_checkpoint_changed','attendance_invalid_response','attendance_concurrent_sync','attendance_cursor_rejected','attendance_upstream_unauthorized','attendance_upstream_unavailable','attendance_timeout','attendance_closed','attendance_not_configured'].includes(error?.message)?error.message:'attendance_unavailable';
 function load(options) {
   try {
     const raw=privateConfig(options,'CAMERA4G_ATTENDANCE_CONFIG_FILE');
@@ -33,6 +33,14 @@ export function mountCameraAttendance(app,{store,auth},options={}) {
         response.on('data',chunk=>{size+=chunk.length;if(size>MAX)response.destroy(new Error('attendance_invalid_response'));else chunks.push(chunk);});
         response.once('error',reject);
         response.once('end',()=>{
+          if(method==='POST' && [400,413,422].includes(response.statusCode)) {
+            let code='invalid_enrollment';
+            try {
+              const value=JSON.parse(Buffer.concat(chunks).toString('utf8'));
+              if(['face_count','face_too_small','invalid_feature','invalid_image','invalid_image_size','unsupported_image','invalid_dimensions','invalid_base64','image_too_large','name_voice_mismatch','pcma8_voice_required','invalid_person_id','invalid_name','invalid_enrollment'].includes(value.error))code=value.error;
+            } catch {}
+            const error=new Error(code);error.rejectedStatus=response.statusCode;reject(error);return;
+          }
           if(response.statusCode!==200){reject(new Error(response.statusCode===401||response.statusCode===403?'attendance_upstream_unauthorized':response.statusCode===400&&method==='GET'?'attendance_cursor_rejected':'attendance_upstream_unavailable'));return;}
           try{resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));}catch{reject(new Error('attendance_invalid_response'));}
         });
@@ -72,7 +80,11 @@ export function mountCameraAttendance(app,{store,auth},options={}) {
     if(closed)return res.status(503).json({error:'attendance_closed'});
     next();
   };
-  const fail=(res,error,enrollment=false)=>res.status(503).json({error:safeError(error),...(enrollment?{outcome:'unknown',message:'录入结果尚未确认，请先查询GPU人员列表，勿自动重试。'}:{})});
+  const fail=(res,error,enrollment=false)=>{
+    if(res.destroyed||res.headersSent)return;
+    if(enrollment&&error.rejectedStatus)return res.status(error.rejectedStatus).json({error:error.message,outcome:'rejected'});
+    res.status(503).json({error:safeError(error),...(enrollment?{outcome:'unknown',message:'录入结果尚未确认，请先查询GPU人员列表，勿自动重试。'}:{})});
+  };
   app.get(`${ROOT}/status`,auth,guard,(_req,res)=>{
     const state=mirror.state();res.json({configured:true,source_id:config.sourceId,stream_id:state.stream_id,cursor:state.cursor,last_sync:state.last_sync,people_synced:state.people_synced,error:state.error,syncing:!!inflight});
   });

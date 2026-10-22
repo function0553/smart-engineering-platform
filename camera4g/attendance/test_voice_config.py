@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 
 from gb_voice import Speaker
@@ -42,6 +43,14 @@ class VoiceConfigTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):prepare_voice({'voice_prepare_command':[sys.executable,str(script)],'voice_prepare_timeout':.05},'测试')
             script.write_text("print('x'*300000)",encoding='utf-8')
             with self.assertRaises(RuntimeError):prepare_voice({'voice_prepare_command':[sys.executable,str(script)]},'测试')
+
+    def test_timeout_terminates_helper_descendants_holding_stdout(self):
+        with tempfile.TemporaryDirectory() as d:
+            script=Path(d)/'tree.py'
+            script.write_text("import subprocess,sys,time\nsubprocess.Popen([sys.executable,'-c','import time;time.sleep(4)'])\ntime.sleep(8)\n",encoding='utf-8')
+            began=time.monotonic()
+            with self.assertRaises(RuntimeError):prepare_voice({'voice_prepare_command':[sys.executable,str(script)],'voice_prepare_timeout':.5},'测试')
+            self.assertLess(time.monotonic()-began,2)
 
 
 if __name__ == '__main__':unittest.main()

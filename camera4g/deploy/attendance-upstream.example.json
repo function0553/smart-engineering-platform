@@ -1,0 +1,10 @@
+{
+  "sourceId": "gpu-camera-attendance",
+  "baseUrl": "https://gpu.example.com:29482",
+  "token": "REPLACE_ATTENDANCE_TOKEN_AT_LEAST_32_CHARS",
+  "pollIntervalMs": 5000,
+  "pageSize": 200,
+  "maxPagesPerSync": 10,
+  "requestTimeoutMs": 10000,
+  "enrollmentTimeoutMs": 60000
+}

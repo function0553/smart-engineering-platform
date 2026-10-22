@@ -1,0 +1,87 @@
+{
+  "recovered_on": "2026-10-22",
+  "source_root": "/data/edge-face/releases/20260924-scrfd-arcface",
+  "scope": "original minimum inference sources; no personal gallery, images or credentials",
+  "files": [
+    {
+      "file": "facekit/core.py",
+      "bytes": 5739,
+      "sha256": "03d4b6746bcb2ffe7e46e1f8c6fd4497ea0e0ad6b33cfe19a0361167cdd206f2"
+    },
+    {
+      "file": "facekit/core_yunet_sface.py",
+      "bytes": 11410,
+      "sha256": "19bea7f476ab447720617600484f9bc37148c662c6f0dcf2b78bacd721ecaa09"
+    },
+    {
+      "file": "facekit/__init__.py",
+      "bytes": 99,
+      "sha256": "eacc831df0df27cdb4991cbc9a2aa55de09f239386c55780aa878a0f22853d87"
+    },
+    {
+      "file": "face_engine/__init__.py",
+      "bytes": 77,
+      "sha256": "d805c720a2258a87b6f2801603e6acdc49369a4c03a18a3fa778c89fa4536f06"
+    },
+    {
+      "file": "face_engine/config.py",
+      "bytes": 798,
+      "sha256": "40ecfd8740f60aa54281b2be64b7d5187d984a2d62138d0c11239e7096dac199"
+    },
+    {
+      "file": "face_engine/onnx_backend.py",
+      "bytes": 1804,
+      "sha256": "d7b28bd7074e36feaf256aa47c3d89b685226e92131cbb5ba92671cbb5f0947e"
+    },
+    {
+      "file": "face_engine/alignment/face_align.py",
+      "bytes": 2801,
+      "sha256": "b9ee77fa1757a004984e44521c09b5d1278d1b78c8f5dc9f62ca2312f901e1bd"
+    },
+    {
+      "file": "face_engine/alignment/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "face_engine/detector/base.py",
+      "bytes": 511,
+      "sha256": "3b8d593eda3c2bb85cd2959279da9003c80a14ab89ab0db9cccee433bbe2a292"
+    },
+    {
+      "file": "face_engine/detector/scrfd.py",
+      "bytes": 6224,
+      "sha256": "1e150a71e523f45ac56badd29c17cc35d5348ade964f6f0c26a0111d91274089"
+    },
+    {
+      "file": "face_engine/detector/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "face_engine/recognizer/base.py",
+      "bytes": 498,
+      "sha256": "0284cdce584adf5bbda330422429da0b1246309e43ed77f55638ed028f2cca20"
+    },
+    {
+      "file": "face_engine/recognizer/arcface.py",
+      "bytes": 2516,
+      "sha256": "ee4aa1851596bb9be6404da6e8264aa32d412e016be6c067154c139daf803e34"
+    },
+    {
+      "file": "face_engine/recognizer/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "licenses/detector-LICENSE.txt",
+      "bytes": 1105,
+      "sha256": "0f7785130b92555f4119ec5161b322467722684b2f2f8d548233f9ca5d012fe7"
+    },
+    {
+      "file": "licenses/recognizer-LICENSE.txt",
+      "bytes": 11560,
+      "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+    }
+  ]
+}

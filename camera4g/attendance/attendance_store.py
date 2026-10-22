@@ -4,6 +4,7 @@ PPE tracks never enter this module. Only a fresh ArcFace match can create a
 check-in. Names and their already-rendered PCMA are snapshotted atomically.
 """
 import json
+import hashlib
 import math
 import re
 import sqlite3
@@ -90,7 +91,14 @@ class Store:
             db.execute("INSERT OR IGNORE INTO metadata VALUES('model_id',?)", (model_id,))
             db.execute('''CREATE TABLE IF NOT EXISTS attendance_changes (
                 sequence INTEGER PRIMARY KEY AUTOINCREMENT,
-                kind TEXT NOT NULL, attendance_id TEXT NOT NULL, record_json TEXT NOT NULL)''')
+                kind TEXT NOT NULL, attendance_id TEXT NOT NULL, record_json TEXT NOT NULL,digest TEXT)''')
+            if not any(row[1]=='digest' for row in db.execute('PRAGMA table_info(attendance_changes)')):
+                db.execute('ALTER TABLE attendance_changes ADD COLUMN digest TEXT')
+            if db.execute('SELECT 1 FROM attendance_changes WHERE digest IS NULL LIMIT 1').fetchone():
+                previous='0'*64
+                for event in db.execute('SELECT * FROM attendance_changes ORDER BY sequence').fetchall():
+                    previous=hashlib.sha256((previous+'\n'+event['kind']+'\n'+event['record_json']).encode()).hexdigest()
+                    db.execute('UPDATE attendance_changes SET digest=? WHERE sequence=?',(previous,event['sequence']))
             db.execute("CREATE UNIQUE INDEX IF NOT EXISTS attendance_change_created ON attendance_changes(attendance_id) WHERE kind='checkin'")
             db.execute("INSERT OR IGNORE INTO metadata VALUES('attendance_stream_id',?)", (uuid.uuid4().hex,))
             # Import the existing gallery's records, retaining all original identities.
@@ -223,8 +231,11 @@ class Store:
             (attendance_id,)).fetchone()
         if record is None:
             raise ValueError('change_record_missing')
-        db.execute('INSERT INTO attendance_changes(kind,attendance_id,record_json) VALUES(?,?,?)',
-                   (kind, attendance_id, json.dumps(dict(record), ensure_ascii=False, allow_nan=False)))
+        previous=db.execute('SELECT digest FROM attendance_changes ORDER BY sequence DESC LIMIT 1').fetchone()
+        record_json=json.dumps(dict(record),ensure_ascii=False,allow_nan=False)
+        digest=hashlib.sha256(((previous[0] if previous else '0'*64)+'\n'+kind+'\n'+record_json).encode()).hexdigest()
+        db.execute('INSERT INTO attendance_changes(kind,attendance_id,record_json,digest) VALUES(?,?,?,?)',
+                   (kind, attendance_id, record_json,digest))
 
     def changes(self, after=0, limit=200):
         if type(after) is not int or not 0 <= after <= 9007199254740991:
@@ -239,10 +250,14 @@ class Store:
             stream = db.execute("SELECT value FROM metadata WHERE key='attendance_stream_id'").fetchone()[0]
             rows = db.execute('SELECT * FROM attendance_changes WHERE sequence>? ORDER BY sequence LIMIT ?',
                               (after, limit)).fetchall()
+            anchor = db.execute('SELECT * FROM attendance_changes WHERE sequence=?',(after,)).fetchone() if after else None
+            if after and anchor is None:
+                raise ValueError('change_cursor_missing')
             events = [{'sequence': r['sequence'], 'kind': r['kind'], 'attendance_id': r['attendance_id'],
-                       'record': json.loads(r['record_json'])} for r in rows]
+                       'record': json.loads(r['record_json']), 'digest': r['digest']} for r in rows]
             cursor = events[-1]['sequence'] if events else after
-            return {'stream_id': stream, 'events': events, 'next_cursor': cursor, 'has_more': cursor < maximum}
+            return {'stream_id': stream, 'after_digest':anchor['digest'] if anchor else None,
+                    'events': events, 'next_cursor': cursor, 'has_more': cursor < maximum}
 
     def clear_today_test(self, camera_id, now=None):
         return self.clear_today_test_for_cameras([camera_id], now)

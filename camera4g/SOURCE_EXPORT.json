@@ -205,18 +205,22 @@
     {
       "file": "attendance/attendance_service.py",
       "source": "camera_npu/server_transition/add_camera_20261019/attendance_service.py",
-      "bytes": 20961,
-      "sha256": "3266eaa010533ac35c2600fa3fff1c871d52b0e7b9495226658c64fd597d5dee",
+      "bytes": 22542,
+      "sha256": "21f4af7cd994801de6573e703336fec37d07a7916e6864835406694ca1fdd430",
       "exported_sha256": "0f10da474f501039e0e634f215b924305f3a23090d2527ac4aaf449c8f8e872b",
       "exported_bytes": 20466,
       "modified_on": "2026-10-22",
-      "modification": "GPU/252 deployment and external API configuration update"
+      "modification": "GPU-owned attendance and 252 enrollment/result synchronization integration"
     },
     {
       "file": "attendance/attendance_store.py",
       "source": "camera_npu/server_transition/add_camera_20261019/attendance_store.py",
-      "bytes": 14328,
-      "sha256": "1da77bfc89c57c021bc314ea6af4fbd6227a11a1c51ff24984ff9635597f2887"
+      "bytes": 19661,
+      "sha256": "00eb150214b9feac2a36424fc46861026ce67b8e6d433d1e5e23990a5df24912",
+      "exported_sha256": "1da77bfc89c57c021bc314ea6af4fbd6227a11a1c51ff24984ff9635597f2887",
+      "exported_bytes": 14328,
+      "modified_on": "2026-10-22",
+      "modification": "GPU-owned attendance and 252 enrollment/result synchronization integration"
     },
     {
       "file": "attendance/attendance.html",
@@ -245,8 +249,12 @@
     {
       "file": "attendance/gb_voice.py",
       "source": "camera_npu/server_transition/add_camera_20261019/gb_voice.py",
-      "bytes": 10903,
-      "sha256": "abcc22e6306aa10baf24e111c086c79b6e6da9f8069942100b8f7252464a9948"
+      "bytes": 11402,
+      "sha256": "5b549f4d4f4e603a3f80bb5b75694fc7099c70f3d0390ed0095733e12b616469",
+      "exported_sha256": "abcc22e6306aa10baf24e111c086c79b6e6da9f8069942100b8f7252464a9948",
+      "exported_bytes": 10903,
+      "modified_on": "2026-10-22",
+      "modification": "GPU-owned attendance and 252 enrollment/result synchronization integration"
     },
     {
       "file": "attendance/local_preview.py",
@@ -486,7 +494,7 @@
     "preview/prepare_router_config.py",
     "preview/preview_server.py"
   ],
-  "production_code_and_models_unchanged": true,
+  "production_code_and_models_unchanged": false,
   "deployment_update": {
     "date": "2026-10-22",
     "timezone": "Asia/Shanghai",
@@ -503,23 +511,23 @@
       },
       {
         "file": "README.md",
-        "bytes": 6370,
-        "sha256": "cc32e32ff849fc02add4c24600b53670bc91c8fbd0f7eb1d3fd6d42cb8d0bae8"
+        "bytes": 8256,
+        "sha256": "a889998be1c2dede65866b87577e2e081559f93b6eaa801d19a71d29097226d5"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 5843,
-        "sha256": "8522bc12cf54d788219a70d8412e37b0041f9944a0dad2816de974f5122a4d77"
+        "bytes": 5899,
+        "sha256": "5570327ef2f3bfcaae8c7cd49a070f2e5134d6bde8e57167ef9aec69a0f42b3e"
       },
       {
         "file": "camera4g/attendance/attendance_service.py",
-        "bytes": 20961,
-        "sha256": "3266eaa010533ac35c2600fa3fff1c871d52b0e7b9495226658c64fd597d5dee"
+        "bytes": 22542,
+        "sha256": "21f4af7cd994801de6573e703336fec37d07a7916e6864835406694ca1fdd430"
       },
       {
         "file": "camera4g/attendance/config.example.json",
-        "bytes": 791,
-        "sha256": "dae475050bdf5ba5caa999b68da063c983b36f0fae5a1e81c1cbc7f55527180a"
+        "bytes": 983,
+        "sha256": "3d4d263428e5772185636c1eaa02361c21376b8b659d92ad6531a2e7bff080e8"
       },
       {
         "file": "camera4g/attendance/test_deployment_config.py",
@@ -528,8 +536,8 @@
       },
       {
         "file": "camera4g/deploy/README.md",
-        "bytes": 1006,
-        "sha256": "5581aac5a18cb8aad8ad2e3be710b340215ae91a2c4f7db963ba4431e40329e3"
+        "bytes": 1251,
+        "sha256": "041f7bb8f2ce97db54a9108173afbb7841a28d9cc2767a8dba712c189594b92c"
       },
       {
         "file": "camera4g/deploy/camera4g-gpu@.service.example",
@@ -548,13 +556,13 @@
       },
       {
         "file": "camera4g/deploy/gpu.env.example",
-        "bytes": 704,
-        "sha256": "a189f76fc1bf5f180a5da15cd157cf5b8590281b72e22c7b576594d23cc59c69"
+        "bytes": 892,
+        "sha256": "e3a383c25f3072ae4de804756162f9e21f1a46b347f02c234fcc99f74a061d15"
       },
       {
         "file": "camera4g/deploy/platform.env.example",
-        "bytes": 523,
-        "sha256": "62b75011b1abbe55d70e715f55ef35f7e766171c1dc02ed6c17073792aaee6e8"
+        "bytes": 602,
+        "sha256": "a13939171e38a3afd26963eda478baaa485c2ba371971564f00dcab6d43ca826"
       },
       {
         "file": "camera4g/deploy/ppe-upstream.example.json",
@@ -563,18 +571,18 @@
       },
       {
         "file": "camera4g/deploy/start-252.sh",
-        "bytes": 1558,
-        "sha256": "a4c52e764ee771399f4000ba0d3f1986a92589ec9f73bd53e36bbc56918cb09e"
+        "bytes": 2024,
+        "sha256": "b64d81c862f07f7f90120ce6a202e331903ec9b90c399f7b31a62776152877b4"
       },
       {
         "file": "camera4g/deploy/start-gpu.sh",
-        "bytes": 1506,
-        "sha256": "07595ddc643bb2ba7960937942e9e4c3bf34ab22f48c952c43b91f5ccf01b534"
+        "bytes": 1867,
+        "sha256": "c0102586bbe5c0c8b3bef55abba716e2e66d6433e2fab1ebdab972a658de84ed"
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 10497,
-        "sha256": "45aae892917bf881334a32ab887733f208452846b3a5b1bb827a1be348d4f5ee"
+        "bytes": 10828,
+        "sha256": "2b1fb510e233ebd33c5e2b87e6ffbddaa839a237e69e408c9eea2737a3b11c83"
       },
       {
         "file": "camera4g/docs/PPE_BACKEND_20261009.md",
@@ -600,6 +608,284 @@
         "file": "PLATFORM_README.md",
         "bytes": 3482,
         "sha256": "c2d0a6e703652be9fe32f56a2b6b2334bbe263ccfd1dbf5f88e2030b41986ef2"
+      }
+    ]
+  },
+  "attendance_integration_update": {
+    "date": "2026-10-22",
+    "scope": "original GPU face runtime, GPU voice, 252 independent enrollment relay and durable polling; no frontend",
+    "production_deployment_unchanged": true,
+    "original_weights_redistributed": false,
+    "files": [
+      {
+        "file": ".gitignore",
+        "bytes": 381,
+        "sha256": "bc487dc426b4bbef5b57720bed3e5456699b7289fe72f6e0675a472b21584022"
+      },
+      {
+        "file": "README.md",
+        "bytes": 8256,
+        "sha256": "a889998be1c2dede65866b87577e2e081559f93b6eaa801d19a71d29097226d5"
+      },
+      {
+        "file": "camera4g/DEPLOYMENT_VALIDATION_20261022.json",
+        "bytes": 4875,
+        "sha256": "3b8c65af58224fecf344f3ea9b373f6731702d6e47e7bc6a3bdf52f9e5359532"
+      },
+      {
+        "file": "camera4g/README.md",
+        "bytes": 5899,
+        "sha256": "5570327ef2f3bfcaae8c7cd49a070f2e5134d6bde8e57167ef9aec69a0f42b3e"
+      },
+      {
+        "file": "camera4g/THIRD_PARTY_NOTICES.md",
+        "bytes": 1756,
+        "sha256": "8c5e603746f0a417328568895f414c43c1330291db148bc94b72808f4e502487"
+      },
+      {
+        "file": "camera4g/VALIDATION.json",
+        "bytes": 2007,
+        "sha256": "8ab3a6425fb353be631494c6c0242a519262e2f3060ed2d3205764976b0ce24a"
+      },
+      {
+        "file": "camera4g/attendance/attendance_service.py",
+        "bytes": 22542,
+        "sha256": "21f4af7cd994801de6573e703336fec37d07a7916e6864835406694ca1fdd430"
+      },
+      {
+        "file": "camera4g/attendance/attendance_store.py",
+        "bytes": 19661,
+        "sha256": "00eb150214b9feac2a36424fc46861026ce67b8e6d433d1e5e23990a5df24912"
+      },
+      {
+        "file": "camera4g/attendance/config.example.json",
+        "bytes": 983,
+        "sha256": "3d4d263428e5772185636c1eaa02361c21376b8b659d92ad6531a2e7bff080e8"
+      },
+      {
+        "file": "camera4g/attendance/face-models.json",
+        "bytes": 732,
+        "sha256": "d12a5dc6c005569743758d764e0be9e65aeca486501aa539b30a0e12a5d54c23"
+      },
+      {
+        "file": "camera4g/attendance/face_runtime.py",
+        "bytes": 3487,
+        "sha256": "7ab944114350fe473aca50610defaf8c3e0685158e782996578cbded8c69f730"
+      },
+      {
+        "file": "camera4g/attendance/gb_voice.py",
+        "bytes": 11402,
+        "sha256": "5b549f4d4f4e603a3f80bb5b75694fc7099c70f3d0390ed0095733e12b616469"
+      },
+      {
+        "file": "camera4g/attendance/prepare_name_voice.py",
+        "bytes": 1289,
+        "sha256": "6e066514a087a76b9ade261bf69e8f836f9f1b036d0d71a734d22615eabcfbd6"
+      },
+      {
+        "file": "camera4g/attendance/requirements-gpu.txt",
+        "bytes": 203,
+        "sha256": "e9041ff09214e66cab622028836f7c7a4646f980f3aed2feaa6dd8f6ec3579b9"
+      },
+      {
+        "file": "camera4g/attendance/test_attendance_api.py",
+        "bytes": 2885,
+        "sha256": "c28fbd1083dc8478fbd49a2a2854812301f72f9166ff00f6d5989b2d33c6313d"
+      },
+      {
+        "file": "camera4g/attendance/test_attendance_changes.py",
+        "bytes": 5660,
+        "sha256": "420f3bd61a8d733d7f958423679daf5e9f2a818f42e6eaabdbd253a29660ae35"
+      },
+      {
+        "file": "camera4g/attendance/test_face_runtime.py",
+        "bytes": 2328,
+        "sha256": "49c97db4d0b137563c87bf6334fd21da815637d0ece8c9baa0c6a29dfed6ee7c"
+      },
+      {
+        "file": "camera4g/attendance/test_voice_config.py",
+        "bytes": 3307,
+        "sha256": "27f6f247d8ab814da8a6567bd85cd597ede2fb32d7efdee97cc79961c3620d2d"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/README.md",
+        "bytes": 1198,
+        "sha256": "c16283a2774a265d8f82a5a617e188364dd9084c83a068b6c66a6a05e8faa4c3"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/__init__.py",
+        "bytes": 77,
+        "sha256": "d805c720a2258a87b6f2801603e6acdc49369a4c03a18a3fa778c89fa4536f06"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/alignment/__init__.py",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/alignment/face_align.py",
+        "bytes": 2801,
+        "sha256": "b9ee77fa1757a004984e44521c09b5d1278d1b78c8f5dc9f62ca2312f901e1bd"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/config.py",
+        "bytes": 798,
+        "sha256": "40ecfd8740f60aa54281b2be64b7d5187d984a2d62138d0c11239e7096dac199"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/detector/__init__.py",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/detector/base.py",
+        "bytes": 511,
+        "sha256": "3b8d593eda3c2bb85cd2959279da9003c80a14ab89ab0db9cccee433bbe2a292"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/detector/scrfd.py",
+        "bytes": 6224,
+        "sha256": "1e150a71e523f45ac56badd29c17cc35d5348ade964f6f0c26a0111d91274089"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/onnx_backend.py",
+        "bytes": 1804,
+        "sha256": "d7b28bd7074e36feaf256aa47c3d89b685226e92131cbb5ba92671cbb5f0947e"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/recognizer/__init__.py",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/recognizer/arcface.py",
+        "bytes": 2516,
+        "sha256": "ee4aa1851596bb9be6404da6e8264aa32d412e016be6c067154c139daf803e34"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/face_engine/recognizer/base.py",
+        "bytes": 498,
+        "sha256": "0284cdce584adf5bbda330422429da0b1246309e43ed77f55638ed028f2cca20"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/facekit/__init__.py",
+        "bytes": 99,
+        "sha256": "eacc831df0df27cdb4991cbc9a2aa55de09f239386c55780aa878a0f22853d87"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/facekit/core.py",
+        "bytes": 5739,
+        "sha256": "03d4b6746bcb2ffe7e46e1f8c6fd4497ea0e0ad6b33cfe19a0361167cdd206f2"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/facekit/core_yunet_sface.py",
+        "bytes": 11410,
+        "sha256": "19bea7f476ab447720617600484f9bc37148c662c6f0dcf2b78bacd721ecaa09"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/licenses/detector-LICENSE.txt",
+        "bytes": 1105,
+        "sha256": "0f7785130b92555f4119ec5161b322467722684b2f2f8d548233f9ca5d012fe7"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/licenses/recognizer-LICENSE.txt",
+        "bytes": 11560,
+        "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5"
+      },
+      {
+        "file": "camera4g/attendance/vendor_original/source-manifest.json",
+        "bytes": 2805,
+        "sha256": "2a905df75428f7b0ce4e0209a74e54350ecdd616f7d27f169f48e88c2bbfb6c4"
+      },
+      {
+        "file": "camera4g/attendance/voice_audio.py",
+        "bytes": 3564,
+        "sha256": "809e1b0bbd92169a9f1d5859ce94b0927b0fdea834f0404f2c10d16cf829d8ab"
+      },
+      {
+        "file": "camera4g/deploy/README.md",
+        "bytes": 1251,
+        "sha256": "041f7bb8f2ce97db54a9108173afbb7841a28d9cc2767a8dba712c189594b92c"
+      },
+      {
+        "file": "camera4g/deploy/attendance-upstream.example.json",
+        "bytes": 276,
+        "sha256": "4b1f1066ac88e690950bb9c25cade0b53a919f9aeb79eb890bf3265a5720b45c"
+      },
+      {
+        "file": "camera4g/deploy/gpu.env.example",
+        "bytes": 892,
+        "sha256": "e3a383c25f3072ae4de804756162f9e21f1a46b347f02c234fcc99f74a061d15"
+      },
+      {
+        "file": "camera4g/deploy/platform.env.example",
+        "bytes": 602,
+        "sha256": "a13939171e38a3afd26963eda478baaa485c2ba371971564f00dcab6d43ca826"
+      },
+      {
+        "file": "camera4g/deploy/start-252.sh",
+        "bytes": 2024,
+        "sha256": "b64d81c862f07f7f90120ce6a202e331903ec9b90c399f7b31a62776152877b4"
+      },
+      {
+        "file": "camera4g/deploy/start-gpu.sh",
+        "bytes": 1867,
+        "sha256": "c0102586bbe5c0c8b3bef55abba716e2e66d6433e2fab1ebdab972a658de84ed"
+      },
+      {
+        "file": "camera4g/docs/ATTENDANCE_GPU_252_20261022.md",
+        "bytes": 9458,
+        "sha256": "d7b5ca6058791c2e75912264c4f327f8b8ad84c6830c8deed2326c8e75282f08"
+      },
+      {
+        "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
+        "bytes": 10828,
+        "sha256": "2b1fb510e233ebd33c5e2b87e6ffbddaa839a237e69e408c9eea2737a3b11c83"
+      },
+      {
+        "file": "docs/superpowers/plans/2026-10-22-camera-attendance-integration.md",
+        "bytes": 4227,
+        "sha256": "b63cba7bf9f19503bf2ee001f8d6b84cb200f057343c84b8a096b65b1c23130f"
+      },
+      {
+        "file": "docs/superpowers/specs/2026-10-22-camera-attendance-integration-design.md",
+        "bytes": 9811,
+        "sha256": "51388650fedd3cab51481177945f7db4e2fdc7c7b6117acbf96c1a4db4fc5d1a"
+      },
+      {
+        "file": "server/app.mjs",
+        "bytes": 26058,
+        "sha256": "69967810aba976b81021ff024400154d52b9dce45dba62ca148aaf70bb921a4f"
+      },
+      {
+        "file": "server/camera4g-attendance-store.mjs",
+        "bytes": 8140,
+        "sha256": "20feba6f7c78ccc3829f36842e4f9d7223316ec3b53234828393484b0b66e15d"
+      },
+      {
+        "file": "server/camera4g-attendance.mjs",
+        "bytes": 8938,
+        "sha256": "ff89fa778ea773f544eaff33232f748eb49b37ae16517ede22af330542a713c6"
+      },
+      {
+        "file": "server/index.mjs",
+        "bytes": 926,
+        "sha256": "9bdefbcd3cdacc45d34318ed813e605709c953411febaa9e2a2270c5f8a3dedb"
+      },
+      {
+        "file": "tests/camera4g-attendance.test.mjs",
+        "bytes": 11990,
+        "sha256": "8c3890b0c8d2e084473dc5290d40f9510ae8079b7191c637c7e0ac5cf2a7f099"
+      },
+      {
+        "file": "tests/camera4g-python-fixture.py",
+        "bytes": 1356,
+        "sha256": "90c6a2959e20c1be835382000b95afb37fd835132321a96df89b2667551c6b59"
+      },
+      {
+        "file": "tests/camera4g-python-integration.test.mjs",
+        "bytes": 2435,
+        "sha256": "d3dfad85933d6eb88a3c471d05420eb2b7a26fd5cc1024d59e21e0c9de74f59d"
       }
     ]
   }

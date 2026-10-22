@@ -4,6 +4,8 @@
 
 **先读：[GPU 算法服务与 252 后端交接文档](docs/GPU_252_HANDOFF_20261022.md)。启动脚本：[GPU 算法服务启动脚本](deploy/start-gpu.sh)、[252 既有后端启动脚本](deploy/start-252.sh)，用途与命令见 [启动脚本清单](deploy/README.md)。**
 
+已恢复原版人脸引擎最小源码，新增 GPU 增量日志、252 录入/持久化同步和 GPU 姓名音频准备。接口和模型恢复见 [打卡 GPU/252 接入说明](docs/ATTENDANCE_GPU_252_20261022.md)。
+
 ## GPU 服务启动命令
 
 以下从仓库根目录执行；先准备 `/etc/camera4g/private/gpu.env` 及其引用的私有 JSON 配置，步骤见 [仓库首页 README](../README.md)。`/opt/hyc` 按实际部署目录替换。
@@ -60,7 +62,7 @@ bash camera4g/deploy/start-gpu.sh ppe
 
 打卡启动方式：`bash deploy/start-gpu.sh attendance`，或直接 `python attendance/attendance_service.py --config /path/to/private/attendance.json`。监听用 `bind.host`/`bind.port` 配置；要求 ATTENDANCE_ADMIN_TOKEN。推荐由 GPU TLS 网关提供 `https://实际GPU域名:29482`；默认回环监听只供 GPU 本机网关使用，不是 252 调用地址。配置见 `attendance/config.example.json`。
 
-当前工作目录未找到打卡所依赖的 `facekit.core`、`face_engine.alignment.face_align` 源码及其 SCRFD/ArcFace 模型，部署方必须恢复既有匹配版本；未用名称相同的其他包替代。其他运行依赖包含 PyAV、NumPy、OpenCV、CUDA 版 ONNX Runtime、paramiko 和 websocket-client，具体版本以已验证环境为准；PPE 依赖清单不能当作完整打卡环境清单。打卡 gpu_id 默认 1、可配置；PPE 使用独立 device_id。
+原版 facekit/face_engine 已恢复在 `attendance/vendor_original`，来源和原始 SHA-256 随附；`attendance/requirements-gpu.txt` 是按当前 GPU 环境记录的打卡依赖。权重通过 `attendance/face_runtime.py` 从受控源恢复/校验，不在 Git 再分发。gpu_id 默认 1、可配置；PPE 使用独立 device_id。姓名音频适配器在 GPU 本机运行，需 espeak-ng 与 ffmpeg。
 
 活体模型已随附，`liveness_model_directory` 指向本目录的 `attendance/models/liveness`。RGB 活体输出需现场验证。语音依赖本次适配的 Monibuca 广播接口和现场听音验证文件；`submitted_unverified` 仅表示已提交，不能代替确认听到。
 
@@ -72,7 +74,7 @@ bash camera4g/deploy/start-gpu.sh ppe
 
 ```sh
 cd attendance
-python -m unittest test_attendance test_attendance_policy test_attendance_runtime test_face_liveness test_ssh_http test_voice_prepare
+python -m unittest discover -p "test_*.py"
 ```
 
 验证结果见 `VALIDATION.json`。离线通过不能证明远端视频在线、GPU 推理可用、听音成功或现场识别准确率。

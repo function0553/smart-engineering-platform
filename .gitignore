@@ -7,6 +7,7 @@ artifacts/
 .data/
 .models/
 private/
+camera4g/attendance/models/scrfd-arcface/
 .env
 .env.*
 !.env.example

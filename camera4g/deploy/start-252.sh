@@ -23,6 +23,12 @@ for (const value of [p?.apiBaseUrl, p?.previewBaseUrl]) {
   if (url.protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) throw Error("252 requires external GPU HTTPS URLs");
 }
 if (![p.cameraToken, p.previewPassword].every(v => typeof v === "string" && v.length >= 32 && !v.startsWith("REPLACE_"))) throw Error("Configure private GPU credentials");
+if (process.env.CAMERA4G_ATTENDANCE_CONFIG_FILE) {
+  const a = privateConfig({}, "CAMERA4G_ATTENDANCE_CONFIG_FILE");
+  const url = upstreamBase(a?.baseUrl);
+  if (url.protocol !== "https:" || ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) throw Error("252 requires external GPU attendance HTTPS URL");
+  if (typeof a.token !== "string" || a.token.length < 32 || a.token.startsWith("REPLACE_")) throw Error("Configure private attendance credentials");
+}
 '
 export NODE_ENV=production
 exec "$NODE_BINARY" server/index.mjs

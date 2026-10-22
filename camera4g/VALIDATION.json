@@ -57,5 +57,7 @@
   },
   "remote_service_or_camera_contacted": false,
   "remote_deployment_performed": false,
-  "field_acceptance_performed": false
+  "field_acceptance_performed": false,
+  "historical_snapshot": true,
+  "current_validation": "DEPLOYMENT_VALIDATION_20261022.json"
 }

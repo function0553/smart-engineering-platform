@@ -1,0 +1,18 @@
+{
+  "model_id": "arcface-w600k-r50-sha256:4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
+  "original_source_directory": "/data/edge-face/releases/20260924-scrfd-arcface/models",
+  "upstream": "https://github.com/deepinsight/insightface",
+  "weights_license": "Upstream pretrained weights are subject to non-commercial research terms or separate license; not redistributed here.",
+  "models": [
+    {
+      "filename": "det_10g.onnx",
+      "bytes": 16923827,
+      "sha256": "5838f7fe053675b1c7a08b633df49e7af5495cee0493c7dcf6697200b85b5b91"
+    },
+    {
+      "filename": "w600k_r50.onnx",
+      "bytes": 174383860,
+      "sha256": "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
+    }
+  ]
+}

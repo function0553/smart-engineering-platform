@@ -31,6 +31,7 @@ export function attendanceMirror(store, sourceId) {
     CREATE TABLE IF NOT EXISTS camera4g_attendance_events (
     source_id TEXT NOT NULL,sequence INTEGER NOT NULL,fingerprint TEXT NOT NULL,PRIMARY KEY(source_id,sequence));`);
   db.prepare('INSERT OR IGNORE INTO camera4g_attendance_state(source_id) VALUES(?)').run(sourceId);
+  if(!db.prepare('PRAGMA table_info(camera4g_attendance_state)').all().some(column=>column.name==='cursor_digest'))db.exec('ALTER TABLE camera4g_attendance_state ADD COLUMN cursor_digest TEXT');
   const state=()=>db.prepare('SELECT * FROM camera4g_attendance_state WHERE source_id=?').get(sourceId);
   const upsertPerson=value=>{const person=cleanPerson(value);db.prepare('INSERT INTO camera4g_attendance_people VALUES(?,?,?) ON CONFLICT(source_id,person_id) DO UPDATE SET data=excluded.data').run(sourceId,person.person_id,JSON.stringify(person));return person;};
   return {
@@ -51,15 +52,16 @@ export function attendanceMirror(store, sourceId) {
       if (!page || !word(page.stream_id) || !Array.isArray(page.events) || page.events.length>limit || !Number.isSafeInteger(page.next_cursor) || typeof page.has_more!=='boolean') throw invalid();
       let previous=after;
       const events=page.events.map(event=>{
-        if (!Number.isSafeInteger(event.sequence) || event.sequence<=previous || !['checkin','voice_update','test_reset'].includes(event.kind) || event.attendance_id!==event.record?.attendance_id) throw invalid();
+        if (!Number.isSafeInteger(event.sequence) || event.sequence!==previous+1 || !/^[a-f0-9]{64}$/.test(event.digest) || !['checkin','voice_update','test_reset'].includes(event.kind) || event.attendance_id!==event.record?.attendance_id) throw invalid();
         previous=event.sequence;
-        return {sequence:event.sequence,kind:event.kind,record:cleanRecord(event.record)};
+        return {sequence:event.sequence,kind:event.kind,digest:event.digest,record:cleanRecord(event.record)};
       });
       if (page.next_cursor!==previous || page.has_more && !events.length) throw invalid();
       store.transaction(()=>{
         const prior=state();
         if (prior.cursor!==after) throw new Error('attendance_concurrent_sync');
         if (prior.stream_id && prior.stream_id!==page.stream_id) throw new Error('attendance_stream_changed');
+        if (page.after_digest!==prior.cursor_digest || after>0&&!prior.cursor_digest) throw new Error('attendance_checkpoint_changed');
         for (const event of events) {
           const id=event.record.attendance_id, data=JSON.stringify(event.record);
           const fingerprint=createHash('sha256').update(JSON.stringify(event)).digest('hex');
@@ -70,7 +72,7 @@ export function attendanceMirror(store, sourceId) {
           db.prepare(`INSERT INTO camera4g_attendance_records VALUES(?,?,?,?,?) ON CONFLICT(source_id,attendance_id)
             DO UPDATE SET data=excluded.data,source_reset=excluded.source_reset`).run(sourceId,id,old?.first_sequence??event.sequence,data,event.kind==='test_reset'?1:old?.source_reset??0);
         }
-        db.prepare('UPDATE camera4g_attendance_state SET stream_id=?,cursor=?,last_sync=?,error=NULL WHERE source_id=?').run(page.stream_id,page.next_cursor,new Date().toISOString(),sourceId);
+        db.prepare('UPDATE camera4g_attendance_state SET stream_id=?,cursor=?,cursor_digest=?,last_sync=?,error=NULL WHERE source_id=?').run(page.stream_id,page.next_cursor,events.at(-1)?.digest??prior.cursor_digest,new Date().toISOString(),sourceId);
       });
       return events.length;
     },

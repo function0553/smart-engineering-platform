@@ -414,9 +414,20 @@ def bind_address(config):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', required=True)
+    parser.add_argument('--check-only', action='store_true', help='Verify original sources/models and CUDA runtime without cameras or gallery writes')
     args = parser.parse_args()
     config = json.loads(Path(args.config).read_text(encoding='utf-8'))
     address = bind_address(config)
+    if args.check_only:
+        from face_runtime import verify_assets, verify_sources
+        from facekit.core import FacePipeline
+        import av
+        result = {**verify_sources(), **verify_assets(config['model_directory'])}
+        pipeline = FacePipeline(config['model_directory'],provider='cuda',gpu_id=config.get('gpu_id',1))
+        Liveness(config['liveness_model_directory'])
+        speaker_for(config)
+        print(json.dumps({**result,'model':pipeline.info(),'gallery_accessed':False,'camera_accessed':False,'listener_started':False}))
+        return
     app = AttendanceHub(config)
     server = ThreadingHTTPServer(address, Handler)
     server.daemon_threads = True
