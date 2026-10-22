@@ -88,6 +88,17 @@ class Store:
             if row is not None and row[0] != model_id:
                 raise ValueError('gallery_model_mismatch')
             db.execute("INSERT OR IGNORE INTO metadata VALUES('model_id',?)", (model_id,))
+            db.execute('''CREATE TABLE IF NOT EXISTS attendance_changes (
+                sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+                kind TEXT NOT NULL, attendance_id TEXT NOT NULL, record_json TEXT NOT NULL)''')
+            db.execute("CREATE UNIQUE INDEX IF NOT EXISTS attendance_change_created ON attendance_changes(attendance_id) WHERE kind='checkin'")
+            db.execute("INSERT OR IGNORE INTO metadata VALUES('attendance_stream_id',?)", (uuid.uuid4().hex,))
+            # Import the existing gallery's records, retaining all original identities.
+            legacy = db.execute("""SELECT attendance_id FROM attendance a WHERE NOT EXISTS
+                (SELECT 1 FROM attendance_changes c WHERE c.attendance_id=a.attendance_id AND c.kind='checkin')
+                ORDER BY a.created_at,a.attendance_id""").fetchall()
+            for row in legacy:
+                self._append_change(db, 'checkin', row[0])
         self.path.chmod(0o600)
 
     @contextmanager
@@ -187,6 +198,7 @@ class Store:
             db.execute('INSERT INTO attendance_schedule VALUES(?,?,?,?)',
                        (attendance_id, schedule['attendance_status'], schedule['late_seconds'],
                         json.dumps(self.policy.info(), ensure_ascii=False)))
+            self._append_change(db, 'checkin', attendance_id)
         return {'attendance_id': attendance_id, 'created': True,
                 'attendance_status': schedule['attendance_status'], 'late_seconds': schedule['late_seconds']}
 
@@ -199,6 +211,38 @@ class Store:
                 FROM attendance a LEFT JOIN attendance_liveness l ON l.attendance_id=a.attendance_id
                 LEFT JOIN attendance_schedule s ON s.attendance_id=a.attendance_id
                 ORDER BY occurred_at DESC LIMIT 200''')]
+
+    @staticmethod
+    def _append_change(db, kind, attendance_id):
+        record = db.execute('''SELECT a.attendance_id,person_id,name,business_date,
+            occurred_at,camera_id,similarity,voice_status,
+            CASE WHEN l.attendance_id IS NULL THEN 'not_checked' ELSE 'passed' END AS liveness_status,
+            COALESCE(s.attendance_status,'legacy_unclassified') AS attendance_status,s.late_seconds
+            FROM attendance a LEFT JOIN attendance_liveness l ON l.attendance_id=a.attendance_id
+            LEFT JOIN attendance_schedule s ON s.attendance_id=a.attendance_id WHERE a.attendance_id=?''',
+            (attendance_id,)).fetchone()
+        if record is None:
+            raise ValueError('change_record_missing')
+        db.execute('INSERT INTO attendance_changes(kind,attendance_id,record_json) VALUES(?,?,?)',
+                   (kind, attendance_id, json.dumps(dict(record), ensure_ascii=False, allow_nan=False)))
+
+    def changes(self, after=0, limit=200):
+        if type(after) is not int or not 0 <= after <= 9007199254740991:
+            raise ValueError('invalid_change_cursor')
+        if type(limit) is not int or not 1 <= limit <= 500:
+            raise ValueError('invalid_change_limit')
+        with self.connect() as db:
+            db.execute('BEGIN')
+            maximum = db.execute('SELECT COALESCE(MAX(sequence),0) FROM attendance_changes').fetchone()[0]
+            if after > maximum:
+                raise ValueError('change_cursor_ahead')
+            stream = db.execute("SELECT value FROM metadata WHERE key='attendance_stream_id'").fetchone()[0]
+            rows = db.execute('SELECT * FROM attendance_changes WHERE sequence>? ORDER BY sequence LIMIT ?',
+                              (after, limit)).fetchall()
+            events = [{'sequence': r['sequence'], 'kind': r['kind'], 'attendance_id': r['attendance_id'],
+                       'record': json.loads(r['record_json'])} for r in rows]
+            cursor = events[-1]['sequence'] if events else after
+            return {'stream_id': stream, 'events': events, 'next_cursor': cursor, 'has_more': cursor < maximum}
 
     def clear_today_test(self, camera_id, now=None):
         return self.clear_today_test_for_cameras([camera_id], now)
@@ -220,6 +264,8 @@ class Store:
             db.execute(f'''INSERT INTO attendance_test_archive(reset_id,cleared_at,{ATTENDANCE_COLUMNS})
                 SELECT ?,?,{ATTENDANCE_COLUMNS} FROM attendance WHERE {where}''',
                        (reset_id, now.isoformat(), *scope))
+            for row in db.execute('SELECT attendance_id FROM attendance WHERE ' + where, scope).fetchall():
+                self._append_change(db, 'test_reset', row[0])
             count = db.execute('DELETE FROM attendance WHERE ' + where, scope).rowcount
         return {'deleted': count, 'archived': count, 'reset_id': reset_id,
                 'camera_id': camera_ids[0] if len(camera_ids) == 1 else None,
@@ -227,28 +273,39 @@ class Store:
 
     def recover_inflight(self):
         with self.connect() as db:
+            ids = [r[0] for r in db.execute("SELECT attendance_id FROM attendance WHERE voice_status='sending'")]
             db.execute("UPDATE attendance SET voice_status='delivery_unknown' WHERE voice_status='sending'")
+            for id in ids:
+                self._append_change(db, 'voice_update', id)
 
     def claim_voice(self, camera_id=None):
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
+            expired = [r[0] for r in db.execute("SELECT attendance_id FROM attendance WHERE voice_status='pending' AND julianday('now')-julianday(created_at)>30.0/86400")]
             db.execute("UPDATE attendance SET voice_status='expired_not_sent' WHERE voice_status='pending' AND julianday('now')-julianday(created_at)>30.0/86400")
+            for id in expired:
+                self._append_change(db, 'voice_update', id)
             query = "SELECT attendance_id,name,voice_pcma,camera_id FROM attendance WHERE voice_status='pending'"
             row = db.execute(query + (" AND camera_id=?" if camera_id is not None else "")
                              + " ORDER BY created_at LIMIT 1", (camera_id,) if camera_id is not None else ()).fetchone()
             if row is None:
                 return None
             db.execute("UPDATE attendance SET voice_status='sending' WHERE attendance_id=? AND voice_status='pending'", (row['attendance_id'],))
+            self._append_change(db, 'voice_update', row['attendance_id'])
             return dict(row)
 
     def finish_voice(self, attendance_id, status, detail):
         if status not in {'submitted_unverified', 'failed_not_sent', 'delivery_unknown'}:
             raise ValueError('invalid_voice_result')
         with self.connect() as db:
-            db.execute("UPDATE attendance SET voice_status=?,voice_detail=? WHERE attendance_id=? AND voice_status='sending'",
-                       (status, json.dumps(detail, ensure_ascii=False), attendance_id))
+            changed = db.execute("UPDATE attendance SET voice_status=?,voice_detail=? WHERE attendance_id=? AND voice_status='sending'",
+                       (status, json.dumps(detail, ensure_ascii=False), attendance_id)).rowcount
+            if changed:
+                self._append_change(db, 'voice_update', attendance_id)
 
     def confirm_voice(self, attendance_id):
         with self.connect() as db:
             changed = db.execute("UPDATE attendance SET voice_status='playback_confirmed' WHERE attendance_id=? AND voice_status='submitted_unverified'", (attendance_id,)).rowcount
+            if changed:
+                self._append_change(db, 'voice_update', attendance_id)
         return changed == 1

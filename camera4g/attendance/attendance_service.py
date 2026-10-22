@@ -14,6 +14,7 @@ import statistics
 import threading
 import time
 import uuid
+from urllib.parse import parse_qs, urlsplit
 
 from attendance_store import Store, AttendanceResetBusy
 from gb_voice import Speaker
@@ -341,6 +342,18 @@ class Handler(BaseHTTPRequestHandler):
         if not hmac.compare_digest(self.headers.get('Authorization', ''), 'Bearer ' + app.token):
             return self.reply(401, {'error': 'authentication_required'})
         if self.command == 'GET':
+            path = urlsplit(self.path)
+            if path.path == '/api/attendance/changes':
+                try:
+                    params = parse_qs(path.query, keep_blank_values=True, strict_parsing=True)
+                    if set(params) - {'after', 'limit'} or any(len(v) != 1 for v in params.values()):
+                        raise ValueError()
+                    values = {k: v[0] for k, v in params.items()}
+                    if any(not v.isascii() or not v.isdigit() or len(v) > 16 for v in values.values()):
+                        raise ValueError()
+                    return self.reply(200, app.store.changes(int(values.get('after', '0')), int(values.get('limit', '200'))))
+                except ValueError:
+                    return self.reply(400, {'error': 'invalid_change_cursor_or_limit'})
             if self.path in ('/', '/index.html'):
                 return self.reply(200, Path(__file__).with_name('attendance.html').read_bytes(), 'text/html; charset=utf-8')
             if self.path == '/api/status':
