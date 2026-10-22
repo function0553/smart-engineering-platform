@@ -511,8 +511,8 @@
       },
       {
         "file": "README.md",
-        "bytes": 8256,
-        "sha256": "a889998be1c2dede65866b87577e2e081559f93b6eaa801d19a71d29097226d5"
+        "bytes": 8309,
+        "sha256": "e62a3f223774f83f495ef868c85bd564eea30acea30380a27508b28a1ee6310c"
       },
       {
         "file": "camera4g/README.md",
@@ -581,8 +581,8 @@
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 10886,
-        "sha256": "a5c210a38b5720607660b4798b734fefdf644d304bc6e86a8eeba27bbd1dba92"
+        "bytes": 11188,
+        "sha256": "4cf455f46ac48d1b1834f19cd4ce54ce1981017f888e0d39c523800a35ce2cb3"
       },
       {
         "file": "camera4g/docs/PPE_BACKEND_20261009.md",
@@ -624,13 +624,13 @@
       },
       {
         "file": "README.md",
-        "bytes": 8256,
-        "sha256": "a889998be1c2dede65866b87577e2e081559f93b6eaa801d19a71d29097226d5"
+        "bytes": 8309,
+        "sha256": "e62a3f223774f83f495ef868c85bd564eea30acea30380a27508b28a1ee6310c"
       },
       {
         "file": "camera4g/DEPLOYMENT_VALIDATION_20261022.json",
-        "bytes": 4875,
-        "sha256": "3b8c65af58224fecf344f3ea9b373f6731702d6e47e7bc6a3bdf52f9e5359532"
+        "bytes": 5264,
+        "sha256": "6b2653fbb084dded8ad0c01ac6f1126af29bf43c258011b02f40458a85aec3ec"
       },
       {
         "file": "camera4g/README.md",
@@ -834,13 +834,13 @@
       },
       {
         "file": "camera4g/docs/ATTENDANCE_GPU_252_20261022.md",
-        "bytes": 9458,
-        "sha256": "d7b5ca6058791c2e75912264c4f327f8b8ad84c6830c8deed2326c8e75282f08"
+        "bytes": 10070,
+        "sha256": "f70a98c5b62d20ef6148f7ec590dfccfc54a3cab22d1b595a75c3efd68d0be17"
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 10886,
-        "sha256": "a5c210a38b5720607660b4798b734fefdf644d304bc6e86a8eeba27bbd1dba92"
+        "bytes": 11188,
+        "sha256": "4cf455f46ac48d1b1834f19cd4ce54ce1981017f888e0d39c523800a35ce2cb3"
       },
       {
         "file": "docs/superpowers/plans/2026-10-22-camera-attendance-integration.md",
@@ -886,6 +886,18 @@
         "file": "tests/camera4g-python-integration.test.mjs",
         "bytes": 2435,
         "sha256": "d3dfad85933d6eb88a3c471d05420eb2b7a26fd5cc1024d59e21e0c9de74f59d"
+      }
+    ]
+  },
+  "tts_dependency_update": {
+    "date": "2026-10-22",
+    "system_package_installed": true,
+    "application_deployed": false,
+    "files": [
+      {
+        "file": "camera4g/TTS_VALIDATION_20261022.json",
+        "bytes": 918,
+        "sha256": "b21234895a867216ec9a37613fc549fa00a91fe5693990ceb011264659ca57cc"
       }
     ]
   }

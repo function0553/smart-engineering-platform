@@ -92,7 +92,6 @@
   "pending_deployment_inputs": [
     "Actual GPU HTTPS host and port mapping, TLS and 252 egress rules",
     "Private tokens and existing camera/media routes",
-    "GPU espeak-ng installation or configured controlled local voice adapter; ffmpeg already exists",
     "252 controlled runtime templates/data paths",
     "Maintenance-window deployment and real enrollment, HTTPS and field voice acceptance"
   ],
@@ -101,7 +100,7 @@
     "passed": true,
     "note": "TypeScript and existing frontend build checked; no frontend source changes"
   },
-  "remote_contact_scope": "read-only source/model/package inventory and controlled original CUDA synthetic inference; no gallery, camera, audio or service restart",
+  "remote_contact_scope": "read-only source/model/package inventory and controlled original CUDA synthetic inference; no gallery, camera, audio or service restart; subsequent authorized espeak-ng installation and memory-only synthetic name audio generation, without playback",
   "original_sources": {
     "files": 16,
     "byte_identical": true,
@@ -122,5 +121,16 @@
       "explicit upstream enrollment rejection status"
     ],
     "regressions_passed": true
+  },
+  "system_dependency_installation_performed": true,
+  "gpu_tts": {
+    "installed": true,
+    "espeak_ng_package_version": "1.50+dfsg-10ubuntu0.1",
+    "local_audio_generation_passed": true,
+    "audio_bytes": 24777,
+    "duration_seconds": 3.097125,
+    "voice_played": false,
+    "new_application_service_deployed": false,
+    "validation": "TTS_VALIDATION_20261022.json"
   }
 }

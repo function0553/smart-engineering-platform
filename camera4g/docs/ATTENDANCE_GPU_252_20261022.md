@@ -52,12 +52,14 @@ GPU 私有配置示例：
 
 voice_base_url 支持每摄像头覆盖、HTTP/HTTPS，WebSocket 自动映射为 ws/wss。它是 **GPU 发送语音所访问的广播通道**；保留本机隧道时用默认值，直连 252 媒体服务时填写 GPU 实际可达地址。此通道不同于 252 拉取 GPU 打卡结果的地址。
 
-默认姓名音频适配器只在 GPU 本地调用 espeak-ng（中文）和 ffmpeg，输出 8kHz 单声道 G.711 A-law，不在录入时播放。GPU 当前已有 ffmpeg、尚未安装 espeak-ng；部署管理员可在 GPU 安装：
+默认姓名音频适配器只在 GPU 本地调用 espeak-ng（中文）和 ffmpeg，输出 8kHz 单声道 G.711 A-law，不在录入时播放。2026-10-22 已在当前 GPU 安装 espeak-ng（1.50+dfsg-10ubuntu0.1），保留已有 ffmpeg；没有升级或卸载其他软件包，也没有重启业务服务。新机器恢复环境可执行：
 
 ```sh
 sudo apt-get update
 sudo apt-get install -y espeak-ng ffmpeg
 ```
+
+已将本仓库适配器源码临时传入 GPU 内存执行，使用“测试人员”验证中文姓名音频生成：24777 bytes，3.097125 秒，8kHz、单声道 G.711 A-law；PCM 解码和非静音检查通过。没有保存或播放测试音频，没有录入真实人员，也未部署新服务或修改其配置。摘要见 [`TTS_VALIDATION_20261022.json`](../TTS_VALIDATION_20261022.json)。
 
 也可通过 voice_prepare_command 使用已有受控本地语音工具：stdin 为 `{"name":"测试人员"}`，stdout 为 `{"voice_text":"测试人员打卡成功","voice_pcma_base64":"..."}`，音频长度为 2000–120000 bytes。命令必须使用绝对可执行文件路径，不经过 shell；超时、输出超限、姓名不符或音频格式错误会失败且不写入人员库。
 
@@ -71,7 +73,7 @@ bash camera4g/deploy/start-gpu.sh attendance --check-only
 bash camera4g/deploy/start-gpu.sh attendance
 ```
 
-预检检查推理引擎、模型、CUDA、活体模型与语音地址，不会实际调用 TTS 或球机；espeak-ng 和实际听音仍需部署验证。已部署机器在维护窗口先备份数据库，停止旧打卡 unit 后启动新版，避免两个服务同时处理同一球机。本次未执行该上线步骤。
+预检检查推理引擎、模型、CUDA、活体模型与语音地址，不会实际调用 TTS 或球机；GPU 音频生成已单独验证，正式配置接入和实际听音仍需部署验证。已部署机器在维护窗口先备份数据库，停止旧打卡 unit 后启动新版，避免两个服务同时处理同一球机。本次未执行该上线步骤。
 
 ## 252 配置和启动
 
@@ -142,4 +144,4 @@ record 包含 attendance_id/person_id/name/business_date/occurred_at/camera_id/s
 
 专项测试覆盖 1000+ 条补录、重启续传、幂等、日志迁移、语音状态/测试清除、无员工档案录入、权限、大小限制、上游错误、备份回滚检测和超时子进程清理；另有真实 Python HTTP API 与 Node 镜像的本地合成数据联调。
 
-GPU 原版 CUDA 推理已以合成空白图只读验证；没有读取真实图库、接入摄像头、录入人员、发送语音或重启线上服务。GPU TTS 依赖安装、252 到 GPU HTTPS 实际连通与现场听音仍需上线时核验。
+GPU 原版 CUDA 推理已以合成空白图只读验证，GPU TTS 依赖已安装并通过合成姓名音频生成验证；没有读取真实图库、接入摄像头、录入人员、发送语音或重启线上服务。新版部署、252 到 GPU HTTPS 实际连通与现场听音仍需上线时核验。

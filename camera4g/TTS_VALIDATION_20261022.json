@@ -1,0 +1,29 @@
+{
+  "probe": "GPU local adapter CLI",
+  "espeak_ng": "/usr/bin/espeak-ng",
+  "ffmpeg": "/usr/bin/ffmpeg",
+  "voice_text_matches": true,
+  "codec": "G.711 A-law",
+  "sample_rate": 8000,
+  "channels": 1,
+  "audio_bytes": 24777,
+  "duration_seconds": 3.097125,
+  "decoded_peak": 29184,
+  "camera_accessed": false,
+  "gallery_accessed": false,
+  "voice_played": false,
+  "production_service_restarted": false,
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "espeak_ng_package_version": "1.50+dfsg-10ubuntu0.1",
+  "packages_newly_installed": [
+    "espeak-ng"
+  ],
+  "other_packages_upgraded": 0,
+  "packages_removed": 0,
+  "adapter_source_commit": "c0cca30cfc588b41f8f8f868f1d5888b470b4bf6",
+  "adapter_execution": "repository source streamed to GPU memory; new service not deployed",
+  "test_name": "synthetic Chinese test name; no personal data",
+  "audio_saved": false,
+  "application_code_deployed": false
+}

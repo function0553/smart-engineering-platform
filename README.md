@@ -52,7 +52,7 @@ cd /opt/hyc
 /opt/camera4g/venv/bin/python -m pip install -r camera4g/ppe/requirements-cuda.txt
 ```
 
-打卡原版 facekit/face_engine 最小源码已恢复到 `camera4g/attendance/vendor_original/`，启动脚本自动加载。完整打卡依赖见 `camera4g/attendance/requirements-gpu.txt`。SCRFD/ArcFace 权重沿用 GPU 受控原文件，用下方命令校验；权重不随 Git 再分发。GPU 需要 espeak-ng 和 ffmpeg 准备姓名音频（当前 GPU 尚缺 espeak-ng）。详细步骤见 [打卡接入与模型恢复](camera4g/docs/ATTENDANCE_GPU_252_20261022.md)。
+打卡原版 facekit/face_engine 最小源码已恢复到 `camera4g/attendance/vendor_original/`，启动脚本自动加载。完整打卡依赖见 `camera4g/attendance/requirements-gpu.txt`。SCRFD/ArcFace 权重沿用 GPU 受控原文件，用下方命令校验；权重不随 Git 再分发。GPU 已安装 espeak-ng 和 ffmpeg，并验证中文姓名音频生成（未播放）。下方安装命令供新机器恢复环境使用，详细步骤见 [打卡接入与模型恢复](camera4g/docs/ATTENDANCE_GPU_252_20261022.md)。
 
 ```sh
 cd /opt/hyc
