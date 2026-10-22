@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "target_device_id": "34020000001320000012",
+  "target_channel_id": "34020000001320000012",
+  "target_online_verified": true,
+  "test_text": "语音测试打卡成功",
+  "synthesis": {
+    "location": "GPU",
+    "espeak_ng": true,
+    "ffmpeg": true,
+    "codec_before_gateway": "PCMA8",
+    "audio_bytes": 24645,
+    "duration_seconds": 3.080625
+  },
+  "production_sender_attempt": {
+    "status": "failed_not_sent",
+    "reason": "broadcast_readiness_timeout",
+    "negotiated_transport": "UDP",
+    "payload_bytes_sent": 0
+  },
+  "isolated_udp_test": {
+    "tested_at_utc": "2026-10-22T11:44:12Z",
+    "status": "submitted_unverified",
+    "transport": "UDP",
+    "payload_bytes_sent": 25200,
+    "packets_sent": 158,
+    "queue_packets": 0,
+    "bye_confirmed": true,
+    "cleanup_complete": true
+  },
+  "onsite_playback": {
+    "status": "awaiting_human_confirmation",
+    "verified": false
+  },
+  "application_service_deployed": false,
+  "production_sender_modified": false,
+  "camera_configuration_changed": false,
+  "attendance_record_created": false,
+  "audio_saved_in_git": false,
+  "limitation": "UDP gateway send counters do not prove camera playback. Existing production Speaker requires TCP readiness; this isolated diagnostic does not change that requirement."
+}

@@ -100,7 +100,7 @@
     "passed": true,
     "note": "TypeScript and existing frontend build checked; no frontend source changes"
   },
-  "remote_contact_scope": "read-only source/model/package inventory and controlled original CUDA synthetic inference; no gallery, camera, audio or service restart; subsequent authorized espeak-ng installation and memory-only synthetic name audio generation, without playback",
+  "remote_contact_scope": "read-only source/model/package inventory and controlled original CUDA synthetic inference; no gallery, camera, audio or service restart; subsequent authorized espeak-ng installation and memory-only synthetic name audio generation, without playback; subsequent authorized synthesized test speech submission to online 4G camera, on-site playback unverified",
   "original_sources": {
     "files": 16,
     "byte_identical": true,
@@ -132,5 +132,14 @@
     "voice_played": false,
     "new_application_service_deployed": false,
     "validation": "TTS_VALIDATION_20261022.json"
+  },
+  "camera_voice_test": {
+    "record": "VOICE_CAMERA_TEST_20261022.json",
+    "gpu_synthesis_passed": true,
+    "tcp_sender_attempt": "failed_not_sent: broadcast_readiness_timeout; camera negotiated UDP",
+    "isolated_udp_submission": "25200 bytes, 158 packets, queue empty, BYE and cleanup confirmed",
+    "onsite_playback_verified": false,
+    "production_sender_changed": false,
+    "camera_configuration_changed": false
   }
 }
