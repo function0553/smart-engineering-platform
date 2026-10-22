@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-22T03:38:22.633328+00:00",
+  "kind": "isolated_video_server_candidate",
+  "model_sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249",
+  "verification_scope": "finite_local_offline_only",
+  "secrets_included": false,
+  "environment_or_native_library_included": false,
+  "remote_deployed_by_this_agent": false,
+  "four_g_main_stream_verified_by_this_agent": false,
+  "production_accepted": false,
+  "files": {
+    "engine.py": {
+      "bytes": 17375,
+      "sha256": "fe4e4c40b71657d0887edff87df8dadf639b9b2abf11d506b3b6e58bf7d4939c"
+    },
+    "precision.py": {
+      "bytes": 9117,
+      "sha256": "40db944b22dd04025d2a0510bc036ea41456251fffdbbdaac6a62f9711060738"
+    },
+    "tracking.py": {
+      "bytes": 12517,
+      "sha256": "0c42b916fa6a2f37eae4de74ac1923bffa2fee4bd3e641934da357b24949fb18"
+    },
+    "annotation_zh.py": {
+      "bytes": 6419,
+      "sha256": "918928f3a2cb9a9a677226c6303a46b0256681664d1e5e1ca890f20de55cde8a"
+    },
+    "configuration.py": {
+      "bytes": 7042,
+      "sha256": "5bf104f8b89fc7af695658255e6fd41e551c6e61045de91f162159e02e4abd0d"
+    },
+    "rtsp_reader.py": {
+      "bytes": 5705,
+      "sha256": "2873113defda3ae668169fe0411406985c35b888f0d132575bc0413ac8a1ea70"
+    },
+    "media_publisher.py": {
+      "bytes": 4939,
+      "sha256": "cf0caf72e50db571a3a4d5de8d641cbb9f61bfcea2503274460ff18080a598a9"
+    },
+    "video_runtime.py": {
+      "bytes": 19400,
+      "sha256": "b9ce9e0daa0dfc52a70a64e470d31fdcd2db3dd40ffeffd3f55ccef0a22a658f"
+    },
+    "http_api.py": {
+      "bytes": 5408,
+      "sha256": "cde6b3f972db3ce352c42b5890e6517488740c5d0966e7951e70d0288e68f9ca"
+    },
+    "server.py": {
+      "bytes": 4093,
+      "sha256": "953ced7132e0bf22ee596788192a8e0e8c51b763c11b9a7dcf48ab38f467e059"
+    },
+    "requirements-common.txt": {
+      "bytes": 115,
+      "sha256": "7b41d5604a23f9c08faac35fe45f2c815c3a2255e9fa05ba8a07ed9d7e2c0ebe"
+    },
+    "requirements-cpu.txt": {
+      "bytes": 47,
+      "sha256": "334c81dba065af1b13b9cd03615b4e2359a2f43ab7192b19f1edef1944821458"
+    },
+    "requirements-cuda.txt": {
+      "bytes": 51,
+      "sha256": "2c3f6357f63446d826bf20548ce8d4faa98148252e9a9624d10429e52beb7d3b"
+    },
+    "config.example.json": {
+      "bytes": 1457,
+      "sha256": "8389d106813ab7690454a3c69291f1fd9d1862ba848546fcfdccd8f86175d570"
+    },
+    "ppe-video.service.example": {
+      "bytes": 463,
+      "sha256": "4d628e75b9a8b5dc4054faa8f4b6cf100465e0784c5f0073eaac50f8236ff282"
+    },
+    "README.md": {
+      "bytes": 12200,
+      "sha256": "b88bfb3497b18036f3492a5657420de52af9315c1ee0f264ab29e0af5ece78c2"
+    },
+    "verify_offline.py": {
+      "bytes": 21040,
+      "sha256": "0fc22cd482bd42b8e68ddbba29ccaab9ee0fc6d52da4bdb46e6c1506eaa72c35"
+    },
+    "offline_verification.json": {
+      "bytes": 3958,
+      "sha256": "a8423a531fdd88d25700dea70e2c5a159ed5800a6ddbf89a5b336b9c7ce85dc7"
+    },
+    "build_manifest.py": {
+      "bytes": 1805,
+      "sha256": "d92ebb7adc045722f9c0d54816a457505044b1d0d8705d030e169fb6b8f134bf"
+    },
+    "models/reference-v0.3/config.json": {
+      "bytes": 560,
+      "sha256": "1c5ca99d2b5f6257668d13ab53761a82d4a4d8872488b4fadede63a57a058224"
+    },
+    "models/reference-v0.3/provenance.json": {
+      "bytes": 2244,
+      "sha256": "991f66df78936091322aea49e699ef5ab35ef67f0a960aaedc93325dd07128c3"
+    },
+    "models/reference-v0.3/README.md": {
+      "bytes": 8595,
+      "sha256": "b0b7acf4bb55b53a63554156d2943269f705508878e9c6144e0454525a4e0848"
+    },
+    "models/reference-v0.3/buildvision-hazards-v0.3.onnx": {
+      "bytes": 44766819,
+      "sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249"
+    }
+  }
+}

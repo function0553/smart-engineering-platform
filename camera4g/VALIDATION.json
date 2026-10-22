@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "scope": "selected_source_export_only",
+  "attendance_unittest": {
+    "passed": true,
+    "tests": 32,
+    "command": "python -m unittest test_attendance test_attendance_policy test_attendance_runtime test_face_liveness test_ssh_http test_voice_prepare",
+    "fixture_adjustment": [
+      "voice_gate initialized",
+      "camera_id initialized"
+    ],
+    "test_data": "temporary databases and synthetic data"
+  },
+  "python_ast": {
+    "passed": true,
+    "files": 30
+  },
+  "javascript_syntax": {
+    "passed": true,
+    "files": [
+      "attendance/attendance_script_check.js",
+      "preview/overlay_logic.js",
+      "preview/preview.js",
+      "preview/vendor/hls.v1.7.3.min.js",
+      "preview/vendor/mediamtx-reader.v1.21.2.js"
+    ],
+    "inline_scripts": [
+      "attendance/attendance.html#script-0"
+    ]
+  },
+  "source_hash_verification": {
+    "passed": true,
+    "files": 69,
+    "modified_tests": 1,
+    "business_code_modified": false
+  },
+  "model_hash_verification": {
+    "passed": true,
+    "ppe_models": 1,
+    "liveness_models": 2
+  },
+  "voice_source_manifest": {
+    "passed": true,
+    "files": 8
+  },
+  "selected_export_data_check": {
+    "private_directories_included": false,
+    "database_files_included": false,
+    "person_photos_included": false,
+    "credentials_or_invite_links_detected": false,
+    "scope": "selected exported files and standard credential patterns; not a universal secret guarantee"
+  },
+  "ppe_runtime_test_this_export": {
+    "executed": false,
+    "reason": "Existing copied Python 3.12 virtual environments reference a missing interpreter; current Python 3.11 lacks PPE inference packages. Original offline_verification.json retained as historical evidence only."
+  },
+  "remote_service_or_camera_contacted": false,
+  "remote_deployment_performed": false,
+  "field_acceptance_performed": false
+}

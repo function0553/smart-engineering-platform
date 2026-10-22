@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "device": "cpu",
+  "device_id": 0,
+  "intra_threads": 1,
+  "diagnostic_jpeg_enabled": false,
+  "model_directory": "models/reference-v0.3",
+  "admin_token_env": "PPE_VIDEO_ADMIN_TOKEN",
+  "bind": {"host": "127.0.0.1", "port": 28878},
+  "camera": {
+    "camera_id": "camera-01",
+    "view_id": "operator-confirmed-view",
+    "source_stream": "MAIN",
+    "main_source_verified": false,
+    "source_url_env": "PPE_MAIN_STREAM_ENDPOINT",
+    "token_env": "PPE_VIDEO_CAMERA_TOKEN",
+    "expected_size": [2560, 1440],
+    "rotation_degrees": 0,
+    "mirror_horizontal": false,
+    "temporal_confirmation_enabled": false,
+    "stream_timing_contract_verified": false
+  },
+  "limits": {
+    "source_pts_policy": "observe",
+    "max_pixels": 4194304,
+    "max_edge": 4096,
+    "decode_threads": 1,
+    "inference_fps": 1,
+    "max_person_rois": 0,
+    "max_pending_age_seconds": 3,
+    "result_ttl_seconds": 4,
+    "open_timeout_seconds": 5,
+    "read_timeout_seconds": 5,
+    "reconnect_seconds": 2,
+    "max_source_backlog_seconds": 2,
+    "max_http_concurrent": 4,
+    "http_timeout_seconds": 3,
+    "max_jpeg_bytes": 8388608
+  },
+  "media": {
+    "enabled": false,
+    "ffmpeg_binary": "imageio",
+    "encoder": "libx264",
+    "threads": 1,
+    "fps": 1,
+    "bitrate_kbps": 1200,
+    "write_timeout_seconds": 5,
+    "publish_rtsp_url": "rtsp://127.0.0.1:28554/annotated-main",
+    "read_rtsp_url": null,
+    "read_web_url": null
+  }
+}

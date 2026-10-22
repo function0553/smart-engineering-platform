@@ -1,0 +1,49 @@
+{
+  "binary_sha256": "c6d14c6355bcf0e98fcde1648b4737468606fa8e1fd7f437bf8c8482d320b57f",
+  "official_source_sha256": "89a8eeb7727097c28cdd4b44a4e181ac7c19dad9e6d6e4acc21ab375c279e9d9",
+  "toolchain": "go1.24.10",
+  "tags": "sqlite,mysql,postgres",
+  "cgo_enabled": false,
+  "files": [
+    {
+      "file": "broadcast.go",
+      "sha256": "4dfb0fd23026c01f81b325b78ca9493457c31f12c13f764185dbc0569a6e652b",
+      "bytes": 5967
+    },
+    {
+      "file": "owned_ack.go",
+      "sha256": "301dbb150def8380be48219f2347f0b780a4b19000472f0fd622aeaa00c16ab4",
+      "bytes": 945
+    },
+    {
+      "file": "owned_ack_test.go",
+      "sha256": "ce580bb7c5c590d0fa0b179c1cd908edbdb4cb360be92ff201b9847553b1bdf9",
+      "bytes": 1842
+    },
+    {
+      "file": "owned_broadcast.go",
+      "sha256": "221a7ba160e8a9f00ea00205a176c0eff57983f7ea99570affa7fdfb1eda15ea",
+      "bytes": 17240
+    },
+    {
+      "file": "owned_media_test.go",
+      "sha256": "32aa3230a33bbd338ecf4f587d5219cf521fd8cee4dbc653bcedf1910463a3c2",
+      "bytes": 2060
+    },
+    {
+      "file": "index.go",
+      "sha256": "816ecd3d499672a086c1894cabf43d9c033167ac26224506f540f4c83eaf40ba",
+      "bytes": 41086
+    },
+    {
+      "file": "api.go",
+      "sha256": "0046f97061b2c6046eded887c570b4d9e9511c94b56a77242fede2c8d94e05d4",
+      "bytes": 122033
+    },
+    {
+      "file": "talk.go",
+      "sha256": "68556ffc02881d088d03930ca9832a7011ba575bbdb16a0a99c01a6e2e467cd8",
+      "bytes": 2321
+    }
+  ]
+}

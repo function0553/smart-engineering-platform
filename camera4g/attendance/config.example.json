@@ -1,0 +1,22 @@
+{
+  "root": "/data/4g-camera-inference",
+  "model_directory": "/path/to/verified/scrfd-arcface-models",
+  "liveness_model_directory": "/path/to/hyc/camera4g/attendance/models/liveness",
+  "database": "/data/4g-camera-inference/private/attendance.sqlite",
+  "recognition_sample_fps": 5,
+  "voice_verification_file": "private/voice-playback-verified.json",
+  "attendance_policy": {
+    "timezone": "Asia/Shanghai",
+    "start": "08:00",
+    "normal_until": "09:05"
+  },
+  "cameras": [
+    {
+      "camera_id": "camera-02",
+      "camera_name": "4G Camera",
+      "source_url": "rtsp://127.0.0.1:12954/camera_main_02?stream=0",
+      "device_id": "REPLACE_WITH_DEVICE_ID",
+      "channel_id": "REPLACE_WITH_CHANNEL_ID"
+    }
+  ]
+}

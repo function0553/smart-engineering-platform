@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "scope": "finite_local_offline_synthetic_file_only",
+  "camera_contacted": false,
+  "server_contacted": false,
+  "http_listener_started": false,
+  "model_sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249",
+  "pyav_version": "19.0.1",
+  "checks": [
+    {
+      "name": "latest_same_frame_and_unknown_timing",
+      "passed": true
+    },
+    {
+      "name": "ttl_withdraws_results",
+      "passed": true
+    },
+    {
+      "name": "reconnect_inflight_and_disconnect_isolation",
+      "passed": true
+    },
+    {
+      "name": "bearer_scope_and_snapshot_mismatch",
+      "passed": true
+    },
+    {
+      "name": "start_to_start_cap_and_no_catch_up",
+      "passed": true,
+      "fps_cap": 4,
+      "step_durations_seconds": [
+        0.1,
+        0.45,
+        0.02
+      ],
+      "relative_start_times_seconds": [
+        0.0,
+        0.25,
+        0.7
+      ]
+    },
+    {
+      "name": "optional_flags_legacy_defaults_and_strict_bool",
+      "passed": true
+    },
+    {
+      "name": "json_only_no_publisher_no_render_results_and_disabled_jpeg",
+      "passed": true
+    },
+    {
+      "name": "observe_pts_repeat_backwards_missing_without_reconnect_and_strict_guard",
+      "passed": true,
+      "observed_raw_pts_seconds": [
+        0.0,
+        0.0,
+        -0.04,
+        null,
+        0.12
+      ]
+    },
+    {
+      "name": "burst_keeps_latest_frame_and_lifetime_successful_commit_counter",
+      "passed": true,
+      "burst_frame_count": 8,
+      "burst_seconds": 0.035,
+      "latest_sequence": 8,
+      "pending_replacements": 7,
+      "successful_commits_across_epochs": 2,
+      "inflight_reconnect_increments_counter": false
+    },
+    {
+      "name": "unstable_pts_metadata_preserved_arrival_time_and_no_temporal_confirmation",
+      "passed": true
+    },
+    {
+      "name": "real_ffmpeg_same_frame_h264_file",
+      "passed": true,
+      "decoded_frames": 2,
+      "frame_size": [
+        320,
+        180
+      ],
+      "jpeg_video_mean_absolute_errors": [
+        4.100572916666667,
+        3.380590277777778
+      ],
+      "bytes": 25586,
+      "sha256": "2cdedc26e68960518555b5ddec3ba24c373a0700b0496665de0a017edba046f2"
+    },
+    {
+      "name": "real_pyav_file_reader_no_network",
+      "passed": true
+    },
+    {
+      "name": "real_model_cpu_black_frame",
+      "passed": true,
+      "network_calls": 1,
+      "detections": 0,
+      "inference_ms": 2628.3027000026777,
+      "backend": {
+        "input": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "output": [
+          1,
+          18,
+          8400
+        ],
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "requested_provider": "CPUExecutionProvider",
+        "device": "cpu",
+        "device_id": 0,
+        "cpu_fallback_disabled": false,
+        "intra_threads": 1,
+        "inter_threads": 1,
+        "thread_spinning": false
+      }
+    },
+    {
+      "name": "real_runtime_cpu8_finite_one_pass",
+      "passed": true,
+      "scope": "local_windows_no_remote_quota",
+      "frame_size": [
+        640,
+        360
+      ],
+      "decoded_frames": 1,
+      "inference_ms": 601.768,
+      "provider": {
+        "input": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "output": [
+          1,
+          18,
+          8400
+        ],
+        "providers": [
+          "CPUExecutionProvider"
+        ],
+        "requested_provider": "CPUExecutionProvider",
+        "device": "cpu",
+        "device_id": 0,
+        "cpu_fallback_disabled": false,
+        "intra_threads": 8,
+        "inter_threads": 1,
+        "thread_spinning": false
+      }
+    }
+  ],
+  "passed": true,
+  "linux_cpu_verified": false,
+  "four_g_main_stream_verified": false,
+  "production_accepted": false
+}

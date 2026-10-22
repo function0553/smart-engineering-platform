@@ -1,0 +1,25 @@
+{
+  "model": "construction-site-safety-hazards v0.3",
+  "architecture": "yolov8s",
+  "onnx": "buildvision-hazards-v0.3.onnx",
+  "imgsz": 640,
+  "classes": [
+    "person",
+    "hardhat",
+    "no-hardhat",
+    "safety vest",
+    "no-safety vest",
+    "no-mask",
+    "gloves",
+    "safety shoes",
+    "excavator",
+    "wheel loader",
+    "dump truck",
+    "goggles",
+    "no-goggles",
+    "no-gloves"
+  ],
+  "letterbox_pad": 114,
+  "input": "RGB float32 [0,1] NCHW",
+  "output": "[1, 4 + num_classes, anchors]: cx, cy, w, h (input pixels), class scores; no NMS"
+}

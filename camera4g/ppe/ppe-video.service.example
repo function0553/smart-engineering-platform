@@ -1,0 +1,20 @@
+[Unit]
+Description=4G camera PPE inference
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=camera4g
+Group=camera4g
+WorkingDirectory=/opt/hyc/camera4g/ppe
+EnvironmentFile=/etc/camera4g/private/video.env
+Environment=PYTHONUNBUFFERED=1
+UMask=0077
+ExecStart=/opt/camera4g/venv/bin/python server.py --config /etc/camera4g/private/video.json
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

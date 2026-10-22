@@ -1,0 +1,25 @@
+{
+  "source": "https://github.com/minivision-ai/Silent-Face-Anti-Spoofing",
+  "commit": "b6d5f04ad78778917853b25c778acef6d5626d15",
+  "license": "Apache-2.0",
+  "input": "BGR uint8 image resized 80x80, transpose NCHW, float32 0..255; no normalization",
+  "live_class_index": 1,
+  "models": [
+    {
+      "filename": "2.7_80x80_MiniFASNetV2.onnx",
+      "scale": 2.7,
+      "weight_sha256": "a5eb02e1843f19b5386b953cc4c9f011c3f985d0ee2bb9819eea9a142099bec0",
+      "onnx_sha256": "5ed34741103f634cbccc06897cb1fd4422b5716e8ac31b68c5d62a8777a5e4d6",
+      "parity_inputs": 8,
+      "max_absolute_error": 8.344650268554688e-07
+    },
+    {
+      "filename": "4_0_0_80x80_MiniFASNetV1SE.onnx",
+      "scale": 4.0,
+      "weight_sha256": "84ee1d37d96894d5e82de5a57df044ef80a58be2b218b5ed7cdfd875ec2f5990",
+      "onnx_sha256": "f0ea1d3db076cc474bc11bcec56a229fdd44d59ebcc14d7b2b752a671a550c46",
+      "parity_inputs": 8,
+      "max_absolute_error": 1.1622905731201172e-06
+    }
+  ]
+}

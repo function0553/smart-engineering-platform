@@ -1,0 +1,46 @@
+{
+  "repository": "constructelligence/construction-site-safety-hazards",
+  "revision": "45d07d8e27a4754df1ea651f62153e000133bece",
+  "downloaded_at": "2026-10-08T03:06:00.222686+00:00",
+  "role": "offline_reference_only",
+  "production_accepted": false,
+  "camera_deployed": false,
+  "weights_license": "AGPL-3.0 (upstream declaration)",
+  "files": [
+    {
+      "file": "buildvision-hazards-v0.3.onnx",
+      "source": "https://huggingface.co/constructelligence/construction-site-safety-hazards/resolve/45d07d8e27a4754df1ea651f62153e000133bece/buildvision-hazards-v0.3.onnx",
+      "bytes": 44766819,
+      "sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249",
+      "upstream_lfs_sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249"
+    },
+    {
+      "file": "config.json",
+      "source": "https://huggingface.co/constructelligence/construction-site-safety-hazards/resolve/45d07d8e27a4754df1ea651f62153e000133bece/config.json",
+      "bytes": 560,
+      "sha256": "1c5ca99d2b5f6257668d13ab53761a82d4a4d8872488b4fadede63a57a058224",
+      "upstream_lfs_sha256": null
+    },
+    {
+      "file": "README.md",
+      "source": "https://huggingface.co/constructelligence/construction-site-safety-hazards/resolve/45d07d8e27a4754df1ea651f62153e000133bece/README.md",
+      "bytes": 8595,
+      "sha256": "b0b7acf4bb55b53a63554156d2943269f705508878e9c6144e0454525a4e0848",
+      "upstream_lfs_sha256": null
+    },
+    {
+      "file": "metrics.json",
+      "source": "https://huggingface.co/constructelligence/construction-site-safety-hazards/resolve/45d07d8e27a4754df1ea651f62153e000133bece/metrics.json",
+      "bytes": 23294,
+      "sha256": "89d5a70079e25f382aee336a433876a0598b4dae97dc1570551ae89b410d5a1e",
+      "upstream_lfs_sha256": null
+    },
+    {
+      "file": "example.jpg",
+      "source": "https://huggingface.co/constructelligence/construction-site-safety-hazards/resolve/45d07d8e27a4754df1ea651f62153e000133bece/example.jpg",
+      "bytes": 432898,
+      "sha256": "0d80be78cb9c050ad88140786173305db88e5c2d1b17bcf3024e445de9f98b96",
+      "upstream_lfs_sha256": "0d80be78cb9c050ad88140786173305db88e5c2d1b17bcf3024e445de9f98b96"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+# Runtime and personal data
+**/private/
+**/__pycache__/
+*.py[cod]
+*.env
+.env*
+!.env.example
+.venv/
+venv/
+*.sqlite*
+*.db
+*.db-*
+*.log
+*.pem
+*.key
+id_rsa*
+id_ed25519*

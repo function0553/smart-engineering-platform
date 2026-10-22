@@ -1,0 +1,20 @@
+{
+  "bind_port": 28880,
+  "inference_port": 28878,
+  "hls_port": 28888,
+  "webrtc_port": 28889,
+  "camera_id": "camera-01",
+  "stream_path": "raw-main",
+  "video_protocol": "hls",
+  "history_seconds": 10,
+  "history_limit": 100,
+  "poll_interval_seconds": 0.2,
+  "alignment_mode": "receive_time_estimate",
+  "overlay_timing_verified": false,
+  "overlay_clock_offset_ms": 0,
+  "overlay_match_max_error_ms": 500,
+  "overlay_sample_ttl_ms": 1000,
+  "expected_video_size": [2560, 1440],
+  "expected_video_fps": 25,
+  "timing_note": "Past sampled detections are matched approximately to HLS program date time using server receive clocks. No sensor exposure UTC or exact frame alignment is claimed; invalid anchors clear boxes."
+}

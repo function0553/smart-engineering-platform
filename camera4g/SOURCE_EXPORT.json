@@ -1,0 +1,482 @@
+{
+  "exported_on": "2026-10-22",
+  "timezone": "Asia/Shanghai",
+  "remote": "https://gitee.com/systemaths/hyc.git",
+  "source_root": "4G球机",
+  "files": [
+    {
+      "file": "ppe/annotation_zh.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/annotation_zh.py",
+      "bytes": 6419,
+      "sha256": "918928f3a2cb9a9a677226c6303a46b0256681664d1e5e1ca890f20de55cde8a"
+    },
+    {
+      "file": "ppe/build_manifest.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/build_manifest.py",
+      "bytes": 1805,
+      "sha256": "d92ebb7adc045722f9c0d54816a457505044b1d0d8705d030e169fb6b8f134bf"
+    },
+    {
+      "file": "ppe/config.example.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/config.example.json",
+      "bytes": 1457,
+      "sha256": "8389d106813ab7690454a3c69291f1fd9d1862ba848546fcfdccd8f86175d570"
+    },
+    {
+      "file": "ppe/configuration.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/configuration.py",
+      "bytes": 7042,
+      "sha256": "5bf104f8b89fc7af695658255e6fd41e551c6e61045de91f162159e02e4abd0d"
+    },
+    {
+      "file": "ppe/engine.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/engine.py",
+      "bytes": 17375,
+      "sha256": "fe4e4c40b71657d0887edff87df8dadf639b9b2abf11d506b3b6e58bf7d4939c"
+    },
+    {
+      "file": "ppe/http_api.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/http_api.py",
+      "bytes": 5408,
+      "sha256": "cde6b3f972db3ce352c42b5890e6517488740c5d0966e7951e70d0288e68f9ca"
+    },
+    {
+      "file": "ppe/media_publisher.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/media_publisher.py",
+      "bytes": 4939,
+      "sha256": "cf0caf72e50db571a3a4d5de8d641cbb9f61bfcea2503274460ff18080a598a9"
+    },
+    {
+      "file": "ppe/precision.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/precision.py",
+      "bytes": 9117,
+      "sha256": "40db944b22dd04025d2a0510bc036ea41456251fffdbbdaac6a62f9711060738"
+    },
+    {
+      "file": "ppe/README.md",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/README.md",
+      "bytes": 12200,
+      "sha256": "b88bfb3497b18036f3492a5657420de52af9315c1ee0f264ab29e0af5ece78c2"
+    },
+    {
+      "file": "ppe/requirements-common.txt",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/requirements-common.txt",
+      "bytes": 115,
+      "sha256": "7b41d5604a23f9c08faac35fe45f2c815c3a2255e9fa05ba8a07ed9d7e2c0ebe"
+    },
+    {
+      "file": "ppe/requirements-cpu.txt",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/requirements-cpu.txt",
+      "bytes": 47,
+      "sha256": "334c81dba065af1b13b9cd03615b4e2359a2f43ab7192b19f1edef1944821458"
+    },
+    {
+      "file": "ppe/requirements-cuda.txt",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/requirements-cuda.txt",
+      "bytes": 51,
+      "sha256": "2c3f6357f63446d826bf20548ce8d4faa98148252e9a9624d10429e52beb7d3b"
+    },
+    {
+      "file": "ppe/rtsp_reader.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/rtsp_reader.py",
+      "bytes": 5705,
+      "sha256": "2873113defda3ae668169fe0411406985c35b888f0d132575bc0413ac8a1ea70"
+    },
+    {
+      "file": "ppe/server.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/server.py",
+      "bytes": 4093,
+      "sha256": "953ced7132e0bf22ee596788192a8e0e8c51b763c11b9a7dcf48ab38f467e059"
+    },
+    {
+      "file": "ppe/tracking.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/tracking.py",
+      "bytes": 12517,
+      "sha256": "0c42b916fa6a2f37eae4de74ac1923bffa2fee4bd3e641934da357b24949fb18"
+    },
+    {
+      "file": "ppe/verify_offline.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/verify_offline.py",
+      "bytes": 21040,
+      "sha256": "0fc22cd482bd42b8e68ddbba29ccaab9ee0fc6d52da4bdb46e6c1506eaa72c35"
+    },
+    {
+      "file": "ppe/video_runtime.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/video_runtime.py",
+      "bytes": 19400,
+      "sha256": "b9ce9e0daa0dfc52a70a64e470d31fdcd2db3dd40ffeffd3f55ccef0a22a658f"
+    },
+    {
+      "file": "ppe/models/reference-v0.3/buildvision-hazards-v0.3.onnx",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/models/reference-v0.3/buildvision-hazards-v0.3.onnx",
+      "bytes": 44766819,
+      "sha256": "55f4dd2f53158eac4ff093d938b9fbda80c99454a03672145bbc36f539988249"
+    },
+    {
+      "file": "ppe/models/reference-v0.3/config.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/models/reference-v0.3/config.json",
+      "bytes": 560,
+      "sha256": "1c5ca99d2b5f6257668d13ab53761a82d4a4d8872488b4fadede63a57a058224"
+    },
+    {
+      "file": "ppe/models/reference-v0.3/provenance.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/models/reference-v0.3/provenance.json",
+      "bytes": 2244,
+      "sha256": "991f66df78936091322aea49e699ef5ab35ef67f0a960aaedc93325dd07128c3"
+    },
+    {
+      "file": "ppe/models/reference-v0.3/README.md",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/models/reference-v0.3/README.md",
+      "bytes": 8595,
+      "sha256": "b0b7acf4bb55b53a63554156d2943269f705508878e9c6144e0454525a4e0848"
+    },
+    {
+      "file": "preview/clean_h264.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/clean_h264.py",
+      "bytes": 5733,
+      "sha256": "4768ca494be96f243e0c663c718062b162eec9bc862b91eaea85d246c407c557"
+    },
+    {
+      "file": "preview/config.example.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/config.example.json",
+      "bytes": 725,
+      "sha256": "fc57a8f44f171490c7e3ced07ab3388e3ad8f8110fb4847bf59bdf260294b512"
+    },
+    {
+      "file": "preview/index.html",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/index.html",
+      "bytes": 4092,
+      "sha256": "a85a6564ebbe9f925bd52ad34deaf60ddd325a43b2ff649212d7332f274e6119"
+    },
+    {
+      "file": "preview/overlay_logic.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/overlay_logic.js",
+      "bytes": 2337,
+      "sha256": "0c44f994968515509278cee6e66484b775df2027458e42ce03b563c634f16760"
+    },
+    {
+      "file": "preview/prepare_router_config.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/prepare_router_config.py",
+      "bytes": 4305,
+      "sha256": "9b0fbadc6b308e2f5601e353d755145646555b8fac722f1e9bd0014003774ef0"
+    },
+    {
+      "file": "preview/preview.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/preview.js",
+      "bytes": 15520,
+      "sha256": "9a7c695030fcabc94b2210dde8681118f477682c4b117e2427b341d3f88b8ed5"
+    },
+    {
+      "file": "preview/preview_server.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/preview_server.py",
+      "bytes": 19923,
+      "sha256": "51f7bf5bc0b356157be1448662ed154e74dbb71cb52742d9d7f5cfa058489a8e"
+    },
+    {
+      "file": "preview/vendor/hls.v1.7.3.min.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/vendor/hls.v1.7.3.min.js",
+      "bytes": 619692,
+      "sha256": "a12e7ee1cd64a69dcdb314157e45dafcba705bfb0b1440b7935cb265d374423e"
+    },
+    {
+      "file": "preview/vendor/LICENSE.hls.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/vendor/LICENSE.hls.js",
+      "bytes": 1338,
+      "sha256": "ca8773cf798c7ed997d4dd7c8e23c348699f8d5b7462636694cc14de6cda12db"
+    },
+    {
+      "file": "preview/vendor/mediamtx-reader.v1.21.2.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/live-overlay-20261009/vendor/mediamtx-reader.v1.21.2.js",
+      "bytes": 18929,
+      "sha256": "a802f229b803c33713d4c69c4cc0d480108a5bf384947aeee4aaf04268bf85c1"
+    },
+    {
+      "file": "preview/clean_h264_camera02.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/clean_h264_camera02.py",
+      "bytes": 5850,
+      "sha256": "6f3ba2deb59aafd414ab0c46a8acd207de4754d274206841d8e078d953fcee45"
+    },
+    {
+      "file": "attendance/attendance_policy.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/attendance_policy.py",
+      "bytes": 2118,
+      "sha256": "560c4c1bc341b08a72aa479c212a5fa30fb06537e25c40ab5c41712633be6225"
+    },
+    {
+      "file": "attendance/attendance_service.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/attendance_service.py",
+      "bytes": 20466,
+      "sha256": "0f10da474f501039e0e634f215b924305f3a23090d2527ac4aaf449c8f8e872b"
+    },
+    {
+      "file": "attendance/attendance_store.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/attendance_store.py",
+      "bytes": 14328,
+      "sha256": "1da77bfc89c57c021bc314ea6af4fbd6227a11a1c51ff24984ff9635597f2887"
+    },
+    {
+      "file": "attendance/attendance.html",
+      "source": "camera_npu/server_transition/add_camera_20261019/attendance.html",
+      "bytes": 7310,
+      "sha256": "0735ced5a00ddf8bed4edd8655f9699d9f1c1dafcc48b8b705977a0455b21da2"
+    },
+    {
+      "file": "attendance/attendance_script_check.js",
+      "source": "camera_npu/server_transition/add_camera_20261019/attendance_script_check.js",
+      "bytes": 4074,
+      "sha256": "15e3a005d98d1f41ffd48133a6e6370cbcc8d2b06bffb2c55b35c2c3135b3b08"
+    },
+    {
+      "file": "attendance/face_liveness.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/face_liveness.py",
+      "bytes": 2944,
+      "sha256": "78d7b619ee435748cfbc7e0a7a43517651f49c8bc6fe94d9d66b2d286c9d4478"
+    },
+    {
+      "file": "attendance/fas_crop.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/fas_crop.py",
+      "bytes": 1858,
+      "sha256": "cd33552d5ca920088143daafceba3c19b7a64bf9aac125241803e1b4af698d65"
+    },
+    {
+      "file": "attendance/gb_voice.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/gb_voice.py",
+      "bytes": 10903,
+      "sha256": "abcc22e6306aa10baf24e111c086c79b6e6da9f8069942100b8f7252464a9948"
+    },
+    {
+      "file": "attendance/local_preview.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/local_preview.py",
+      "bytes": 7241,
+      "sha256": "149684b2ebbbbdcebd2e313e790c3abee4e99ed2b18f861c565d666ca9499cb6"
+    },
+    {
+      "file": "attendance/ssh_http.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/ssh_http.py",
+      "bytes": 1383,
+      "sha256": "91ece3078a8de6184d50e3490869d33242c2c3c3c74596c00b93252203d5daf0"
+    },
+    {
+      "file": "attendance/render_voice.ps1",
+      "source": "camera_npu/server_transition/add_camera_20261019/render_voice.ps1",
+      "bytes": 804,
+      "sha256": "f6053eb6f8029d700095d92813c1af244d8fa463d5248d513d1217425c91b6a1"
+    },
+    {
+      "file": "attendance/test_attendance.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_attendance.py",
+      "bytes": 7757,
+      "sha256": "4aab7c50cb39d8e275e24f5279b82eb7d015a6dc30fd296b98aaa5b30810cca2"
+    },
+    {
+      "file": "attendance/test_attendance_policy.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_attendance_policy.py",
+      "bytes": 4615,
+      "sha256": "8c396a51961ac1e6a12d890a3fdf4d4bce4019b0ca7ca8e74db40f30ff5352d4"
+    },
+    {
+      "file": "attendance/test_attendance_runtime.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_attendance_runtime.py",
+      "bytes": 8008,
+      "sha256": "3f3e8a5784301faf7f7ba9c511af2cb539f7584c3b68a1b26e026989fc604a05",
+      "source_sha256": "84f9c930ccfe44cda5ccbc87c3e85c3353ebaf80aa8323cf3b42a218ba8634ff",
+      "change": "Initialize voice_gate and camera_id in the existing runtime test fixture; production code unchanged."
+    },
+    {
+      "file": "attendance/test_face_liveness.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_face_liveness.py",
+      "bytes": 671,
+      "sha256": "b9e225b66f33d3e69c2dbc43d3dc28929da3291615ae2ffeda0094e07c26863d"
+    },
+    {
+      "file": "attendance/test_ssh_http.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_ssh_http.py",
+      "bytes": 2911,
+      "sha256": "fde394ebf2b29bf2dc4bcc79826c396b99d5fb764e86f3e0f896bc494480c1cb"
+    },
+    {
+      "file": "attendance/test_voice_prepare.py",
+      "source": "camera_npu/server_transition/add_camera_20261019/test_voice_prepare.py",
+      "bytes": 4857,
+      "sha256": "f1b33431f29c97597fddc19d71eefae3450057214a764e5fa09aa9332347e9ca"
+    },
+    {
+      "file": "attendance/models/liveness/model-manifest.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/antispoof_candidate/model-manifest.json",
+      "bytes": 1001,
+      "sha256": "7fa92096e5e87d202ccbcbf23571715f3f24599142af027c0f010da15f4f8959"
+    },
+    {
+      "file": "attendance/models/liveness/UPSTREAM_COMMIT.txt",
+      "source": "camera_npu/server_transition/add_camera_20261019/antispoof_candidate/UPSTREAM_COMMIT.txt",
+      "bytes": 42,
+      "sha256": "96d7448d2fbb47a5f1d5c8ffbe526c6f6579f5dfc5852adea80c5b34be265f61"
+    },
+    {
+      "file": "attendance/models/liveness/2.7_80x80_MiniFASNetV2.onnx",
+      "source": "camera_npu/server_transition/add_camera_20261019/antispoof_candidate/models/2.7_80x80_MiniFASNetV2.onnx",
+      "bytes": 1745494,
+      "sha256": "5ed34741103f634cbccc06897cb1fd4422b5716e8ac31b68c5d62a8777a5e4d6"
+    },
+    {
+      "file": "attendance/models/liveness/4_0_0_80x80_MiniFASNetV1SE.onnx",
+      "source": "camera_npu/server_transition/add_camera_20261019/antispoof_candidate/models/4_0_0_80x80_MiniFASNetV1SE.onnx",
+      "bytes": 1745004,
+      "sha256": "f0ea1d3db076cc474bc11bcec56a229fdd44d59ebcc14d7b2b752a671a550c46"
+    },
+    {
+      "file": "licenses/Silent-Face-Anti-Spoofing.LICENSE",
+      "source": "camera_npu/server_transition/add_camera_20261019/antispoof_candidate/upstream/LICENSE",
+      "bytes": 11340,
+      "sha256": "daf94bf1dc9cc5700fe5af2c7c0cbd1836e70d509ed78fd0bebef7432edee6fb"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/broadcast.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/broadcast.go",
+      "bytes": 5967,
+      "sha256": "4dfb0fd23026c01f81b325b78ca9493457c31f12c13f764185dbc0569a6e652b"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/owned_ack.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/owned_ack.go",
+      "bytes": 945,
+      "sha256": "301dbb150def8380be48219f2347f0b780a4b19000472f0fd622aeaa00c16ab4"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/owned_ack_test.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/owned_ack_test.go",
+      "bytes": 1842,
+      "sha256": "ce580bb7c5c590d0fa0b179c1cd908edbdb4cb360be92ff201b9847553b1bdf9"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/owned_broadcast.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/owned_broadcast.go",
+      "bytes": 17240,
+      "sha256": "221a7ba160e8a9f00ea00205a176c0eff57983f7ea99570affa7fdfb1eda15ea"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/owned_media_test.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/owned_media_test.go",
+      "bytes": 2060,
+      "sha256": "32aa3230a33bbd338ecf4f587d5219cf521fd8cee4dbc653bcedf1910463a3c2"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/index.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/index.go",
+      "bytes": 41086,
+      "sha256": "816ecd3d499672a086c1894cabf43d9c033167ac26224506f540f4c83eaf40ba"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/api.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/api.go",
+      "bytes": 122033,
+      "sha256": "0046f97061b2c6046eded887c570b4d9e9511c94b56a77242fede2c8d94e05d4"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/plugin/gb28181/talk.go",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/plugin/gb28181/talk.go",
+      "bytes": 2321,
+      "sha256": "68556ffc02881d088d03930ca9832a7011ba575bbdb16a0a99c01a6e2e467cd8"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/go.mod",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/go.mod",
+      "bytes": 6813,
+      "sha256": "f8835452a24292957df284b1fbdb7e6ccef01755b313666d90efabb08ebc0854"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/go.sum",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/go.sum",
+      "bytes": 34584,
+      "sha256": "f7ab778212bdfc48ca152c0f8ea9369abade6035b155daf256c874ad476e3e24"
+    },
+    {
+      "file": "voice-adapter/monibuca-5.1.6/LICENSE",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/LICENSE",
+      "bytes": 34524,
+      "sha256": "3d8c8676bef3e0a79bc82357d7621bdd230d9276050ce82bcc3513381bf14ccb"
+    },
+    {
+      "file": "voice-adapter/voice-source-manifest.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/voice-source-manifest.json",
+      "bytes": 1471,
+      "sha256": "ffb27a3cda9945e0f1100b57084920d4519e511988573bb06804a4b0ea6cd4ab"
+    },
+    {
+      "file": "licenses/AGPL-3.0.txt",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/monibuca-5.1.6/LICENSE",
+      "bytes": 34524,
+      "sha256": "3d8c8676bef3e0a79bc82357d7621bdd230d9276050ce82bcc3513381bf14ccb"
+    },
+    {
+      "file": "docs/PPE_BACKEND_20261009.md",
+      "source": "后端接入说明_4G安全帽反光背心_20261009.md",
+      "bytes": 25546,
+      "sha256": "590f02a305027945902ab2344cd78c6b1ba443ebb882d3ae0523dafb337242da"
+    },
+    {
+      "file": "ppe/offline_verification.json",
+      "source": "camera_npu/server_transition/add_camera_20261019/source/video-candidate-20261009/offline_verification.json",
+      "bytes": 3958,
+      "sha256": "a8423a531fdd88d25700dea70e2c5a159ed5800a6ddbf89a5b336b9c7ce85dc7",
+      "evidence": "historical_offline_report_not_rerun_on_export"
+    }
+  ],
+  "copied_files_unchanged": false,
+  "generated_files": [
+    "README.md",
+    ".gitignore",
+    "THIRD_PARTY_NOTICES.md",
+    "attendance/config.example.json",
+    "voice-adapter/README.md",
+    "SOURCE_EXPORT.json",
+    "VALIDATION.json",
+    "ppe/ppe-video.service.example",
+    "ppe/SOURCE_MANIFEST.json",
+    ".gitattributes"
+  ],
+  "excluded": [
+    "private data",
+    "credentials",
+    "attendance database",
+    "face enrollment images",
+    "voice recordings",
+    "virtual environments",
+    "caches",
+    "unaccepted candidates",
+    "office_monitor"
+  ],
+  "python_syntax_checked": [
+    "attendance/attendance_policy.py",
+    "attendance/attendance_service.py",
+    "attendance/attendance_store.py",
+    "attendance/face_liveness.py",
+    "attendance/fas_crop.py",
+    "attendance/gb_voice.py",
+    "attendance/local_preview.py",
+    "attendance/ssh_http.py",
+    "attendance/test_attendance.py",
+    "attendance/test_attendance_policy.py",
+    "attendance/test_attendance_runtime.py",
+    "attendance/test_face_liveness.py",
+    "attendance/test_ssh_http.py",
+    "attendance/test_voice_prepare.py",
+    "ppe/annotation_zh.py",
+    "ppe/build_manifest.py",
+    "ppe/configuration.py",
+    "ppe/engine.py",
+    "ppe/http_api.py",
+    "ppe/media_publisher.py",
+    "ppe/precision.py",
+    "ppe/rtsp_reader.py",
+    "ppe/server.py",
+    "ppe/tracking.py",
+    "ppe/verify_offline.py",
+    "ppe/video_runtime.py",
+    "preview/clean_h264.py",
+    "preview/clean_h264_camera02.py",
+    "preview/prepare_router_config.py",
+    "preview/preview_server.py"
+  ],
+  "production_code_and_models_unchanged": true
+}
