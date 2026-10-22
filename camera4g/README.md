@@ -4,6 +4,30 @@
 
 **先读：[GPU 算法服务与 252 后端交接文档](docs/GPU_252_HANDOFF_20261022.md)。启动脚本：[GPU 算法服务启动脚本](deploy/start-gpu.sh)、[252 既有后端启动脚本](deploy/start-252.sh)，用途与命令见 [启动脚本清单](deploy/README.md)。**
 
+## GPU 服务启动命令
+
+以下从仓库根目录执行；先准备 `/etc/camera4g/private/gpu.env` 及其引用的私有 JSON 配置，步骤见 [仓库首页 README](../README.md)。`/opt/hyc` 按实际部署目录替换。
+
+```sh
+cd /opt/hyc
+# 启动脚本：安全帽、反光背心 CUDA 检测
+bash camera4g/deploy/start-gpu.sh ppe
+```
+
+```sh
+cd /opt/hyc
+# 启动脚本：GPU 人脸打卡
+bash camera4g/deploy/start-gpu.sh attendance
+```
+
+```sh
+cd /opt/hyc
+# 启动脚本：已有视频与结果历史代理
+bash camera4g/deploy/start-gpu.sh preview
+```
+
+三个独立常驻进程，分别用终端或 systemd 管理，不能在同一终端串行等待三条命令。
+
 ## 目录
 
 | 目录 | 内容 |
@@ -19,12 +43,13 @@
 
 ## PPE 安装和配置
 
-在独立 Python 环境中安装 `ppe/requirements-cpu.txt`；CUDA 环境改用 `ppe/requirements-cuda.txt`。按 `ppe/config.example.json` 创建私有运行配置，填写已验证的 MAIN 流尺寸、设备标识、模型路径及资源预算；示例中的 `main_source_verified=false` 会保留启动阻断。
+GPU 部署在独立 Python CUDA 环境中安装 `ppe/requirements-cuda.txt`。按 `ppe/config.example.json` 创建私有运行配置，设置 device=cuda、实际 device_id、模型绝对路径、已验证的 MAIN 流尺寸、设备标识及资源预算；示例中的 `main_source_verified=false` 会保留启动阻断。
 
 ```sh
-python -m pip install -r ppe/requirements-cpu.txt
-python ppe/server.py --config /path/to/private/video.json --check-only
-python ppe/server.py --config /path/to/private/video.json
+cd /opt/hyc
+/opt/camera4g/venv/bin/python -m pip install -r camera4g/ppe/requirements-cuda.txt
+bash camera4g/deploy/start-gpu.sh ppe --check-only
+bash camera4g/deploy/start-gpu.sh ppe
 ```
 
 流地址与鉴权从 `PPE_MAIN_STREAM_ENDPOINT`、`PPE_VIDEO_ADMIN_TOKEN`、`PPE_VIDEO_CAMERA_TOKEN` 读取。预览使用 `preview/config.example.json` 及 `PPE_VIDEO_CAMERA_TOKEN`、`PPE_PREVIEW_PASS`、`PPE_MEDIA_READ_USER`、`PPE_MEDIA_READ_PASS`。示例中的模型相对路径需按实际工作目录解析并配置。详细说明见 `ppe/README.md` 与 `docs/PPE_BACKEND_20261009.md`。

@@ -503,13 +503,13 @@
       },
       {
         "file": "README.md",
-        "bytes": 3482,
-        "sha256": "c2d0a6e703652be9fe32f56a2b6b2334bbe263ccfd1dbf5f88e2030b41986ef2"
+        "bytes": 6370,
+        "sha256": "cc32e32ff849fc02add4c24600b53670bc91c8fbd0f7eb1d3fd6d42cb8d0bae8"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 5155,
-        "sha256": "9345e3b2286ed40cdf36182956b95be739a4a52234e20ecb22db7ad3e595760e"
+        "bytes": 5843,
+        "sha256": "8522bc12cf54d788219a70d8412e37b0041f9944a0dad2816de974f5122a4d77"
       },
       {
         "file": "camera4g/attendance/attendance_service.py",
@@ -595,6 +595,11 @@
         "file": "tests/ppe.test.mjs",
         "bytes": 31365,
         "sha256": "594cd686481ed33927399e57c84fd4588671788c845b12821041814d20fa502f"
+      },
+      {
+        "file": "PLATFORM_README.md",
+        "bytes": 3482,
+        "sha256": "c2d0a6e703652be9fe32f56a2b6b2334bbe263ccfd1dbf5f88e2030b41986ef2"
       }
     ]
   }

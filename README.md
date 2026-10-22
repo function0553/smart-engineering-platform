@@ -1,43 +1,119 @@
-# 智慧工程
+# 4G 球机算法服务
 
-施工资料、项目管理及工程业务平台源码。此次源码对应平台 **0.6.0-rc.39**、安卓 **0.3.35 / code41** 的冻结发布基线。
+安全帽检测、反光背心检测和人脸打卡在 **GPU 服务器**运行，供 **252 服务器的业务后端**接入。算法源码在 [`camera4g/`](camera4g/README.md)。本次不新增前端。
 
-七类施工资料按项目、施工部位和资料日期整理，支持按筛选或单日打包ZIP；管理员可统一查看，其他账号按既有项目、类别、部位和下载权限访问。工序照片按服务器已保存的当前工序代表图自动生成Word入包，无需单独点击生成；未上传的本机照片不入表。原件、视频、已有历史Word、目录清单一起保留，不改变审核或归档状态。零图保留十个工序空格，部分工序缺图会列出缺项。
+## 服务启动脚本与命令
 
-## 本地运行
+以下命令均从仓库根目录执行，`/opt/hyc` 为示例路径，请换成实际部署目录。**先完成下方私有配置和依赖准备，再启动服务。**
 
-需要Node.js 24.14或更新的24.x版本及npm。先按 [TEMPLATE_ASSETS.md](TEMPLATE_ASSETS.md) 私下恢复受控运行模板；不复制生产数据库进行一般开发。
+| 启动脚本 | 执行位置 | 用途 |
+| --- | --- | --- |
+| [`camera4g/deploy/start-gpu.sh`](camera4g/deploy/start-gpu.sh) | **GPU** | 安全帽、反光背心检测；人脸打卡；已有视频与结果历史代理 |
+| [`camera4g/deploy/start-252.sh`](camera4g/deploy/start-252.sh) | **252** | 启动仓库既有业务后端，加载 GPU HTTPS 接入配置 |
 
-```sh
-npm ci
-npm run check
-npm run build
-npm run build:mobile
-npm test
-npm run dev
-```
-
-开发页面默认使用Vite配置中的本机地址；服务端配置见 `server/index.mjs`。首次进入空数据库由使用者自行设置管理员，不在仓库中预置账号密码。需要真实视觉模型的用例另有安装条件，构建成功不代表视觉模型或现场验收。
-
-## 安卓构建
-
-仅使用现有正式签名身份，禁止生成替代签名。通过项目负责人受控恢复 `private/android/signing.json`、`private/android/daily-report.p12` 及用于签名一致性核验的 `delivery/smart-engineering-daily-report-0.3.13.apk`。这些文件均不进Git。
-
-设置 `REPORT_JAVA_HOME`（JDK21）、`REPORT_ANDROID_TOOLS`（Android build-tools35目录）、`REPORT_ANDROID_PLATFORM`（android-35/android.jar）、`REPORT_ANDROID_OUTPUT`（本机输出目录），完成网页与移动资源构建后运行：
+**GPU：启动安全帽、反光背心 CUDA 检测**
 
 ```sh
-npm run build:android
+cd /opt/hyc
+bash camera4g/deploy/start-gpu.sh ppe
 ```
 
-默认入口仅调用本次原签名构建器 `scripts/build-auto-word-android.py`，不会自动新建密钥。原生专项校验入口为 `scripts/check-site-library-native.py`，在执行前通过相同 `REPORT_JAVA_HOME`、`REPORT_ANDROID_TOOLS`、`REPORT_ANDROID_PLATFORM` 变量设置自己的工具链。APK和签名凭据不包含在源码仓库内。发布还需要统一版本清单、备份和正式环境校验，不能以源码推送代替部署。
+**GPU：启动人脸打卡**
 
-## 源码与资产边界
+```sh
+cd /opt/hyc
+bash camera4g/deploy/start-gpu.sh attendance
+```
 
-4G 球机算法部署、对外接口和交接说明见 [GPU 与 252 部署交接](camera4g/docs/GPU_252_HANDOFF_20261022.md)。**服务启动脚本**见 [camera4g/deploy](camera4g/deploy/README.md)：GPU 运行打卡、安全帽及反光背心算法，252 后端调用 GPU HTTPS 接口，本次不新增前端。
+**GPU：启动已有视频与检测历史代理**
 
-- 业务代码来自本次冻结快照，文件摘要见 `SOURCE_EXPORT.json`。
-- 测试使用隔离生成的合成数据；不含生产数据库、真实图片视频、账号密码、用户历史或手机草稿。
-- 四份原始运行DOCX作为受控资产排除，恢复要求见上文。
-- `miniprogram/` 及 `ios/` 为额外保留的源文件，不属于本次安卓发行验收；iOS不包含个人开发团队绑定、签名或用户工程状态，苹果仍需后续真机验证。
-- `ops/deploy252/` 为本次发布过程参考，需要外部受限凭据及本机审核回执；不具备凭据时不会自动部署。冻结脚本记录的是本次工作目录约定，外部工程师需按自己的受控发布目录配置。
-- 没有授予新的开源许可证；第三方组件权利和声明见 `THIRD_PARTY_NOTICES.txt`。
+```sh
+cd /opt/hyc
+bash camera4g/deploy/start-gpu.sh preview
+```
+
+三个服务是独立常驻进程，分别使用终端或 systemd 管理；不要在同一终端串行等待三条命令。preview 提供已有 HLS 与历史结果，不需要新增业务前端。
+
+**252：启动既有业务后端**
+
+```sh
+cd /opt/hyc
+bash camera4g/deploy/start-252.sh
+```
+
+252 已有服务时应合并环境配置，避免重复启动。该脚本不包含新的打卡业务集成，打卡 API 由业务后端按交接契约接入。
+
+## 首次启动前准备
+
+GPU 使用独立 Python CUDA 环境；已有环境按实际路径使用。PPE 依赖安装命令：
+
+```sh
+cd /opt/hyc
+/opt/camera4g/venv/bin/python -m pip install -r camera4g/ppe/requirements-cuda.txt
+```
+
+打卡另需恢复既有匹配版本的 `facekit.core`、`face_engine.alignment.face_align` 及 SCRFD/ArcFace 模型；这些人脸引擎源码和识别模型未包含在仓库中。其他依赖见 [算法目录说明](camera4g/README.md)，PPE 依赖清单不是完整打卡环境。
+
+将以下模板复制到服务器私有目录并填写真实值；已有部署应保留原配置与数据。
+
+| 配置模板 | 私有配置位置 | 关键设置 |
+| --- | --- | --- |
+| [`gpu.env.example`](camera4g/deploy/gpu.env.example) | GPU：`/etc/camera4g/private/gpu.env` | GPU_PYTHON、三个 JSON 路径、流地址和独立 token |
+| [`ppe/config.example.json`](camera4g/ppe/config.example.json) | GPU：`/etc/camera4g/private/video.json` | device=cuda、device_id、模型绝对路径、camera_id、尺寸；确认 MAIN 流后设置 main_source_verified=true |
+| [`attendance/config.example.json`](camera4g/attendance/config.example.json) | GPU：`/etc/camera4g/private/attendance.json` | 人脸/活体模型、数据库路径、cameras、gpu_id（默认 1，单 GPU 改为 0） |
+| [`preview/config.example.json`](camera4g/preview/config.example.json) | GPU：`/etc/camera4g/private/preview.json` | inference_port 与 PPE bind.port 一致，恢复 HLS 媒体链路 |
+| [`platform.env.example`](camera4g/deploy/platform.env.example) | 252：`/etc/camera4g/private/platform.env` | Node 路径、BASE_URL、原有数据库/模型路径、PPE_CONFIG_FILE |
+| [`ppe-upstream.example.json`](camera4g/deploy/ppe-upstream.example.json) | 252：`/etc/camera4g/private/ppe-upstream.json` | GPU 实际 HTTPS 地址、cameraId、读取凭据和授权用户 |
+
+替换全部 REPLACE_ 和 gpu.example.com，限制私有配置为服务用户可读。GPU 环境文件可用 CAMERA4G_GPU_ENV 指定，252 环境文件可用 CAMERA4G_252_ENV 指定。密码、token、真实人员数据不提交 Git。
+
+GPU PPE/视频代理可先进行本地预检，不连接视频：
+
+```sh
+cd /opt/hyc
+bash camera4g/deploy/start-gpu.sh ppe --check-only
+bash camera4g/deploy/start-gpu.sh preview --check-only
+```
+
+## systemd 常驻启动
+
+先按实际环境调整 [GPU systemd 模板](camera4g/deploy/camera4g-gpu@.service.example) 中的服务用户、仓库路径及私有配置权限，再执行：
+
+```sh
+cd /opt/hyc
+sudo cp camera4g/deploy/camera4g-gpu@.service.example /etc/systemd/system/camera4g-gpu@.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now camera4g-gpu@ppe camera4g-gpu@attendance camera4g-gpu@preview
+sudo systemctl status camera4g-gpu@ppe camera4g-gpu@attendance camera4g-gpu@preview
+```
+
+手动启动和 systemd 启动二选一，避免端口冲突。252 可参考 [既有后端 systemd 模板](camera4g/deploy/camera4g-platform.service.example)。
+
+## GPU 对外接口与 252 接入
+
+GPU SSH 连接命令（由项目负责人提供，本次未在线核验）：
+
+```sh
+ssh -p 2222 dell@211.139.12.141
+```
+
+**2222 是 SSH 端口，不是算法 HTTP/HTTPS 端口。** 252 调用算法必须使用 GPU 可达 IP 或域名，以下是待配置的外部入口示例，需替换域名并确认端口映射：
+
+| GPU 外部接口示例 | 用途 | 鉴权 |
+| --- | --- | --- |
+| `https://gpu.example.com:29478` | 安全帽、反光背心检测 JSON 与状态 | Bearer：PPE_VIDEO_CAMERA_TOKEN |
+| `https://gpu.example.com:29480` | HLS、检测历史、叠框参数 | HTTP Basic：viewer / PPE_PREVIEW_PASS |
+| `https://gpu.example.com:29482` | 人脸打卡、人员录入、识别记录 | Bearer：ATTENDANCE_ADMIN_TOKEN |
+
+跨服务器地址不能填 127.0.0.1、localhost 或 0.0.0.0。GPU 网关访问 GPU 本机算法进程可使用本机回环地址。部署时配置 [GPU HTTPS 网关模板](camera4g/deploy/gpu-gateway.nginx.conf.example)、TLS 证书、NAT 和 252 出口放行规则。
+
+## 交接文档与验证
+
+- [GPU 算法服务 / 252 后端完整交接](camera4g/docs/GPU_252_HANDOFF_20261022.md)：接口路径、录入参数、语音依赖和联调步骤。
+- [启动脚本清单](camera4g/deploy/README.md)：区分启动脚本与配置模板。
+- [算法目录说明](camera4g/README.md)：依赖、模型和交付范围。
+- [本次验证记录](camera4g/DEPLOYMENT_VALIDATION_20261022.json)：28 项 PPE/HTTPS 测试、34 项打卡测试及脚本检查通过；全仓测试存在受控资产缺失。
+
+本次为代码和文档交付，未执行远端上线，GPU 推理、252 可达性和现场效果需部署后核验。
+
+仓库保留的智慧工程平台本地运行、安卓构建和资产说明见 [PLATFORM_README.md](PLATFORM_README.md)。
