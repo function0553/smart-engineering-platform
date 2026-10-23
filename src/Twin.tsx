@@ -42,7 +42,33 @@ export default function TwinScreen({ ws, exit, select, connectionError, lastSync
   const removeAnchor = async () => { if (!selectedAnchor) return; setSaving(true); try { await api(`/models/${modelId}/anchors/${selectedAnchor.id}`, 'DELETE', { version: selectedAnchor.version }); await getAnchors(); setUnlink(false); } catch (e: any) { setError(e.message); } finally { setSaving(false); } };
   const pickAsset = (id: string) => { setSelectedId(id); setUnlink(false); setBindingId(''); setPosition(null); };
   return <div className="twin-screen" ref={root}>
-    <header className="twin-header"><div className="twin-header-left"><button onClick={exit}><ArrowLeft size={15} />管理后台</button><span>{ws.organization}</span></div><div className="twin-title"><h1>数字孪生 · 运营指挥中心</h1><span>DIGITAL TWIN OPERATIONS CENTER</span></div><div className="twin-header-right"><div><strong>{clock.toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}</strong><span>{clock.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'long' })}</span></div><button aria-label={full ? '退出全屏' : '进入全屏'} title={full ? '退出全屏' : '进入全屏'} onClick={() => { (document.fullscreenElement ? document.exitFullscreen() : root.current?.closest('.app-shell')?.requestFullscreen())?.catch(e => setError(e.message)); }}>{full ? <Minimize size={18} /> : <Maximize size={18} />}</button></div></header>
+    <header className="twin-header">
+      <div className="twin-header-left">
+        {full ? (
+          <button className="twin-back-btn" onClick={() => { if (document.fullscreenElement) document.exitFullscreen(); else exit(); }}>
+            <ArrowLeft size={15} />退出全屏
+          </button>
+        ) : (
+          <span className="twin-live-pill">
+            <i className="pulse-dot" />孪生空间在线
+          </span>
+        )}
+        <span>{ws.organization}</span>
+      </div>
+      <div className="twin-title">
+        <h1>数字孪生 · 运营指挥中心</h1>
+        <span>DIGITAL TWIN OPERATIONS CENTER</span>
+      </div>
+      <div className="twin-header-right">
+        <div>
+          <strong>{clock.toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}</strong>
+          <span>{clock.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'long' })}</span>
+        </div>
+        <button aria-label={full ? '退出全屏' : '进入全屏'} title={full ? '退出全屏' : '进入全屏'} onClick={() => { (document.fullscreenElement ? document.exitFullscreen() : root.current?.closest('.app-shell')?.requestFullscreen())?.catch(e => setError(e.message)); }}>
+          {full ? <Minimize size={18} /> : <Maximize size={18} />}
+        </button>
+      </div>
+    </header>
     <div className="twin-body"><aside className="twin-left">
       <TwinPanel title="运行总览" icon={<Activity size={16} />}><div className="twin-kpis"><div><strong>{ws.records.spaces.length}</strong><span>登记场所</span></div><div><strong>{ws.records.devices.length}</strong><span>登记设备</span></div><div className="warning"><strong>{pending.length}</strong><span>待处理告警</span></div><div><strong>{jobs.length}</strong><span>进行中工单</span></div></div></TwinPanel>
       <TwinPanel title="设备接入情况" icon={<Cable size={16} />}><div className="twin-device-status"><div className="twin-ring" style={{ background: `conic-gradient(#6dbea4 ${ws.records.devices.length ? online / ws.records.devices.length * 360 : 0}deg,#203b3c 0deg)` }}><span><strong>{online}</strong><small>已上报在线</small></span></div><div>{[['online', '已上报在线'], ['offline', '已上报离线'], ['stale', '心跳过期'], ['unverified', '待接入']].map(([state, label]) => <span key={state}><i className={state} />{label}<b>{ws.records.devices.filter(d => d.state === state).length}</b></span>)}</div></div></TwinPanel>

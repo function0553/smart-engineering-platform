@@ -383,7 +383,7 @@ label small {
 }
 
 /* ==========================================================================
-   App Shell & macOS Sidebar
+   App Shell & macOS Sequoia Vibrant Sidebar
    ========================================================================== */
 
 .app-shell {
@@ -394,17 +394,29 @@ label small {
 
 .sidebar {
   width: 250px !important;
-  background: var(--apple-dark-sidebar) !important;
-  backdrop-filter: var(--apple-glass-blur) !important;
-  -webkit-backdrop-filter: var(--apple-glass-blur) !important;
-  border-right: 1px solid var(--apple-dark-sidebar-border) !important;
-  color: rgba(255, 255, 255, 0.85);
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  background: rgba(246, 246, 248, 0.88) !important;
+  backdrop-filter: blur(40px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(190%) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+  color: var(--apple-text-primary) !important;
+  box-shadow: 1px 0 10px rgba(0, 0, 0, 0.03) !important;
   transition: transform 0.3s var(--ease-apple);
+  z-index: 50;
+}
+
+/* Strictly hide mobile hamburger and mobile close button on desktop */
+@media (min-width: 769px) {
+  .mobile-close,
+  .mobile-menu {
+    display: none !important;
+  }
 }
 
 .sidebar-brand {
   padding: 24px 22px 20px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Brand Component (Apple minimalist icon & typography) */
@@ -481,11 +493,12 @@ label small {
 
 /* Workspace Organization Badge in Sidebar */
 .workspace-label {
-  margin: 0 16px 18px !important;
+  margin: 0 14px 18px !important;
   padding: 10px 12px !important;
   border-radius: var(--radius-md) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
   backdrop-filter: blur(10px);
   gap: 10px !important;
   min-height: auto !important;
@@ -493,29 +506,34 @@ label small {
 }
 
 .workspace-label:hover {
-  background: rgba(255, 255, 255, 0.09) !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
 }
 
 .workspace-letter {
   width: 32px !important;
   height: 32px !important;
   border-radius: var(--radius-sm) !important;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05)) !important;
+  background: linear-gradient(135deg, #0077ed 0%, #5856d6 100%) !important;
   color: #ffffff !important;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(0, 113, 227, 0.25);
 }
 
 .workspace-label span:nth-child(2) {
   font-size: 13px !important;
-  font-weight: 550 !important;
-  color: #ffffff !important;
+  font-weight: 600 !important;
+  color: var(--apple-text-primary) !important;
 }
 
 .workspace-label small {
   font-size: 11px !important;
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--apple-text-tertiary) !important;
+}
+
+.workspace-label svg {
+  color: var(--apple-text-quaternary) !important;
 }
 
 /* Navigation Section Headers */
@@ -529,63 +547,95 @@ label small {
   font-weight: 600 !important;
   letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: #86868b !important;
   transition: color 0.2s ease;
 }
 
 .nav-group-toggle:hover {
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: var(--apple-text-primary) !important;
 }
 
 .nav-group-toggle svg {
   transition: transform 0.24s var(--ease-apple);
+  color: #aeaeb2 !important;
 }
 
-/* Navigation Item Pills */
+/* Navigation Item Pills (macOS Sequoia Style) */
 .nav-item {
-  min-height: 38px !important;
-  padding: 8px 14px !important;
-  margin: 3px 10px !important;
+  min-height: 36px !important;
+  padding: 7px 12px !important;
+  margin: 2px 10px !important;
   border-radius: 9px !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   font-weight: 450 !important;
-  color: rgba(255, 255, 255, 0.72) !important;
+  color: #3a3a3c !important;
   gap: 11px !important;
   width: calc(100% - 20px) !important;
-  transition: all 0.2s var(--ease-apple) !important;
+  transition: all 0.18s var(--ease-apple) !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.nav-item svg {
+  color: #6e6e73 !important;
+  transition: color 0.18s ease;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  color: #000000 !important;
   transform: translateX(2px);
 }
 
+.nav-item:hover svg {
+  color: #1d1d1f !important;
+}
+
 .nav-item.active {
-  background: var(--apple-blue) !important;
-  color: #ffffff !important;
+  background: rgba(0, 113, 227, 0.1) !important;
+  color: #0071e3 !important;
   font-weight: 600 !important;
-  box-shadow: 0 3px 12px rgba(0, 113, 227, 0.4) !important;
+  box-shadow: none !important;
   transform: none !important;
 }
 
 .nav-item.active svg {
-  stroke: #ffffff !important;
+  stroke: #0071e3 !important;
+  color: #0071e3 !important;
 }
 
 .nav-item b {
   font-size: 11px !important;
   padding: 1px 7px !important;
   border-radius: var(--radius-pill) !important;
-  background: rgba(255, 59, 48, 0.22) !important;
-  color: #ff453a !important;
+  background: rgba(255, 59, 48, 0.14) !important;
+  color: #ff3b30 !important;
   font-weight: 600 !important;
+  margin-left: auto;
 }
 
 .sidebar-bottom {
-  padding: 16px 20px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  background: rgba(0, 0, 0, 0.15);
+  padding: 14px 18px !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  color: var(--apple-text-secondary) !important;
+}
+
+.sidebar-bottom span:nth-child(2) {
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  color: var(--apple-text-primary) !important;
+}
+
+.sidebar-bottom small {
+  display: block;
+  font-size: 11px !important;
+  color: var(--apple-text-tertiary) !important;
+  margin-top: 1px;
+}
+
+.sidebar-bottom svg {
+  color: var(--apple-text-tertiary) !important;
 }
 
 .connection-dot {
@@ -611,6 +661,7 @@ label small {
   min-height: 100vh;
   background: var(--apple-canvas);
   position: relative;
+  transition: background 0.3s ease;
 }
 
 .topbar {
@@ -829,7 +880,7 @@ main {
   display: flex !important;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   font-weight: 600 !important;
   color: var(--apple-text-secondary) !important;
   text-transform: none !important;
@@ -841,9 +892,47 @@ main {
   background: var(--apple-blue-soft);
   padding: 6px;
   border-radius: var(--radius-sm);
-  width: 30px !important;
-  height: 30px !important;
+  width: 32px !important;
+  height: 32px !important;
   box-sizing: border-box;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.metric-card:hover .metric-label svg {
+  transform: scale(1.1);
+}
+
+/* Apple Fitness / Health Colored Badges */
+.metric-card.color-orange .metric-label svg {
+  color: #ff9500 !important;
+  background: rgba(255, 149, 0, 0.12) !important;
+}
+.metric-card.color-orange:hover {
+  box-shadow: 0 16px 36px -4px rgba(255, 149, 0, 0.18), 0 0 0 1px rgba(255, 149, 0, 0.28) !important;
+}
+
+.metric-card.color-indigo .metric-label svg {
+  color: #5856d6 !important;
+  background: rgba(88, 86, 214, 0.12) !important;
+}
+.metric-card.color-indigo:hover {
+  box-shadow: 0 16px 36px -4px rgba(88, 86, 214, 0.18), 0 0 0 1px rgba(88, 86, 214, 0.28) !important;
+}
+
+.metric-card.color-green .metric-label svg {
+  color: #34c759 !important;
+  background: rgba(52, 199, 89, 0.12) !important;
+}
+.metric-card.color-green:hover {
+  box-shadow: 0 16px 36px -4px rgba(52, 199, 89, 0.18), 0 0 0 1px rgba(52, 199, 89, 0.28) !important;
+}
+
+.metric-card.color-blue .metric-label svg {
+  color: #0071e3 !important;
+  background: rgba(0, 113, 227, 0.12) !important;
+}
+.metric-card.color-blue:hover {
+  box-shadow: 0 16px 36px -4px rgba(0, 113, 227, 0.18), 0 0 0 1px rgba(0, 113, 227, 0.28) !important;
 }
 
 .metric-card>strong {
@@ -872,6 +961,201 @@ main {
 
 .metric-card:hover .metric-foot svg {
   transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   Dashboard Grid & Structured Apple Content Modules
+   ========================================================================== */
+
+.dashboard-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 1fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
+  margin-top: 10px !important;
+}
+
+.dashboard-primary,
+.dashboard-secondary {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+  min-width: 0 !important;
+}
+
+/* Onboarding Setup Steps (Apple Setup Assistant Style) */
+.onboarding-panel {
+  background: #ffffff !important;
+  border-radius: var(--radius-lg) !important;
+  margin-bottom: 24px !important;
+  border: 1px solid var(--apple-glass-border) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.completion-count {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--apple-blue) !important;
+  background: var(--apple-blue-soft);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.completion-count small {
+  font-size: 12px;
+  color: var(--apple-text-tertiary);
+  font-weight: 400;
+}
+
+.setup-steps {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  padding: 10px 16px 20px !important;
+  gap: 12px !important;
+}
+
+.setup-steps button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 16px !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all 0.22s var(--ease-apple) !important;
+}
+
+.setup-steps button:hover {
+  background: #ffffff !important;
+  border-color: rgba(0, 113, 227, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  transform: translateY(-2px);
+}
+
+.setup-steps button.done {
+  background: rgba(52, 199, 89, 0.06) !important;
+  border-color: rgba(52, 199, 89, 0.2) !important;
+}
+
+.setup-steps button.done .step-number {
+  background: var(--apple-green) !important;
+  color: #ffffff !important;
+}
+
+.step-number {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: var(--apple-text-secondary) !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  flex-shrink: 0 !important;
+}
+
+.setup-steps strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--apple-text-primary) !important;
+}
+
+.setup-steps small {
+  display: block !important;
+  font-size: 11px !important;
+  color: var(--apple-text-tertiary) !important;
+  margin-top: 2px !important;
+}
+
+.setup-steps button>svg {
+  color: var(--apple-text-quaternary) !important;
+  margin-left: auto !important;
+}
+
+/* Dashboard Alert List */
+.dashboard-alert-list {
+  padding: 8px 14px !important;
+}
+
+.dashboard-alert-list button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+  padding: 14px 12px !important;
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  background: transparent !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: all 0.2s var(--ease-apple) !important;
+}
+
+.dashboard-alert-list button:last-child {
+  border-bottom: none !important;
+}
+
+.dashboard-alert-list button:hover {
+  background: rgba(0, 113, 227, 0.04) !important;
+  transform: translateX(3px);
+}
+
+.dashboard-alert-list button span:first-child {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.dashboard-alert-list strong {
+  display: block !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--apple-text-primary) !important;
+}
+
+.dashboard-alert-list small {
+  display: block !important;
+  font-size: 12px !important;
+  color: var(--apple-text-tertiary) !important;
+  margin-top: 3px !important;
+}
+
+/* Agenda List */
+.agenda-list {
+  padding: 8px 16px !important;
+}
+
+.agenda-list button {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  width: 100% !important;
+  padding: 12px 10px !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  background: transparent !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all 0.18s var(--ease-apple) !important;
+}
+
+.agenda-list button:hover {
+  background: rgba(0, 113, 227, 0.04) !important;
+}
+
+.agenda-time {
+  padding: 4px 8px !important;
+  border-radius: var(--radius-xs) !important;
+  background: var(--apple-blue-soft) !important;
+  color: var(--apple-blue) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  font-variant-numeric: tabular-nums !important;
 }
 
 /* ==========================================================================
@@ -1501,6 +1785,367 @@ tbody tr:last-child td {
   border-bottom: 1px solid var(--apple-glass-border) !important;
 }
 
+/* ==========================================================================
+   Apple Dynamic Island Alarm Capsule (Overrides full-width footer cut-off)
+   ========================================================================== */
+
+.alarm-dock,
+.app-shell .alarm-dock {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  left: auto !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  z-index: 99 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 10px !important;
+  pointer-events: none !important;
+}
+
+.alarm-dock > *,
+.app-shell .alarm-dock > * {
+  pointer-events: auto !important;
+}
+
+.alarm-dock-bar,
+.app-shell .alarm-dock-bar {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 6px 16px !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: var(--radius-pill) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  color: var(--apple-text-primary) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  transition: all 0.25s var(--ease-apple) !important;
+}
+
+.alarm-dock-bar:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16) !important;
+  background: #ffffff !important;
+}
+
+.alarm-dock-bar button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--apple-text-primary) !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+  padding: 4px 6px !important;
+  border-radius: var(--radius-pill) !important;
+  transition: background 0.18s ease !important;
+}
+
+.alarm-dock-bar button:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.alarm-dock-bar i {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: var(--apple-green) !important;
+  display: inline-block !important;
+  box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.25) !important;
+}
+
+.alarm-dock-bar i.failed {
+  background: var(--apple-red) !important;
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.25) !important;
+}
+
+.alarm-dock-bar b {
+  padding: 2px 7px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  background: var(--apple-red) !important;
+  color: #ffffff !important;
+  border-radius: var(--radius-pill) !important;
+  margin-left: 4px !important;
+}
+
+.alarm-inbox,
+.app-shell .alarm-inbox {
+  width: 320px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(35px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(35px) saturate(190%) !important;
+  border: 1px solid rgba(0, 0, 0, 0.09) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-sheet) !important;
+  overflow: hidden !important;
+  margin-bottom: 8px !important;
+  animation: appleModalEnter 0.3s var(--ease-apple) both !important;
+}
+
+.alarm-inbox header {
+  padding: 14px 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--apple-text-primary) !important;
+}
+
+.alarm-inbox-item {
+  width: 100% !important;
+  padding: 12px 18px !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  background: transparent !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: background 0.18s ease !important;
+}
+
+.alarm-inbox-item:hover {
+  background: rgba(0, 113, 227, 0.04) !important;
+}
+
+.alarm-all {
+  width: 100% !important;
+  padding: 12px 18px !important;
+  border: none !important;
+  background: rgba(0, 0, 0, 0.02) !important;
+  color: var(--apple-blue) !important;
+  font-weight: 550 !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+}
+
+/* ==========================================================================
+   Digital Twin Screen Apple Dark Immersion Integration
+   ========================================================================== */
+
+.app-shell.twin-mode {
+  background-color: #0b151c !important;
+}
+
+.app-shell.twin-mode .main-shell {
+  background: #0b151c !important;
+}
+
+.app-shell.twin-mode .topbar {
+  background: rgba(16, 26, 33, 0.88) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.app-shell.twin-mode .topbar .breadcrumb strong {
+  color: #ffffff !important;
+}
+
+.app-shell.twin-mode .topbar .breadcrumb span {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.app-shell.twin-mode .notification-button {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.app-shell.twin-mode .notification-button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.app-shell.twin-mode .profile-button {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.app-shell.twin-mode .profile-button span:nth-child(2) {
+  color: #ffffff !important;
+}
+
+.app-shell.twin-mode .profile-button small {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.app-shell.twin-mode .alarm-dock-bar {
+  background: rgba(20, 33, 55, 0.88) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.app-shell.twin-mode .alarm-dock-bar button {
+  color: #ffffff !important;
+}
+
+main.main-twin {
+  padding: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  min-height: calc(100vh - 64px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #0b151c !important;
+}
+
+.twin-screen {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: calc(100vh - 64px) !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  flex: 1 !important;
+  background: radial-gradient(ellipse at 50% 48%, #142a32 0%, #0b171c 100%) !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.twin-header {
+  min-height: 64px !important;
+  height: 64px !important;
+  padding: 0 28px !important;
+  background: rgba(14, 25, 32, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.twin-header-left {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.twin-live-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 10px !important;
+  border-radius: var(--radius-pill) !important;
+  background: rgba(52, 199, 89, 0.14) !important;
+  border: 1px solid rgba(52, 199, 89, 0.28) !important;
+  color: #34c759 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+}
+
+.twin-live-pill .pulse-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #34c759 !important;
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.4) !important;
+  animation: applePulse 2s infinite var(--ease-apple);
+}
+
+.twin-back-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: var(--radius-pill) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.twin-back-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.twin-title h1 {
+  font-size: 20px !important;
+  font-weight: 650 !important;
+  letter-spacing: 2px !important;
+  color: #ffffff !important;
+}
+
+.twin-title span {
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  margin-top: 3px !important;
+}
+
+.twin-body {
+  width: 100% !important;
+  padding: 20px 24px !important;
+  box-sizing: border-box !important;
+  gap: 20px !important;
+  display: grid !important;
+  grid-template-columns: 280px minmax(360px, 1fr) 300px !important;
+}
+
+.twin-panel {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(16, 28, 36, 0.72) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.twin-panel-heading {
+  padding: 14px 18px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.twin-scene-toolbar {
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+  background: rgba(16, 28, 36, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 8px 16px !important;
+}
+
+.twin-scene-area {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: none !important;
+  background: radial-gradient(ellipse at 50% 50%, rgba(30, 60, 75, 0.25) 0%, rgba(11, 23, 28, 0.95) 100%) !important;
+  min-height: 480px !important;
+  position: relative !important;
+}
+
+.twin-scene-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+.twin-foot {
+  padding: 12px 28px !important;
+  background: rgba(11, 23, 28, 0.8) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  font-size: 12px !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 900px) {
   .sidebar {
@@ -1515,6 +2160,15 @@ tbody tr:last-child td {
   }
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .setup-steps {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .twin-body {
+    grid-template-columns: 1fr !important;
   }
   .auth-screen {
     grid-template-columns: 1fr !important;

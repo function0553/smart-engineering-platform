@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, lazy, Suspense, type FormEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useState, useRef, type FormEvent, type ReactNode } from 'react';
 import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, Sparkles } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
 import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
@@ -10,7 +10,7 @@ import SiteDocumentLibrary from './SiteDocumentLibrary';
 import { engineeringNavigationBlocked, notifyEngineeringNavigationBlocked } from './engineering-navigation-guard';
 import AnalysisRegion, { FULL_FRAME } from './AnalysisRegion';
 import { AlarmDock, SecurityPage, SecurityForm, SecurityEvidence, securityPages, securityForms } from './Security';
-const TwinScreen = lazy(() => import('./Twin'));
+import TwinScreen from './Twin';
 
 const sections = [
   { title: '工作空间', items: [['dashboard', '运营工作台', LayoutDashboard], ['twin', '数字孪生大屏', Layers]] },
@@ -80,10 +80,9 @@ export default function App() {
   const writable = (type: string) => canWrite && (!modules[type]?.adminOnly || isAdmin);
   const currentPage = adminPages.includes(page) && !isAdmin ? 'dashboard' : page;
   return <div className={`app-shell ${currentPage === 'twin' ? 'twin-mode' : ''}`}>
-    {currentPage === 'twin' ? <Suspense fallback={<div className="loading-screen"><span className="spinner" /><p>正在加载数字孪生大屏</p></div>}><TwinScreen ws={ws} exit={() => navigate('dashboard')} select={setSelected} connectionError={error} lastSynced={lastSynced} /></Suspense> : <>
     {sidebar && <button className="sidebar-shade" aria-label="收起导航" onClick={() => setSidebar(false)} />}
     <aside ref={sidebarRef} className={`sidebar ${sidebar ? 'is-open' : ''}`}>
-      <div className="sidebar-brand"><Brand light /><button className="mobile-close icon-button" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={20} /></button></div>
+      <div className="sidebar-brand"><Brand /><button className="mobile-close icon-button" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={20} /></button></div>
       <div className="workspace-label"><span className="workspace-letter">{ws.organization.slice(0, 1)}</span><span>{ws.organization}<small>办公 · 安防 · 运维</small></span><Layers size={15} /></div>
       <nav aria-label="主导航">{sections.map((section, index) => {
         const expanded = expandedSections.includes(section.title);
@@ -95,16 +94,39 @@ export default function App() {
       <div className="sidebar-bottom"><span className={`connection-dot ${error ? 'disconnected' : ''}`} /><span>{error ? '工作空间连接异常' : '工作空间已连接'}<small>{error ? '请重试获取最新状态' : '业务数据自动保存'}</small></span><Shield size={17} /></div>
     </aside>
     <div ref={mainShellRef} className="main-shell">
-      <header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="展开导航" onClick={() => setSidebar(true)}><Menu size={21} /></button><span>管理平台</span><span className="slash">/</span><strong>{pageTitle(currentPage)}</strong></div><div className="topbar-actions">{!['engineering','daily-report','photo-archive'].includes(currentPage) && <div className="global-search"><Search size={16} /><input aria-label="搜索当前业务" placeholder={currentPage === 'dashboard' ? '搜索业务记录…' : '搜索当前业务…'} value={search} onChange={e => setSearch(e.target.value)} /><kbd>检索</kbd></div>}<button className="icon-button notification-button" onClick={() => navigate('alerts')} aria-label={`告警中心，${openAlerts}条待处理`}><Bell size={19} />{openAlerts > 0 && <i />}</button><span className="topbar-divider" /><button className="profile-button" onClick={() => setProfile(true)}><span className="avatar">{ws.user.name.slice(-2)}</span><span>{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button></div></header>
-      <main>
+      <header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="展开导航" onClick={() => setSidebar(true)}><Menu size={21} /></button><span>管理平台</span><span className="slash">/</span><strong>{pageTitle(currentPage)}</strong></div><div className="topbar-actions">{!['engineering','daily-report','photo-archive','twin'].includes(currentPage) && <div className="global-search"><Search size={16} /><input aria-label="搜索当前业务" placeholder={currentPage === 'dashboard' ? '搜索业务记录…' : '搜索当前业务…'} value={search} onChange={e => setSearch(e.target.value)} /><kbd>检索</kbd></div>}<button className="icon-button notification-button" onClick={() => navigate('alerts')} aria-label={`告警中心，${openAlerts}条待处理`}><Bell size={19} />{openAlerts > 0 && <i />}</button><span className="topbar-divider" /><button className="profile-button" onClick={() => setProfile(true)}><span className="avatar">{ws.user.name.slice(-2)}</span><span>{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button></div></header>
+      <main className={currentPage === 'twin' ? 'main-twin' : ''}>
         {error && <div className="error-banner" role="alert">{error}<button className="text-button" onClick={() => void refresh()}>重试</button></div>}
         <div key={currentPage} className="apple-page-enter">
-          {currentPage === 'engineering' ? <Engineering key={ws.user.id} user={ws.user}/> : currentPage === 'site-library' ? <SiteDocumentLibrary admin onOpenRecord={(projectId,recordId)=>{navigate('engineering?view=projects&module=documents&project='+encodeURIComponent(projectId)+'&item='+encodeURIComponent(recordId));}}/> : currentPage === 'photo-archive' ? <DailyReport kind="photo" key={ws.user.id} user={ws.user} /> : currentPage === 'daily-report' ? <DailyReport key={ws.user.id} user={ws.user} /> : currentPage === 'dashboard' ? <Dashboard ws={ws} navigate={navigate} search={search} select={setSelected} create={create} canWrite={canWrite} /> : securityPages.includes(currentPage) ? <SecurityPage ws={ws} page={currentPage} search={search} navigate={navigate} create={create} select={setSelected} refresh={refresh} /> : modules[currentPage] ? <ResourcePage ws={ws} type={currentPage} search={search} deviceFilter={deviceFilter} navigate={navigate} create={() => create(currentPage, deviceFilter ? { deviceId: deviceFilter } : undefined)} select={setSelected} canWrite={writable(currentPage)} refresh={refresh} /> : currentPage === 'integrations' ? <IntegrationPage ws={ws} saved={saved} /> : currentPage === 'users' ? <UserPage user={ws.user} saved={saved} /> : currentPage === 'audit' ? <AuditPage search={search} /> : <VideoAnalysis ws={ws} navigate={navigate} create={create} changed={refresh} />}
+          {currentPage === 'twin' ? (
+            <TwinScreen ws={ws} exit={() => navigate('dashboard')} select={setSelected} connectionError={error} lastSynced={lastSynced} />
+          ) : currentPage === 'engineering' ? (
+            <Engineering key={ws.user.id} user={ws.user}/>
+          ) : currentPage === 'site-library' ? (
+            <SiteDocumentLibrary admin onOpenRecord={(projectId,recordId)=>{navigate('engineering?view=projects&module=documents&project='+encodeURIComponent(projectId)+'&item='+encodeURIComponent(recordId));}}/>
+          ) : currentPage === 'photo-archive' ? (
+            <DailyReport kind="photo" key={ws.user.id} user={ws.user} />
+          ) : currentPage === 'daily-report' ? (
+            <DailyReport key={ws.user.id} user={ws.user} />
+          ) : currentPage === 'dashboard' ? (
+            <Dashboard ws={ws} navigate={navigate} search={search} select={setSelected} create={create} canWrite={canWrite} />
+          ) : securityPages.includes(currentPage) ? (
+            <SecurityPage ws={ws} page={currentPage} search={search} navigate={navigate} create={create} select={setSelected} refresh={refresh} />
+          ) : modules[currentPage] ? (
+            <ResourcePage ws={ws} type={currentPage} search={search} deviceFilter={deviceFilter} navigate={navigate} create={() => create(currentPage, deviceFilter ? { deviceId: deviceFilter } : undefined)} select={setSelected} canWrite={writable(currentPage)} refresh={refresh} />
+          ) : currentPage === 'integrations' ? (
+            <IntegrationPage ws={ws} saved={saved} />
+          ) : currentPage === 'users' ? (
+            <UserPage user={ws.user} saved={saved} />
+          ) : currentPage === 'audit' ? (
+            <AuditPage search={search} />
+          ) : (
+            <VideoAnalysis ws={ws} navigate={navigate} create={create} changed={refresh} />
+          )}
         </div>
-        <footer className="page-footer"><span>智慧工程 · 统一工作空间</span><span>数据按当前单位管理 <span className="footer-dot">·</span> v{ws.version}</span></footer>
+        {currentPage !== 'twin' && <footer className="page-footer"><span>智慧工程 · 统一工作空间</span><span>数据按当前单位管理 <span className="footer-dot">·</span> v{ws.version}</span></footer>}
       </main>
     </div>
-    </>}
     {form && (securityForms.includes(form.type) ? <SecurityForm ws={ws} type={form.type} row={form.row} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} /> : <RecordForm ws={ws} type={form.type} row={form.row} initial={form.initial} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} />)}
     {selected && !form && <RecordDetail key={selected.id} ws={ws} row={selected} canWrite={writable(selected.type)} onClose={() => setSelected(null)} saved={saved} onSelect={setSelected} edit={() => setForm({ type: selected.type, row: selected })} createOrder={() => { setForm({ type: 'workorders', initial: { name: `处理：${selected.data.name}`, alertId: selected.id, deviceId: selected.data.deviceId, priority: selected.data.priority, description: selected.data.description, assigneeId: selected.data.assigneeId } }); setSelected(null); }} />}
     {profile && <Profile user={ws.user} onClose={() => setProfile(false)} saved={saved} logout={async () => { if (pageRef.current === 'engineering' && engineeringNavigationBlocked(false)) { setProfile(false); notifyEngineeringNavigationBlocked(); return; } await api('/logout', 'POST', {}); setProfile(false); setWs(null); }} />}
@@ -334,7 +356,12 @@ function Dashboard({ ws, navigate, search, select, create, canWrite }: { ws: Wor
   const duties = [{ label: '告警待处置', detail: '确认事件并跟进处理', count: pending.length, page: 'alerts', icon: Bell }, { label: '工单待完成', detail: '跟进现场维护与修复', count: orders.length, page: 'workorders', icon: Wrench }, { label: '设备待确认在线', detail: '核对连接和状态上报', count: r.devices.length - connected.length, page: 'devices', icon: Cctv }, { label: '访客待审批', detail: '确认来访预约信息', count: guests.length, page: 'visits', icon: UserRoundCheck }];
   return <><PageHeading eyebrow="" title="运营工作台" description={new Date().toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}><button className="button secondary" onClick={() => navigate('twin')}><Layers size={16} />数字孪生大屏</button><button className="button primary" onClick={() => navigate('video')}><Video size={17} />进入视频监控</button></PageHeading>
     {search ? <Panel title={`搜索结果 · ${filtered.length}`} meta={`关键词：${search}`}><div className="search-results">{filtered.length ? filtered.map(row => <button key={row.id} onClick={() => select(row)}><span className="result-icon"><Search size={18} /></span><span><strong>{row.data.name || modules[row.type]?.singular || '业务记录'}</strong><small>{modules[row.type]?.name || '业务记录'} · {prettyTime(row.updated_at)}</small></span><ArrowUpRight size={18} /></button>) : <Empty title="没有找到记录" description="尝试姓名、设备编号或业务名称。" />}</div></Panel> : <>
-      <div className="metrics-grid">{[{ label: '待处置告警', value: pending.length, text: '待确认与处理中', page: 'alerts', icon: Bell }, { label: '待办工单', value: orders.length, text: '维护任务与修复跟进', page: 'workorders', icon: Wrench }, { label: '在线设备', value: `${connected.length} / ${r.devices.length}`, text: '已上报在线 / 登记总数', page: 'devices', icon: Cctv }, { label: '今日会议', value: meetings.length, text: '已确认的会议安排', page: 'bookings', icon: CalendarDays }].map((item, index) => <button className="metric-card" key={item.label} style={{ animationDelay: `${index * 0.06}s` }} onClick={() => navigate(item.page)}><span className="metric-label">{item.label}<item.icon size={18} /></span><strong>{item.value}</strong><span className="metric-foot">{item.text}<ArrowUpRight size={14} /></span></button>)}</div>
+      <div className="metrics-grid">{[
+        { label: '待处置告警', value: pending.length, text: '待确认与处理中', page: 'alerts', icon: Bell, color: 'color-orange' },
+        { label: '待办工单', value: orders.length, text: '维护任务与修复跟进', page: 'workorders', icon: Wrench, color: 'color-indigo' },
+        { label: '在线设备', value: `${connected.length} / ${r.devices.length}`, text: '已上报在线 / 登记总数', page: 'devices', icon: Cctv, color: 'color-green' },
+        { label: '今日会议', value: meetings.length, text: '已确认的会议安排', page: 'bookings', icon: CalendarDays, color: 'color-blue' }
+      ].map((item, index) => <button className={`metric-card ${item.color}`} key={item.label} style={{ animationDelay: `${index * 0.06}s` }} onClick={() => navigate(item.page)}><span className="metric-label">{item.label}<item.icon size={18} /></span><strong>{item.value}</strong><span className="metric-foot">{item.text}<ArrowUpRight size={14} /></span></button>)}</div>
       {canWrite && steps.some(step => !step.done) && <Panel title="接入准备" meta="完成配置，让现场数据进入工作台" className="onboarding-panel" action={<span className="completion-count">{steps.filter(step => step.done).length}<small> / 4</small></span>}><Steps steps={steps} navigate={navigate} /></Panel>}
       <div className="dashboard-grid"><div className="dashboard-primary">
         <Panel title="近期告警" meta="事件发生后可进入详情核验与处置" action={<LinkButton onClick={() => navigate('alerts')}>全部告警</LinkButton>}>{latest.length ? <div className="dashboard-alert-list">{latest.map((alert, i) => <button key={alert.id} style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: `${i * 0.05}s` }} onClick={() => select(alert)}><span><strong>{alert.data.name}</strong><small>{cellValue(ws, 'alerts', alert, 'deviceId')} · {prettyTime(alert.data.occurredAt, true)}</small></span><Badge state={alert.data.priority} /><Badge state={alert.state} /><ArrowUpRight size={15} /></button>)}</div> : <div className="dashboard-alarm-empty"><span className="empty-icon"><ShieldCheck size={29} strokeWidth={1.4} /></span><h3>暂无告警记录</h3><p>接入摄像头并启用规则后，识别事件将在这里汇总。</p><button className="text-button" onClick={() => navigate('video')}>前往视频监控<ArrowRight size={15} /></button></div>}</Panel>
