@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { X, ArrowUpRight, Inbox, Check, ChevronRight } from 'lucide-react';
 import { modules, stateNames, prettyTime, type Row, type Workspace } from './model';
 import { fenceNames } from './security-model';
@@ -30,7 +30,7 @@ export function Badge({ state, children }: { state: string; children?: ReactNode
 
 export function Empty({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
   return (
-    <div className="empty-state" style={{ animation: 'appleCardEnter 0.35s var(--ease-apple) both' }}>
+    <div className="empty-state">
       <span className="empty-icon">
         <Inbox size={26} strokeWidth={1.5} />
       </span>
@@ -43,15 +43,25 @@ export function Empty({ title, description, action }: { title: string; descripti
 
 export function Modal({ title, subtitle, children, onClose, wide = false }: { title: string; subtitle?: string; children: ReactNode; onClose: () => void; wide?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  const requestClose = () => {
+    if (closingRef.current) return;
+    if (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) { onClose(); return; }
+    closingRef.current = true; setClosing(true);
+    setTimeout(() => { closingRef.current = false; setClosing(false); close.current(); }, 190);
+  };
   const close = useRef(onClose);
   close.current = onClose;
+  const requestCloseRef = useRef(requestClose);
+  requestCloseRef.current = requestClose;
 
   useEffect(() => {
     const before = document.activeElement as HTMLElement;
     const focusable = () => Array.from(root.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href]') || []);
     focusable()[0]?.focus();
     const key = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close.current();
+      if (e.key === 'Escape') requestCloseRef.current();
       if (e.key === 'Tab') {
         const items = focusable();
         if (e.shiftKey && document.activeElement === items[0]) {
@@ -74,14 +84,14 @@ export function Modal({ title, subtitle, children, onClose, wide = false }: { ti
   }, []);
 
   return (
-    <div className="modal-overlay" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className={`modal-overlay ${closing ? 'is-closing' : ''}`} onMouseDown={e => { if (e.target === e.currentTarget) requestClose(); }}>
       <div className={`modal ${wide ? 'wide' : ''}`} ref={root} role="dialog" aria-modal="true" aria-label={title}>
         <div className="modal-heading">
           <div>
             <h2>{title}</h2>
             {subtitle && <p>{subtitle}</p>}
           </div>
-          <button className="icon-button modal-close-btn" aria-label="关闭弹窗" onClick={onClose}>
+          <button className="icon-button modal-close-btn" aria-label="关闭弹窗" onClick={requestClose}>
             <X size={18} />
           </button>
         </div>
@@ -93,7 +103,7 @@ export function Modal({ title, subtitle, children, onClose, wide = false }: { ti
 
 export function Panel({ title, meta, action, children, className = '' }: { title: string; meta?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
-    <section className={`panel ${className}`} style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both' }}>
+    <section className={`panel ${className}`}>
       <div className="panel-heading">
         <div>
           <h2>{title}</h2>

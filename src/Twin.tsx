@@ -12,12 +12,12 @@ type Model = { id: string; name: string; size: number; sha256: string };
 type Anchor = { id: string; model_id: string; target_id: string; position: [number, number, number]; version: number };
 type SceneMarker = Anchor & { target: Row; alerts: number };
 
-export default function TwinScreen({ ws, exit, select, connectionError, lastSynced }: { ws: Workspace; exit: () => void; select: (row: Row) => void; connectionError: string; lastSynced: number }) {
+export default function TwinScreen({ ws, exit, select, connectionError, lastSynced, immersive = false, setImmersive }: { ws: Workspace; exit: () => void; select: (row: Row) => void; connectionError: string; lastSynced: number; immersive?: boolean; setImmersive?: (value: boolean) => void }) {
   const root = useRef<HTMLDivElement>(null);
   const [models, setModels] = useState<Model[]>([]); const [modelId, setModelId] = useState(''); const [anchors, setAnchors] = useState<Anchor[]>([]);
   const [selectedId, setSelectedId] = useState(''); const [bindingId, setBindingId] = useState(''); const [position, setPosition] = useState<[number, number, number] | null>(null);
   const [uploading, setUploading] = useState(false); const [uploadOpen, setUploadOpen] = useState(false); const [error, setError] = useState(''); const [assetSearch, setAssetSearch] = useState('');
-  const [clock, setClock] = useState(new Date()); const [full, setFull] = useState(false); const [saving, setSaving] = useState(false); const [unlink, setUnlink] = useState(false);
+  const [clock, setClock] = useState(new Date()); const full = immersive; const [saving, setSaving] = useState(false); const [unlink, setUnlink] = useState(false);
   const admin = ws.user.role === 'admin';
   const assets = [...ws.records.spaces, ...ws.records.devices, ...(ws.records.fences || [])]; const selected = assets.find(r => r.id === selectedId);
   const pending = ws.records.alerts.filter(r => ['new', 'processing'].includes(r.state)); const selectedAnchor = anchors.find(a => a.target_id === selectedId);
@@ -33,7 +33,8 @@ export default function TwinScreen({ ws, exit, select, connectionError, lastSync
   const getAnchors = useCallback(async () => { if (!modelId) { setAnchors([]); return; } const rows = await api<Anchor[]>(`/models/${modelId}/anchors`); setAnchors(rows); }, [modelId]);
   useEffect(() => { void getModels().catch(e => setError(e.message)); }, [getModels]);
   useEffect(() => { let cancelled = false; setAnchors([]); setBindingId(''); setPosition(null); setUnlink(false); if (modelId) api<Anchor[]>(`/models/${modelId}/anchors`).then(rows => { if (!cancelled) setAnchors(rows); }).catch(e => { if (!cancelled) setError(e.message); }); return () => { cancelled = true; }; }, [modelId]);
-  useEffect(() => { const id = setInterval(() => setClock(new Date()), 1000); const change = () => setFull(!!document.fullscreenElement); document.addEventListener('fullscreenchange', change); return () => { clearInterval(id); document.removeEventListener('fullscreenchange', change); }; }, []);
+  useEffect(() => { const id = setInterval(() => setClock(new Date()), 1000); return () => clearInterval(id); }, []);
+  const toggleFull = () => setImmersive?.(!full);
   const upload = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault(); const fd = new FormData(event.currentTarget); const file = fd.get('file') as File; setUploading(true); setError('');
     try { if (!file?.size || !file.name.toLowerCase().endsWith('.glb')) throw new Error('请选择 GLB 模型文件'); if (file.size > 100 * 1024 * 1024) throw new Error('当前单文件上限为 100 MB，请先优化模型'); const result = await fetch(`/api/models?name=${encodeURIComponent(String(fd.get('name')))}`, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'model/gltf-binary', 'X-Workspace-Request': '1' }, body: file }); const body = await result.json(); if (!result.ok) throw new Error(body.error); await getModels(); setModelId(body.id); setUploadOpen(false); } catch (e: any) { setError(e.message); } finally { setUploading(false); }
@@ -45,7 +46,7 @@ export default function TwinScreen({ ws, exit, select, connectionError, lastSync
     <header className="twin-header">
       <div className="twin-header-left">
         {full ? (
-          <button className="twin-back-btn" onClick={() => { if (document.fullscreenElement) document.exitFullscreen(); else exit(); }}>
+          <button className="twin-back-btn" onClick={toggleFull}>
             <ArrowLeft size={15} />退出全屏
           </button>
         ) : (
@@ -53,25 +54,26 @@ export default function TwinScreen({ ws, exit, select, connectionError, lastSync
             <i className="pulse-dot" />孪生空间在线
           </span>
         )}
-        <span>{ws.organization}</span>
+        <span className="twin-org">{ws.organization}</span>
       </div>
       <div className="twin-title">
         <h1>数字孪生 · 运营指挥中心</h1>
         <span>DIGITAL TWIN OPERATIONS CENTER</span>
       </div>
       <div className="twin-header-right">
-        <div>
+        <div className="twin-clock">
           <strong>{clock.toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}</strong>
           <span>{clock.toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai', month: '2-digit', day: '2-digit', weekday: 'long' })}</span>
         </div>
-        <button aria-label={full ? '退出全屏' : '进入全屏'} title={full ? '退出全屏' : '进入全屏'} onClick={() => { (document.fullscreenElement ? document.exitFullscreen() : root.current?.closest('.app-shell')?.requestFullscreen())?.catch(e => setError(e.message)); }}>
-          {full ? <Minimize size={18} /> : <Maximize size={18} />}
+        <button className={`twin-full-btn ${full ? 'is-on' : ''}`} aria-pressed={full} aria-label={full ? '退出全屏' : '进入全屏'} title={full ? '退出全屏（Esc）' : '页面全屏显示'} onClick={toggleFull}>
+          {full ? <Minimize size={16} /> : <Maximize size={16} />}<span>{full ? '退出全屏' : '全屏'}</span>
         </button>
       </div>
     </header>
+    {full && <div className="twin-esc-hint" aria-hidden="true">按 <kbd>Esc</kbd> 退出全屏</div>}
     <div className="twin-body"><aside className="twin-left">
       <TwinPanel title="运行总览" icon={<Activity size={16} />}><div className="twin-kpis"><div><strong>{ws.records.spaces.length}</strong><span>登记场所</span></div><div><strong>{ws.records.devices.length}</strong><span>登记设备</span></div><div className="warning"><strong>{pending.length}</strong><span>待处理告警</span></div><div><strong>{jobs.length}</strong><span>进行中工单</span></div></div></TwinPanel>
-      <TwinPanel title="设备接入情况" icon={<Cable size={16} />}><div className="twin-device-status"><div className="twin-ring" style={{ background: `conic-gradient(#6dbea4 ${ws.records.devices.length ? online / ws.records.devices.length * 360 : 0}deg,#203b3c 0deg)` }}><span><strong>{online}</strong><small>已上报在线</small></span></div><div>{[['online', '已上报在线'], ['offline', '已上报离线'], ['stale', '心跳过期'], ['unverified', '待接入']].map(([state, label]) => <span key={state}><i className={state} />{label}<b>{ws.records.devices.filter(d => d.state === state).length}</b></span>)}</div></div></TwinPanel>
+      <TwinPanel title="设备接入情况" icon={<Cable size={16} />}><div className="twin-device-status"><div className="twin-ring" style={{ background: `conic-gradient(#30d158 ${ws.records.devices.length ? online / ws.records.devices.length * 360 : 0}deg,rgba(255,255,255,.08) 0deg)` }}><span><strong>{online}</strong><small>已上报在线</small></span></div><div>{[['online', '已上报在线'], ['offline', '已上报离线'], ['stale', '心跳过期'], ['unverified', '待接入']].map(([state, label]) => <span key={state}><i className={state} />{label}<b>{ws.records.devices.filter(d => d.state === state).length}</b></span>)}</div></div></TwinPanel>
       <TwinPanel title="场景业务对象" icon={<Layers size={16} />} className="twin-assets-panel"><input aria-label="搜索场景对象" placeholder="查找场所或设备" value={assetSearch} onChange={e => setAssetSearch(e.target.value)} /><div className="twin-asset-list">{filteredAssets.length ? filteredAssets.map(asset => <button className={selectedId === asset.id ? 'selected' : ''} key={asset.id} onClick={() => pickAsset(asset.id)}>{asset.type === 'spaces' ? <Building2 size={15} /> : <Cctv size={15} />}<span>{asset.data.name}<small>{asset.data.code || '围栏布控'}</small></span>{anchors.some(a => a.target_id === asset.id) ? <MapPin size={13} /> : <small>未定位</small>}</button>) : <div className="twin-compact-empty">先在后台建立场所与设备，<br />再与三维模型绑定。</div>}</div></TwinPanel>
     </aside>
     <section className="twin-center"><div className="twin-scene-toolbar"><div><Box size={17} /><select aria-label="选择三维模型" value={modelId} onChange={e => setModelId(e.target.value)} disabled={!models.length}>{!models.length && <option value="">场景待配置</option>}{models.map(m => <option value={m.id} key={m.id}>{m.name}</option>)}</select></div><span>{anchors.length} 个业务点位</span>{admin && <button onClick={() => { setUploadOpen(true); setError(''); }}><Upload size={14} />导入模型</button>}</div>

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState, useRef, type FormEvent, type ReactNode } from 'react';
-import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, Sparkles } from 'lucide-react';
+import { useCallback, useEffect, useLayoutEffect, useState, useRef, type FormEvent, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react';
+import { flushSync } from 'react-dom';
+import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, Sparkles, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, UserRound, LockKeyhole, Building, LoaderCircle } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
 import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
 import VideoAnalysis from './VideoAnalysis';
@@ -28,6 +29,18 @@ const readRoute = (hash: string) => {
   const page = validPage(name);
   return { page, device: ['rules', 'alerts', 'workorders'].includes(page) ? new URLSearchParams(query).get('device') || '' : '' };
 };
+
+const reduceMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+/** Runs a state update inside a View Transition when the browser supports it, so pages morph instead of jumping. */
+if (typeof document !== 'undefined' && 'startViewTransition' in document) document.documentElement.classList.add('vt-capable');
+
+export function withViewTransition(update: () => void, kind = 'page') {
+  const doc = document as Document & { startViewTransition?: (callback: () => void) => { finished: Promise<void> } };
+  if (!doc.startViewTransition || reduceMotion() || document.hidden) { update(); return; }
+  document.documentElement.dataset.vt = kind;
+  try { doc.startViewTransition(() => flushSync(update)).finished.finally(() => { delete document.documentElement.dataset.vt; }); }
+  catch { delete document.documentElement.dataset.vt; update(); }
+}
 
 export default function App() {
   const [status, setStatus] = useState<{ name: string; setupRequired: boolean } | null>(null);
@@ -65,41 +78,70 @@ export default function App() {
   const load = useCallback(async () => { const next = await api<Workspace>('/bootstrap'); setWs(next); setLastSynced(Date.now()); setSelected(current => current ? Object.values(next.records).flat().find(r => r.id === current.id) || null : null); }, []);
   const refresh = useCallback(async () => { try { await load(); setError(''); } catch (e: any) { if (e.status === 401) setWs(null); else setError(e.message); } }, [load]);
   useEffect(() => { api('/status').then(setStatus).then(() => load()).catch((e: any) => { if (e.status !== 401) setError(e.message); }).finally(() => setLoading(false)); }, [load]);
-  useEffect(() => { const handle = (event: HashChangeEvent) => { const route = readRoute(location.hash); if (pageRef.current === 'engineering' && route.page !== 'engineering' && engineeringNavigationBlocked()) { const previous = new URL(event.oldURL).hash; history.replaceState(null, '', readRoute(previous).page === 'engineering' ? previous : '#engineering'); setSidebar(false); notifyEngineeringNavigationBlocked(); return; } setPage(route.page); setDeviceFilter(route.device); setSearch(''); setSidebar(false); }; window.addEventListener('hashchange', handle); return () => window.removeEventListener('hashchange', handle); }, []);
+  useEffect(() => { const handle = (event: HashChangeEvent) => { const route = readRoute(location.hash); if (pageRef.current === 'engineering' && route.page !== 'engineering' && engineeringNavigationBlocked()) { const previous = new URL(event.oldURL).hash; history.replaceState(null, '', readRoute(previous).page === 'engineering' ? previous : '#engineering'); setSidebar(false); notifyEngineeringNavigationBlocked(); return; } const apply = () => { setPage(route.page); setDeviceFilter(route.device); setSearch(''); setSidebar(false); }; if (route.page !== pageRef.current) withViewTransition(apply); else apply(); }; window.addEventListener('hashchange', handle); return () => window.removeEventListener('hashchange', handle); }, []);
   useEffect(() => { window.scrollTo(0, 0); mainShellRef.current?.scrollTo(0, 0); }, [page]);
   useEffect(() => { if (!ws) return; const timer = setInterval(() => { if (!document.hidden) void refresh(); }, 30000); return () => clearInterval(timer); }, [!!ws, refresh]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(''), 5000); return () => clearTimeout(timer); }, [toast]);
-  const navigate = (next: string) => { const route = readRoute(next); if (pageRef.current === 'engineering' && route.page !== 'engineering' && engineeringNavigationBlocked()) { setSidebar(false); notifyEngineeringNavigationBlocked(); return; } location.hash = next; setPage(route.page); setDeviceFilter(route.device); setSearch(''); setSidebar(false); };
+  const navigate = (next: string) => { const route = readRoute(next); if (pageRef.current === 'engineering' && route.page !== 'engineering' && engineeringNavigationBlocked()) { setSidebar(false); notifyEngineeringNavigationBlocked(); return; } const apply = () => { setPage(route.page); setDeviceFilter(route.device); setSearch(''); setSidebar(false); }; const changed = route.page !== pageRef.current; pageRef.current = route.page; location.hash = next; if (changed) withViewTransition(apply); else apply(); };
   const saved = async (message = '已保存') => { await load(); setToast(message); };
   const create = (type: string, initial?: Record<string, any>) => setForm({ type, initial });
-  if (loading) return <div className="loading-screen"><Brand /><span className="spinner" /><p>正在连接工作空间</p></div>;
+  const [collapsed, setCollapsed] = useState(() => { try { return localStorage.getItem('os-sidebar-collapsed') === '1'; } catch { return false; } });
+  const toggleCollapsed = () => setCollapsed(value => { const next = !value; try { localStorage.setItem('os-sidebar-collapsed', next ? '1' : '0'); } catch { /* storage unavailable */ } return next; });
+  const [immersive, setImmersive] = useState(false);
+  const setImmersiveMode = useCallback((value: boolean) => withViewTransition(() => setImmersive(value), 'immersive'), []);
+  useEffect(() => { if (page !== 'twin') setImmersive(false); }, [page]);
+  useEffect(() => { if (!immersive) return; const key = (event: KeyboardEvent) => { if (event.key === 'Escape' && !document.querySelector('.modal-overlay')) setImmersiveMode(false); }; document.addEventListener('keydown', key); return () => document.removeEventListener('keydown', key); }, [immersive, setImmersiveMode]);
+  const searchRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { const key = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k' && searchRef.current) { event.preventDefault(); searchRef.current.focus(); searchRef.current.select(); } }; document.addEventListener('keydown', key); return () => document.removeEventListener('keydown', key); }, []);
+  const navRef = useRef<HTMLElement>(null);
+  const [indicator, setIndicator] = useState({ top: 0, height: 0, visible: false });
+  const measureIndicator = useCallback(() => { const nav = navRef.current; const active = nav?.querySelector<HTMLElement>('.os-nav-item[aria-current=page]'); if (!nav || !active || active.closest('[inert]')) { setIndicator(current => current.visible ? { ...current, visible: false } : current); return; } const top = active.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop; const height = active.offsetHeight; setIndicator(current => current.top === top && current.height === height && current.visible ? current : { top, height, visible: true }); }, []);
+  useLayoutEffect(() => { measureIndicator(); const timer = setTimeout(measureIndicator, 380); return () => clearTimeout(timer); });
+  useEffect(() => { const nav = navRef.current; if (!nav) return; const observer = new ResizeObserver(() => measureIndicator()); nav.querySelectorAll('.os-nav-items > div').forEach(element => observer.observe(element)); observer.observe(nav); return () => observer.disconnect(); }, [!!ws, collapsed, measureIndicator]);
+  useEffect(() => { const move = (event: PointerEvent) => { const target = (event.target as Element | null)?.closest?.<HTMLElement>('.metric-card, .quick-links > button, .os-spot, .setup-steps > button, .room-card'); if (!target) return; const rect = target.getBoundingClientRect(); target.style.setProperty('--mx', `${event.clientX - rect.left}px`); target.style.setProperty('--my', `${event.clientY - rect.top}px`); }; document.addEventListener('pointermove', move, { passive: true }); return () => document.removeEventListener('pointermove', move); }, []);
+  if (loading) return <div className="os-loading"><div className="os-loading-mark"><Brand /></div><span className="os-loading-bar"><i /></span><p>正在连接工作空间</p></div>;
   if (!ws) return <Auth setup={!!status?.setupRequired} name={status?.name || '智慧工程'} error={error} done={async () => { await load(); setStatus(s => s ? { ...s, setupRequired: false } : s); }} />;
   const openAlerts = ws.records.alerts.filter(r => ['new', 'processing'].includes(r.state)).length;
   const isAdmin = ws.user.role === 'admin';
   const canWrite = ws.user.role !== 'viewer';
   const writable = (type: string) => canWrite && (!modules[type]?.adminOnly || isAdmin);
   const currentPage = adminPages.includes(page) && !isAdmin ? 'dashboard' : page;
-  return <div className={`app-shell ${currentPage === 'twin' ? 'twin-mode' : ''}`}>
-    {sidebar && <button className="sidebar-shade" aria-label="收起导航" onClick={() => setSidebar(false)} />}
-    <aside ref={sidebarRef} className={`sidebar ${sidebar ? 'is-open' : ''}`}>
-      <div className="sidebar-brand"><Brand /><button className="mobile-close icon-button" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={20} /></button></div>
-      <div className="workspace-label"><span className="workspace-letter">{ws.organization.slice(0, 1)}</span><span>{ws.organization}<small>办公 · 安防 · 运维</small></span><Layers size={15} /></div>
-      <nav aria-label="主导航">{sections.map((section, index) => {
-        const expanded = expandedSections.includes(section.title);
-        return <div className="nav-section" key={section.title}>
-          <button className="nav-group-toggle" aria-expanded={expanded} aria-controls={`nav-group-${index}`} onClick={() => setExpandedSections(current => expanded ? current.filter(title => title !== section.title) : [...current, section.title])}>{section.title}<ChevronDown size={13} className={expanded ? 'expanded' : ''} /></button>
-          <div id={`nav-group-${index}`} hidden={!expanded}>{section.items.filter(([id]) => !adminPages.includes(id as string) || isAdmin).map(([id, label, Icon]) => { const NavigationIcon = Icon as typeof LayoutDashboard; return <button key={id as string} onClick={() => navigate(id as string)} aria-current={currentPage === id ? 'page' : undefined} className={`nav-item ${currentPage === id ? 'active' : ''}`}><NavigationIcon size={18} strokeWidth={1.7} /><span>{label as string}</span>{id === 'alerts' && openAlerts > 0 && <b>{openAlerts}</b>}</button>; })}</div>
-        </div>;
-      })}</nav>
-      <div className="sidebar-bottom"><span className={`connection-dot ${error ? 'disconnected' : ''}`} /><span>{error ? '工作空间连接异常' : '工作空间已连接'}<small>{error ? '请重试获取最新状态' : '业务数据自动保存'}</small></span><Shield size={17} /></div>
+  return <div className={`os-shell ${collapsed ? 'is-collapsed' : ''} ${currentPage === 'twin' ? 'is-twin' : ''} ${immersive && currentPage === 'twin' ? 'is-immersive' : ''}`}>
+    <div className="os-ambient" aria-hidden="true"><i /><i /><i /></div>
+    {sidebar && <button className="os-shade" aria-label="收起导航" onClick={() => setSidebar(false)} />}
+    <aside ref={sidebarRef} className={`os-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="侧边导航">
+      <div className="os-sidebar-head">
+        <Brand />
+        <button className="os-icon-btn os-collapse" aria-label={collapsed ? '展开侧边栏' : '收起侧边栏'} title={collapsed ? '展开侧边栏' : '收起侧边栏'} onClick={() => toggleCollapsed()}>{collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}</button>
+        <button className="os-icon-btn os-mobile-close" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={19} /></button>
+      </div>
+      <button className="os-org" onClick={() => setProfile(true)} title={ws.organization}><span className="os-org-letter">{ws.organization.slice(0, 1)}</span><span className="os-org-text">{ws.organization}<small>办公 · 安防 · 运维</small></span><ChevronDown size={14} /></button>
+      <nav ref={navRef} className="os-nav" aria-label="主导航">
+        <span className="os-nav-indicator" aria-hidden="true" style={{ transform: `translateY(${indicator.top}px)`, height: indicator.height, opacity: indicator.visible ? 1 : 0 }} />
+        {sections.map((section, index) => {
+          const expanded = collapsed || expandedSections.includes(section.title);
+          return <div className={`os-nav-group ${expanded ? 'is-open' : ''}`} key={section.title}>
+            <button className="os-nav-heading" aria-expanded={expanded} aria-controls={`nav-group-${index}`} onClick={() => setExpandedSections(current => expanded ? current.filter(title => title !== section.title) : [...current, section.title])}><span>{section.title}</span><ChevronDown size={13} /></button>
+            <div className="os-nav-items" id={`nav-group-${index}`} inert={!expanded}><div>{section.items.filter(([id]) => !adminPages.includes(id as string) || isAdmin).map(([id, label, Icon]) => { const NavigationIcon = Icon as typeof LayoutDashboard; return <button key={id as string} title={collapsed ? label as string : undefined} onClick={() => navigate(id as string)} aria-current={currentPage === id ? 'page' : undefined} className={`os-nav-item ${currentPage === id ? 'active' : ''}`}><span className="os-nav-icon"><NavigationIcon size={17} strokeWidth={1.8} /></span><span className="os-nav-label">{label as string}</span>{id === 'alerts' && openAlerts > 0 && <b>{openAlerts}</b>}</button>; })}</div></div>
+          </div>;
+        })}
+      </nav>
+      <div className={`os-sidebar-foot ${error ? 'is-error' : ''}`}><span className="os-live-dot" /><span className="os-foot-text">{error ? '工作空间连接异常' : '工作空间已连接'}<small>{error ? '请重试获取最新状态' : `业务数据自动保存 · v${ws.version}`}</small></span></div>
     </aside>
-    <div ref={mainShellRef} className="main-shell">
-      <header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" aria-label="展开导航" onClick={() => setSidebar(true)}><Menu size={21} /></button><span>管理平台</span><span className="slash">/</span><strong>{pageTitle(currentPage)}</strong></div><div className="topbar-actions">{!['engineering','daily-report','photo-archive','twin'].includes(currentPage) && <div className="global-search"><Search size={16} /><input aria-label="搜索当前业务" placeholder={currentPage === 'dashboard' ? '搜索业务记录…' : '搜索当前业务…'} value={search} onChange={e => setSearch(e.target.value)} /><kbd>检索</kbd></div>}<button className="icon-button notification-button" onClick={() => navigate('alerts')} aria-label={`告警中心，${openAlerts}条待处理`}><Bell size={19} />{openAlerts > 0 && <i />}</button><span className="topbar-divider" /><button className="profile-button" onClick={() => setProfile(true)}><span className="avatar">{ws.user.name.slice(-2)}</span><span>{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button></div></header>
-      <main className={currentPage === 'twin' ? 'main-twin' : ''}>
+    <div ref={mainShellRef} className="os-main">
+      <header className="os-topbar">
+        <div className="os-topbar-left"><button className="os-icon-btn os-mobile-menu" aria-label="展开导航" onClick={() => setSidebar(true)}><Menu size={20} /></button><div className="os-crumb"><span>管理平台</span><ChevronDown size={12} className="os-crumb-sep" /><strong key={currentPage}>{pageTitle(currentPage)}</strong></div></div>
+        <div className="os-topbar-right">
+          {!['engineering', 'daily-report', 'photo-archive', 'twin'].includes(currentPage) && <label className="os-search"><Search size={15} /><input ref={searchRef} aria-label="搜索当前业务" placeholder={currentPage === 'dashboard' ? '搜索业务记录' : '搜索当前业务'} value={search} onChange={e => setSearch(e.target.value)} />{search ? <button type="button" className="os-search-clear" aria-label="清除搜索" onClick={() => setSearch('')}><X size={12} /></button> : <kbd><Command size={11} />K</kbd>}</label>}
+          <button className="os-icon-btn os-bell" onClick={() => navigate('alerts')} aria-label={`告警中心，${openAlerts}条待处理`}><Bell size={18} />{openAlerts > 0 && <i>{openAlerts > 99 ? '99+' : openAlerts}</i>}</button>
+          <button className="os-profile" onClick={() => setProfile(true)}><span className="os-avatar">{ws.user.name.slice(-2)}</span><span className="os-profile-text">{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button>
+        </div>
+      </header>
+      <main className={`os-content ${currentPage === 'twin' ? 'is-twin' : ''}`}>
         {error && <div className="error-banner" role="alert">{error}<button className="text-button" onClick={() => void refresh()}>重试</button></div>}
-        <div key={currentPage} className="apple-page-enter">
+        <div key={currentPage} className="os-page apple-page-enter">
           {currentPage === 'twin' ? (
-            <TwinScreen ws={ws} exit={() => navigate('dashboard')} select={setSelected} connectionError={error} lastSynced={lastSynced} />
+            <TwinScreen ws={ws} exit={() => navigate('dashboard')} select={setSelected} connectionError={error} lastSynced={lastSynced} immersive={immersive} setImmersive={setImmersiveMode} />
           ) : currentPage === 'engineering' ? (
             <Engineering key={ws.user.id} user={ws.user}/>
           ) : currentPage === 'site-library' ? (
@@ -124,37 +166,38 @@ export default function App() {
             <VideoAnalysis ws={ws} navigate={navigate} create={create} changed={refresh} />
           )}
         </div>
-        {currentPage !== 'twin' && <footer className="page-footer"><span>智慧工程 · 统一工作空间</span><span>数据按当前单位管理 <span className="footer-dot">·</span> v{ws.version}</span></footer>}
+        {currentPage !== 'twin' && <footer className="os-footer"><span>智慧工程 · 统一工作空间</span><span>数据按当前单位管理 · v{ws.version}</span></footer>}
       </main>
     </div>
     {form && (securityForms.includes(form.type) ? <SecurityForm ws={ws} type={form.type} row={form.row} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} /> : <RecordForm ws={ws} type={form.type} row={form.row} initial={form.initial} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} />)}
     {selected && !form && <RecordDetail key={selected.id} ws={ws} row={selected} canWrite={writable(selected.type)} onClose={() => setSelected(null)} saved={saved} onSelect={setSelected} edit={() => setForm({ type: selected.type, row: selected })} createOrder={() => { setForm({ type: 'workorders', initial: { name: `处理：${selected.data.name}`, alertId: selected.id, deviceId: selected.data.deviceId, priority: selected.data.priority, description: selected.data.description, assigneeId: selected.data.assigneeId } }); setSelected(null); }} />}
     {profile && <Profile user={ws.user} onClose={() => setProfile(false)} saved={saved} logout={async () => { if (pageRef.current === 'engineering' && engineeringNavigationBlocked(false)) { setProfile(false); notifyEngineeringNavigationBlocked(); return; } await api('/logout', 'POST', {}); setProfile(false); setWs(null); }} />}
     <AlarmDock ws={ws} refresh={refresh} select={setSelected} navigate={navigate} />
-    {toast && <div className="toast" role="status"><Check size={17} />{toast}</div>}
+    {toast && <div key={toast} className="os-toast" role="status"><span><Check size={14} strokeWidth={2.6} /></span>{toast}</div>}
   </div>;
 }
 
 function Auth({ setup, name, error: externalError, done }: { setup: boolean; name: string; error: string; done: () => Promise<void> }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const [shake, setShake] = useState(0);
+  const [reveal, setReveal] = useState(false);
   const [org, setOrg] = useState('');
   const [adminName, setAdminName] = useState('');
   const [usernameVal, setUsernameVal] = useState(setup ? '' : 'admin');
   const [passVal, setPassVal] = useState(setup ? '' : 'admin123456');
   const [confirmVal, setConfirmVal] = useState('');
+  const card = useRef<HTMLElement>(null);
 
   const fillQuickAdmin = () => {
     if (setup) {
       setOrg('智慧工程示范项目部');
       setAdminName('系统管理员');
-      setUsernameVal('admin');
-      setPassVal('admin123456');
       setConfirmVal('admin123456');
-    } else {
-      setUsernameVal('admin');
-      setPassVal('admin123456');
     }
+    setUsernameVal('admin');
+    setPassVal('admin123456');
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -168,172 +211,75 @@ function Auth({ setup, name, error: externalError, done }: { setup: boolean; nam
         delete values.confirm;
       }
       await api(setup ? '/setup' : '/login', 'POST', values);
+      setLeaving(true);
+      await new Promise(resolve => setTimeout(resolve, reduceMotion() ? 0 : 560));
       await done();
     } catch (e: any) {
+      setLeaving(false);
       setError(e.message);
+      setShake(value => value + 1);
     } finally {
       setBusy(false);
     }
   };
 
+  const tilt = (event: ReactPointerEvent<HTMLElement>) => {
+    const element = card.current; if (!element || event.pointerType !== 'mouse') return;
+    const rect = element.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5; const y = (event.clientY - rect.top) / rect.height - .5;
+    element.style.setProperty('--rx', `${(-y * 3).toFixed(2)}deg`); element.style.setProperty('--ry', `${(x * 4).toFixed(2)}deg`);
+    element.style.setProperty('--mx', `${event.clientX - rect.left}px`); element.style.setProperty('--my', `${event.clientY - rect.top}px`);
+  };
+  const resetTilt = () => { card.current?.style.setProperty('--rx', '0deg'); card.current?.style.setProperty('--ry', '0deg'); };
+  const shownError = error || externalError;
+  const features: [typeof Video, string, string][] = [[Video, '视频与智能分析', '摄像头接入 · 场景规则 · 识别证据'], [ShieldCheck, '布控与事件处置', '人像布控 · 区域防护 · 独立告警'], [Building2, '办公与运维协同', '人员空间 · 访客会议 · 维护工单']];
+
   return (
-    <div className="auth-screen">
-      <section className="auth-story">
-        <Brand light />
-        <div className="auth-story-content">
-          <h1>
-            让管理更有序，<br />
-            让安全看得见。
-          </h1>
-          <p>智慧办公与 AI 安防的统一工作平台</p>
-          <div className="auth-capabilities">
-            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.1s' }}>
-              <Video size={22} />
-              <span>
-                <strong>视频与智能分析</strong>
-                <small>摄像头接入 · 场景规则 · 识别证据</small>
-              </span>
-            </div>
-            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.2s' }}>
-              <ShieldCheck size={22} />
-              <span>
-                <strong>布控与事件处置</strong>
-                <small>人像布控 · 区域防护 · 独立告警</small>
-              </span>
-            </div>
-            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.3s' }}>
-              <Building2 size={22} />
-              <span>
-                <strong>办公与运维协同</strong>
-                <small>人员空间 · 访客会议 · 维护工单</small>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="auth-story-bottom">
-          <span>智慧办公</span>
-          <i />
-          <span>AI安防</span>
-          <i />
-          <span>统一运维</span>
-        </div>
+    <div className={`os-auth ${leaving ? 'is-leaving' : ''}`}>
+      <div className="os-auth-aurora" aria-hidden="true"><i /><i /><i /><i /></div>
+      <div className="os-auth-grain" aria-hidden="true" />
+      <header className="os-auth-top"><Brand light /><span className="os-auth-chip"><i />{setup ? '首次启动' : '安全连接'}</span></header>
+
+      <section className="os-auth-hero">
+        <span className="os-auth-eyebrow">SMART ENGINEERING PLATFORM</span>
+        <h1><span><b>让管理更有序，</b></span><span><b>让安全看得见。</b></span></h1>
+        <p>智慧办公与 AI 安防的统一工作平台。<br />一处登录，掌握项目、现场与安全的每一个细节。</p>
+        <ul className="os-auth-features">
+          {features.map(([Icon, title, detail], index) => <li key={title} style={{ animationDelay: `${0.55 + index * 0.09}s` }}><span><Icon size={18} strokeWidth={1.7} /></span><div><strong>{title}</strong><small>{detail}</small></div></li>)}
+        </ul>
       </section>
 
-      <section className="auth-form-side">
-        <div className="auth-form-wrap" style={{ animation: 'appleModalEnter 0.45s var(--ease-apple) both' }}>
-          <div className="auth-header-row">
-            <span className="auth-icon">
-              <Layers size={24} />
-            </span>
-            <button
-              type="button"
-              className="text-button quick-fill-pill"
-              onClick={fillQuickAdmin}
-              title="一键填入默认账号与密码"
-            >
-              <Sparkles size={14} />
-              一键填入账号密码
-            </button>
+      <section ref={card} className="os-auth-card" onPointerMove={tilt} onPointerLeave={resetTilt}>
+        <div key={shake} className={`os-auth-card-inner ${shake ? 'is-shaking' : ''}`}>
+          <div className="os-auth-card-head">
+            <span className="os-auth-logo"><Layers size={22} strokeWidth={1.8} /></span>
+            <button type="button" className="os-quick-fill" onClick={fillQuickAdmin} title="一键填入默认账号与密码"><Sparkles size={13} />一键填入</button>
           </div>
-
           <h2>{setup ? '开始协同管理' : `登录${name}`}</h2>
-          <p>
-            {setup
-              ? '首次启动：设置你的单位名称和首任管理员账号。'
-              : '使用你的平台账号继续工作。'}
-          </p>
+          <p className="os-auth-sub">{setup ? '首次启动：设置单位名称和首任管理员账号。' : '使用你的平台账号继续工作。'}</p>
 
-          <form onSubmit={submit}>
-            {setup && (
-              <>
-                <label>
-                  单位 / 项目名称
-                  <input
-                    name="organization"
-                    value={org}
-                    onChange={e => setOrg(e.target.value)}
-                    placeholder="例如：园区运营管理中心"
-                    required
-                    maxLength={100}
-                  />
-                </label>
-                <label>
-                  管理员姓名
-                  <input
-                    name="name"
-                    value={adminName}
-                    onChange={e => setAdminName(e.target.value)}
-                    placeholder="输入你的姓名"
-                    required
-                    maxLength={60}
-                    autoComplete="name"
-                  />
-                </label>
-              </>
-            )}
-            <label>
-              账号
-              <input
-                name="username"
-                value={usernameVal}
-                onChange={e => setUsernameVal(e.target.value)}
-                placeholder="3–40 位字母、数字或下划线"
-                required
-                pattern="[a-zA-Z0-9_.\-]{3,40}"
-                autoComplete="username"
-              />
-            </label>
-            <label>
-              密码
-              <input
-                name="password"
-                type="password"
-                value={passVal}
-                onChange={e => setPassVal(e.target.value)}
-                placeholder={setup ? '至少 6 位' : '输入密码'}
-                required
-                minLength={setup ? 6 : 1}
-                maxLength={128}
-                autoComplete={setup ? 'new-password' : 'current-password'}
-              />
-            </label>
-            {setup && (
-              <label>
-                确认密码
-                <input
-                  name="confirm"
-                  type="password"
-                  value={confirmVal}
-                  onChange={e => setConfirmVal(e.target.value)}
-                  placeholder="再次输入密码"
-                  required
-                  minLength={6}
-                  autoComplete="new-password"
-                />
-              </label>
-            )}
+          <form onSubmit={submit} className="os-auth-form">
+            {setup && <>
+              <label className="os-field"><span>单位 / 项目名称</span><div><Building size={16} /><input name="organization" value={org} onChange={e => setOrg(e.target.value)} placeholder="例如：园区运营管理中心" required maxLength={100} /></div></label>
+              <label className="os-field"><span>管理员姓名</span><div><UserRound size={16} /><input name="name" value={adminName} onChange={e => setAdminName(e.target.value)} placeholder="输入你的姓名" required maxLength={60} autoComplete="name" /></div></label>
+            </>}
+            <label className="os-field"><span>账号</span><div><UserRound size={16} /><input name="username" value={usernameVal} onChange={e => setUsernameVal(e.target.value)} placeholder="3–40 位字母、数字或下划线" required pattern="[a-zA-Z0-9_.\-]{3,40}" autoComplete="username" autoFocus={setup ? undefined : !usernameVal} /></div></label>
+            <label className="os-field"><span>密码</span><div><LockKeyhole size={16} /><input name="password" type={reveal ? 'text' : 'password'} value={passVal} onChange={e => setPassVal(e.target.value)} placeholder={setup ? '至少 6 位' : '输入密码'} required minLength={setup ? 6 : 1} maxLength={128} autoComplete={setup ? 'new-password' : 'current-password'} /><button type="button" className="os-reveal" aria-label={reveal ? '隐藏密码' : '显示密码'} onClick={() => setReveal(value => !value)}>{reveal ? <EyeOff size={16} /> : <Eye size={16} />}</button></div></label>
+            {setup && <label className="os-field"><span>确认密码</span><div><LockKeyhole size={16} /><input name="confirm" type={reveal ? 'text' : 'password'} value={confirmVal} onChange={e => setConfirmVal(e.target.value)} placeholder="再次输入密码" required minLength={6} autoComplete="new-password" /></div></label>}
 
-            {(error || externalError) && (
-              <div className="form-error" role="alert">
-                {error || externalError}
-              </div>
-            )}
+            {shownError && <div className="os-auth-error" role="alert"><AlertTriangle size={15} />{shownError}</div>}
 
-            <button className="button primary full" disabled={busy}>
-              {busy ? '正在处理…' : setup ? '创建工作空间并进入' : '进入工作空间'}
-              <ArrowRight size={17} />
+            <button className={`os-auth-submit ${busy ? 'is-busy' : ''} ${leaving ? 'is-done' : ''}`} disabled={busy || leaving}>
+              <span className="os-auth-submit-label">{leaving ? '欢迎回来' : busy ? '正在验证…' : setup ? '创建工作空间并进入' : '进入工作空间'}</span>
+              {leaving ? <Check size={18} strokeWidth={2.6} /> : busy ? <LoaderCircle size={18} className="os-spin" /> : <ArrowRight size={18} />}
             </button>
           </form>
 
-          <div className="auth-footnote">
-            <ShieldCheck size={15} />
-            {setup
-              ? '没有预设密码，由你保管管理员账号。可随时在系统设置中重置。'
-              : '账号权限由本单位管理员分配。如忘记密码可联系管理员重置。'}
-          </div>
+          <div className="os-auth-foot"><ShieldCheck size={14} />{setup ? '没有预设密码，由你保管管理员账号。可随时在系统设置中重置。' : '账号权限由本单位管理员分配。如忘记密码可联系管理员重置。'}</div>
         </div>
-        <small className="auth-copyright">智慧工程 · SMART WORKSPACE</small>
       </section>
+
+      <footer className="os-auth-bottom"><span>智慧办公</span><i /><span>AI 安防</span><i /><span>统一运维</span></footer>
     </div>
   );
 }
