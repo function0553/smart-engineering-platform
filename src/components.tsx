@@ -2,14 +2,16 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { X, ArrowUpRight, Inbox, Check, ChevronRight } from 'lucide-react';
 import { modules, stateNames, prettyTime, type Row, type Workspace } from './model';
 import { fenceNames } from './security-model';
+import MiniIcon from './MiniIcon';
 
-export function Brand({ light = false }: { light?: boolean }) {
+export function Brand({ light = false, model = false }: { light?: boolean; model?: boolean }) {
   return (
-    <div className={`brand ${light ? 'light' : ''}`}>
+    <div className={`brand ${light ? 'light' : ''} ${model ? 'has-model' : ''}`} data-mini-zone={model || undefined}>
       <span className="brand-mark">
         <i />
         <i />
         <i />
+        {model && <MiniIcon kind="bars" />}
       </span>
       <span>
         智慧工程

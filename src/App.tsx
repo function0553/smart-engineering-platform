@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useState, useRef, type FormEvent, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
-import { ChevronRight, LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { ChevronRight, ChevronsUpDown, LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
 import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
 import VideoAnalysis from './VideoAnalysis';
+import MiniIcon from './MiniIcon';
 import DailyReport from './ProjectDailyReports';
 import PhotoArchives from './PhotoArchives';
 import Engineering from './MobileWorkspace';
@@ -110,11 +111,11 @@ export default function App() {
     {sidebar && <button className="os-shade" aria-label="收起导航" onClick={() => setSidebar(false)} />}
     <aside ref={sidebarRef} className={`os-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="侧边导航">
       <div className="os-sidebar-head">
-        <Brand />
+        <Brand model />
         <button className="os-icon-btn os-collapse" aria-label={collapsed ? '展开侧边栏' : '收起侧边栏'} title={collapsed ? '展开侧边栏' : '收起侧边栏'} onClick={() => toggleCollapsed()}>{collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}</button>
         <button className="os-icon-btn os-mobile-close" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={19} /></button>
       </div>
-      <button className="os-org" onClick={() => setProfile(true)} title={ws.organization}><span className="os-org-letter">{ws.organization.slice(0, 1)}</span><span className="os-org-text">{ws.organization}<small>办公 · 安防 · 运维</small></span><ChevronDown size={14} /></button>
+      <button className="os-org" data-mini-zone onClick={() => setProfile(true)} title={ws.organization}><span className="os-org-letter">{ws.organization.slice(0, 1)}<MiniIcon kind="site" /></span><span className="os-org-text">{ws.organization}<small><span>办公</span><span>安防</span><span>运维</span></small></span><ChevronsUpDown size={14} /></button>
       <nav ref={navRef} className="os-nav" aria-label="主导航">
         <span className="os-nav-indicator" aria-hidden="true" style={{ transform: `translateY(${indicator.top}px)`, height: indicator.height, opacity: indicator.visible ? 1 : 0 }} />
         {sections.map((section, index) => {
@@ -228,7 +229,7 @@ function Auth({ setup, name, error: externalError, done }: { setup: boolean; nam
     <div className={`os-auth ${leaving ? 'is-leaving' : ''}`}>
       <header className="os-auth-nav">
         <div className="os-auth-nav-inner">
-          <Brand />
+          <Brand model />
           <nav className="os-auth-nav-links" aria-label="平台能力"><span>智慧办公</span><span>AI 安防</span><span>工程管理</span><span>统一运维</span></nav>
           <span className="os-auth-chip"><i />{setup ? '首次启动' : '安全连接'}</span>
         </div>
