@@ -4,7 +4,12 @@ import { z } from 'zod';
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate';
 import { weatherLocationSchema, weatherInfoSchema } from './daily-report-weather.mjs';
 
-const template = readFileSync(new URL('./templates/daily-report.docx', import.meta.url));
+let template = Buffer.alloc(0);
+try {
+  template = readFileSync(new URL('./templates/daily-report.docx', import.meta.url));
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+}
 const { roles } = JSON.parse(readFileSync(new URL('./templates/daily-report-roles.json', import.meta.url), 'utf8'));
 const text = max => z.string().trim().max(max).refine(v => !/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(v), '文字包含不支持的控制字符');
 const required = max => text(max).pipe(z.string().min(1, '请填写此项'));

@@ -2,7 +2,12 @@ import {readTemplatePhotoBytes} from './template-photo-original.mjs';
 import { readFileSync } from 'node:fs';
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate';
 
-const template = readFileSync(new URL('./templates/photo-archive.docx', import.meta.url));
+let template = Buffer.alloc(0);
+try {
+  template = readFileSync(new URL('./templates/photo-archive.docx', import.meta.url));
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+}
 export const photoTemplate = JSON.parse(readFileSync(new URL('./templates/photo-archive-roles.json', import.meta.url), 'utf8'));
 const xml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[c]);
 

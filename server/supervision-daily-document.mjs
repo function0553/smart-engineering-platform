@@ -6,7 +6,12 @@ import { invalidXmlText } from './site-photo-document.mjs';
 const fieldBytes=readFileSync(new URL('../shared/supervision-daily-fields.json',import.meta.url));
 export const supervisionFields=JSON.parse(fieldBytes);
 export const supervisionSchema=z.object(Object.fromEntries(supervisionFields.map(f=>[f.key,z.string().trim().max(f.maxLength).refine(s=>!invalidXmlText(s),'文字包含无效控制字符').default('')]))).strict();
-const template=readFileSync(new URL('./templates/supervision-daily.docx',import.meta.url));
+let template = Buffer.alloc(0);
+try {
+  template = readFileSync(new URL('./templates/supervision-daily.docx', import.meta.url));
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+}
 export const supervisionTemplateHash=createHash('sha256').update(template).digest('hex');
 export const supervisionLayoutHash=createHash('sha256').update(readFileSync(new URL(import.meta.url))).update(fieldBytes).digest('hex');
 export function supervisionMissing(data){return supervisionFields.filter(f=>f.required&&!data?.[f.key]?.trim()).map(f=>f.label);}

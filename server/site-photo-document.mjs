@@ -4,10 +4,15 @@ import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate';
 import sharp from 'sharp';
 import { siteWorkSteps } from './site-work-steps.mjs';
 
-const template = readFileSync(new URL('./templates/site-photo-a4-aligned.docx', import.meta.url));
-const rolesBytes=readFileSync(new URL('./templates/site-photo-ten-steps-roles.json', import.meta.url));
+let template = Buffer.alloc(0);
+const rolesBytes = readFileSync(new URL('./templates/site-photo-ten-steps-roles.json', import.meta.url));
 const roles = JSON.parse(rolesBytes.toString('utf8'));
-if (createHash('sha256').update(template).digest('hex') !== roles.sourceSha256) throw new Error('照片模板与工序槽位不一致');
+try {
+  template = readFileSync(new URL('./templates/site-photo-a4-aligned.docx', import.meta.url));
+  if (createHash('sha256').update(template).digest('hex') !== roles.sourceSha256) throw new Error('照片模板与工序槽位不一致');
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+}
 export const invalidXmlText = value => /[\u0000-\u0008\u000b\u000c\u000e-\u001f\ud800-\udfff\ufffe\uffff]/u.test(String(value ?? ''));
 const xml = value => { if(invalidXmlText(value))throw new Error('文档文字包含无效字符');return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'})[c]); };
 export const sitePhotoTemplateHash = roles.sourceSha256;
