@@ -113,11 +113,18 @@ html, body {
 @keyframes applePageEnter {
   0% {
     opacity: 0;
-    transform: translateY(14px) scale(0.996);
+    transform: translateY(24px) scale(0.988);
+    filter: blur(4px);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translateY(-2px) scale(1.002);
+    filter: blur(0px);
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
+    filter: blur(0px);
   }
 }
 
@@ -1398,12 +1405,41 @@ tbody tr:last-child td {
 }
 
 .auth-form-wrap {
-  width: min(420px, 100%) !important;
+  width: min(440px, 100%) !important;
   background: #ffffff !important;
   border: 1px solid var(--apple-glass-border) !important;
   border-radius: var(--radius-xl) !important;
   padding: 40px !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08) !important;
+}
+
+.auth-header-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 22px !important;
+}
+
+.quick-fill-pill {
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  padding: 6px 14px !important;
+  border-radius: var(--radius-pill) !important;
+  background: var(--apple-blue-soft) !important;
+  color: var(--apple-blue) !important;
+  border: 1px solid rgba(0, 113, 227, 0.22) !important;
+  transition: all 0.2s var(--ease-apple) !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quick-fill-pill:hover {
+  background: rgba(0, 113, 227, 0.16) !important;
+  color: var(--apple-blue-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 113, 227, 0.15);
 }
 
 .auth-form-wrap h2 {

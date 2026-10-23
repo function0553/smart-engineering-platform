@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef, lazy, Suspense, type FormEvent, type ReactNode } from 'react';
-import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, Sparkles } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
 import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
 import VideoAnalysis from './VideoAnalysis';
@@ -114,9 +114,206 @@ export default function App() {
 }
 
 function Auth({ setup, name, error: externalError, done }: { setup: boolean; name: string; error: string; done: () => Promise<void> }) {
-  const [error, setError] = useState(''); const [busy, setBusy] = useState(false);
-  const submit = async (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); const values = Object.fromEntries(new FormData(e.currentTarget)); setBusy(true); setError(''); try { if (setup) { if (values.password !== values.confirm) throw new Error('两次密码输入不一致'); delete values.confirm; } await api(setup ? '/setup' : '/login', 'POST', values); await done(); } catch (e: any) { setError(e.message); } finally { setBusy(false); } };
-  return <div className="auth-screen"><section className="auth-story"><Brand light /><div className="auth-story-content"><h1>让管理更有序，<br />让安全看得见。</h1><p>智慧办公与 AI 安防的统一工作平台</p><div className="auth-capabilities"><div><Video size={23} /><span><strong>视频与智能分析</strong><small>摄像头接入 · 场景规则 · 识别证据</small></span></div><div><ShieldCheck size={23} /><span><strong>布控与事件处置</strong><small>人像布控 · 区域防护 · 独立告警</small></span></div><div><Building2 size={23} /><span><strong>办公与运维协同</strong><small>人员空间 · 访客会议 · 维护工单</small></span></div></div></div><div className="auth-story-bottom"><span>智慧办公</span><i /><span>AI安防</span><i /><span>统一运维</span></div></section><section className="auth-form-side"><div className="auth-form-wrap"><span className="auth-icon"><Layers size={24} /></span><h2>{setup ? '开始协同管理' : `登录${name}`}</h2><p>{setup ? '设置单位名称和首个管理员，开始录入真实业务。' : '使用你的平台账号继续工作。'}</p><form onSubmit={submit}>{setup && <><label>单位 / 项目名称<input name="organization" placeholder="例如：园区运营管理中心" required maxLength={100} /></label><label>管理员姓名<input name="name" placeholder="输入你的姓名" required maxLength={60} autoComplete="name" /></label></>}<label>账号<input name="username" placeholder="3–40 位字母、数字或下划线" required pattern="[a-zA-Z0-9_.\-]{3,40}" autoComplete="username" /></label><label>密码<input name="password" type="password" placeholder={setup ? '至少 6 位' : '输入密码'} required minLength={setup ? 6 : 1} maxLength={128} autoComplete={setup ? 'new-password' : 'current-password'} /></label>{setup && <label>确认密码<input name="confirm" type="password" placeholder="再次输入密码" required minLength={6} autoComplete="new-password" /></label>}{(error || externalError) && <div className="form-error" role="alert">{error || externalError}</div>}<button className="button primary full" disabled={busy}>{busy ? '正在处理…' : setup ? '创建工作空间' : '进入工作空间'}<ArrowRight size={17} /></button></form><div className="auth-footnote"><ShieldCheck size={15} />{setup ? '没有预设密码，由你保管管理员账号。' : '账号权限由本单位管理员分配。'}</div></div><small className="auth-copyright">智慧工程 · SMART WORKSPACE</small></section></div>;
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [org, setOrg] = useState('');
+  const [adminName, setAdminName] = useState('');
+  const [usernameVal, setUsernameVal] = useState(setup ? '' : 'admin');
+  const [passVal, setPassVal] = useState(setup ? '' : 'admin123456');
+  const [confirmVal, setConfirmVal] = useState('');
+
+  const fillQuickAdmin = () => {
+    if (setup) {
+      setOrg('智慧工程示范项目部');
+      setAdminName('系统管理员');
+      setUsernameVal('admin');
+      setPassVal('admin123456');
+      setConfirmVal('admin123456');
+    } else {
+      setUsernameVal('admin');
+      setPassVal('admin123456');
+    }
+  };
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const values = Object.fromEntries(new FormData(e.currentTarget));
+    setBusy(true);
+    setError('');
+    try {
+      if (setup) {
+        if (values.password !== values.confirm) throw new Error('两次密码输入不一致');
+        delete values.confirm;
+      }
+      await api(setup ? '/setup' : '/login', 'POST', values);
+      await done();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="auth-screen">
+      <section className="auth-story">
+        <Brand light />
+        <div className="auth-story-content">
+          <h1>
+            让管理更有序，<br />
+            让安全看得见。
+          </h1>
+          <p>智慧办公与 AI 安防的统一工作平台</p>
+          <div className="auth-capabilities">
+            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.1s' }}>
+              <Video size={22} />
+              <span>
+                <strong>视频与智能分析</strong>
+                <small>摄像头接入 · 场景规则 · 识别证据</small>
+              </span>
+            </div>
+            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.2s' }}>
+              <ShieldCheck size={22} />
+              <span>
+                <strong>布控与事件处置</strong>
+                <small>人像布控 · 区域防护 · 独立告警</small>
+              </span>
+            </div>
+            <div style={{ animation: 'appleCardEnter 0.4s var(--ease-apple) both', animationDelay: '0.3s' }}>
+              <Building2 size={22} />
+              <span>
+                <strong>办公与运维协同</strong>
+                <small>人员空间 · 访客会议 · 维护工单</small>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="auth-story-bottom">
+          <span>智慧办公</span>
+          <i />
+          <span>AI安防</span>
+          <i />
+          <span>统一运维</span>
+        </div>
+      </section>
+
+      <section className="auth-form-side">
+        <div className="auth-form-wrap" style={{ animation: 'appleModalEnter 0.45s var(--ease-apple) both' }}>
+          <div className="auth-header-row">
+            <span className="auth-icon">
+              <Layers size={24} />
+            </span>
+            <button
+              type="button"
+              className="text-button quick-fill-pill"
+              onClick={fillQuickAdmin}
+              title="一键填入默认账号与密码"
+            >
+              <Sparkles size={14} />
+              一键填入账号密码
+            </button>
+          </div>
+
+          <h2>{setup ? '开始协同管理' : `登录${name}`}</h2>
+          <p>
+            {setup
+              ? '首次启动：设置你的单位名称和首任管理员账号。'
+              : '使用你的平台账号继续工作。'}
+          </p>
+
+          <form onSubmit={submit}>
+            {setup && (
+              <>
+                <label>
+                  单位 / 项目名称
+                  <input
+                    name="organization"
+                    value={org}
+                    onChange={e => setOrg(e.target.value)}
+                    placeholder="例如：园区运营管理中心"
+                    required
+                    maxLength={100}
+                  />
+                </label>
+                <label>
+                  管理员姓名
+                  <input
+                    name="name"
+                    value={adminName}
+                    onChange={e => setAdminName(e.target.value)}
+                    placeholder="输入你的姓名"
+                    required
+                    maxLength={60}
+                    autoComplete="name"
+                  />
+                </label>
+              </>
+            )}
+            <label>
+              账号
+              <input
+                name="username"
+                value={usernameVal}
+                onChange={e => setUsernameVal(e.target.value)}
+                placeholder="3–40 位字母、数字或下划线"
+                required
+                pattern="[a-zA-Z0-9_.\-]{3,40}"
+                autoComplete="username"
+              />
+            </label>
+            <label>
+              密码
+              <input
+                name="password"
+                type="password"
+                value={passVal}
+                onChange={e => setPassVal(e.target.value)}
+                placeholder={setup ? '至少 6 位' : '输入密码'}
+                required
+                minLength={setup ? 6 : 1}
+                maxLength={128}
+                autoComplete={setup ? 'new-password' : 'current-password'}
+              />
+            </label>
+            {setup && (
+              <label>
+                确认密码
+                <input
+                  name="confirm"
+                  type="password"
+                  value={confirmVal}
+                  onChange={e => setConfirmVal(e.target.value)}
+                  placeholder="再次输入密码"
+                  required
+                  minLength={6}
+                  autoComplete="new-password"
+                />
+              </label>
+            )}
+
+            {(error || externalError) && (
+              <div className="form-error" role="alert">
+                {error || externalError}
+              </div>
+            )}
+
+            <button className="button primary full" disabled={busy}>
+              {busy ? '正在处理…' : setup ? '创建工作空间并进入' : '进入工作空间'}
+              <ArrowRight size={17} />
+            </button>
+          </form>
+
+          <div className="auth-footnote">
+            <ShieldCheck size={15} />
+            {setup
+              ? '没有预设密码，由你保管管理员账号。可随时在系统设置中重置。'
+              : '账号权限由本单位管理员分配。如忘记密码可联系管理员重置。'}
+          </div>
+        </div>
+        <small className="auth-copyright">智慧工程 · SMART WORKSPACE</small>
+      </section>
+    </div>
+  );
 }
 
 function PageHeading({ title, description, children }: { eyebrow: string; title: string; description: string; children?: ReactNode }) { return <div className="page-heading"><div><h1>{title}</h1><p>{description}</p></div><div className="heading-actions">{children}</div></div>; }
