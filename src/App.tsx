@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useState, useRef, type FormEve
 import { flushSync } from 'react-dom';
 import { ChevronRight, ChevronsUpDown, LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
-import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
+import { Brand, Badge, Empty, Modal, Panel, Popover, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
 import VideoAnalysis from './VideoAnalysis';
 import MiniIcon from './MiniIcon';
 import DailyReport from './ProjectDailyReports';
@@ -36,10 +36,10 @@ const reduceMotion = () => typeof matchMedia === 'function' && matchMedia('(pref
 if (typeof document !== 'undefined' && 'startViewTransition' in document) document.documentElement.classList.add('vt-capable');
 
 export function withViewTransition(update: () => void, kind = 'page') {
-  const doc = document as Document & { startViewTransition?: (callback: () => void) => { finished: Promise<void> } };
+  const doc = document as Document & { startViewTransition?: (callback: () => void) => { finished: Promise<void>; ready?: Promise<void> } };
   if (!doc.startViewTransition || reduceMotion() || document.hidden) { update(); return; }
   document.documentElement.dataset.vt = kind;
-  try { doc.startViewTransition(() => flushSync(update)).finished.finally(() => { delete document.documentElement.dataset.vt; }); }
+  try { const vt = doc.startViewTransition(() => flushSync(update)); vt.ready?.catch(() => undefined); vt.finished.finally(() => { delete document.documentElement.dataset.vt; }); }
   catch { delete document.documentElement.dataset.vt; update(); }
 }
 
@@ -74,7 +74,10 @@ export default function App() {
   useEffect(() => { const group = sections.find(section => section.items.some(([id]) => id === page)); if (group) setExpandedSections(current => current.includes(group.title) ? current : [...current, group.title]); }, [page]);
   const [form, setForm] = useState<{ type: string; row?: Row; initial?: Record<string, any> } | null>(null);
   const [selected, setSelected] = useState<Row | null>(null);
-  const [profile, setProfile] = useState(false);
+  const [menu, setMenu] = useState<'' | 'workspace' | 'account'>('');
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const orgRef = useRef<HTMLButtonElement>(null);
+  const profileRef = useRef<HTMLButtonElement>(null);
   const [lastSynced, setLastSynced] = useState(Date.now());
   const load = useCallback(async () => { const next = await api<Workspace>('/bootstrap'); setWs(next); setLastSynced(Date.now()); setSelected(current => current ? Object.values(next.records).flat().find(r => r.id === current.id) || null : null); }, []);
   const refresh = useCallback(async () => { try { await load(); setError(''); } catch (e: any) { if (e.status === 401) setWs(null); else setError(e.message); } }, [load]);
@@ -105,6 +108,7 @@ export default function App() {
   const openAlerts = ws.records.alerts.filter(r => ['new', 'processing'].includes(r.state)).length;
   const isAdmin = ws.user.role === 'admin';
   const canWrite = ws.user.role !== 'viewer';
+  const logout = async () => { if (pageRef.current === 'engineering' && engineeringNavigationBlocked(false)) { notifyEngineeringNavigationBlocked(); return; } try { await api('/logout', 'POST', {}); setWs(null); } catch (e: any) { setToast(`退出登录失败：${e.message}`); } };
   const writable = (type: string) => canWrite && (!modules[type]?.adminOnly || isAdmin);
   const currentPage = adminPages.includes(page) && !isAdmin ? 'dashboard' : page;
   return <div className={`os-shell ${collapsed ? 'is-collapsed' : ''} ${currentPage === 'twin' ? 'is-twin' : ''} ${immersive && currentPage === 'twin' ? 'is-immersive' : ''}`}>
@@ -115,7 +119,7 @@ export default function App() {
         <button className="os-icon-btn os-collapse" aria-label={collapsed ? '展开侧边栏' : '收起侧边栏'} title={collapsed ? '展开侧边栏' : '收起侧边栏'} onClick={() => toggleCollapsed()}>{collapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}</button>
         <button className="os-icon-btn os-mobile-close" aria-label="收起导航" onClick={() => setSidebar(false)}><X size={19} /></button>
       </div>
-      <button className="os-org" data-mini-zone onClick={() => setProfile(true)} title={ws.organization}><span className="os-org-letter">{ws.organization.slice(0, 1)}<MiniIcon kind="site" /></span><span className="os-org-text">{ws.organization}<small><span>办公</span><span>安防</span><span>运维</span></small></span><ChevronsUpDown size={14} /></button>
+      <button ref={orgRef} className="os-org" data-mini-zone aria-haspopup="dialog" aria-expanded={menu === 'workspace'} onClick={() => setMenu(m => m === 'workspace' ? '' : 'workspace')} title={ws.organization}><span className="os-org-letter">{ws.organization.slice(0, 1)}<MiniIcon kind="site" /></span><span className="os-org-text">{ws.organization}<small><span>办公</span><span>安防</span><span>运维</span></small></span><ChevronsUpDown size={14} /></button>
       <nav ref={navRef} className="os-nav" aria-label="主导航">
         <span className="os-nav-indicator" aria-hidden="true" style={{ transform: `translateY(${indicator.top}px)`, height: indicator.height, opacity: indicator.visible ? 1 : 0 }} />
         {sections.map((section, index) => {
@@ -134,7 +138,7 @@ export default function App() {
         <div className="os-topbar-right">
           {!['engineering', 'daily-report', 'photo-archive', 'twin'].includes(currentPage) && <label className="os-search"><Search size={15} /><input ref={searchRef} aria-label="搜索当前业务" placeholder={currentPage === 'dashboard' ? '搜索业务记录' : '搜索当前业务'} value={search} onChange={e => setSearch(e.target.value)} />{search ? <button type="button" className="os-search-clear" aria-label="清除搜索" onClick={() => setSearch('')}><X size={12} /></button> : <kbd><Command size={11} />K</kbd>}</label>}
           <button className="os-icon-btn os-bell" onClick={() => navigate('alerts')} aria-label={`告警中心，${openAlerts}条待处理`}><Bell size={18} />{openAlerts > 0 && <i>{openAlerts > 99 ? '99+' : openAlerts}</i>}</button>
-          <button className="os-profile" onClick={() => setProfile(true)}><span className="os-avatar">{ws.user.name.slice(-2)}</span><span className="os-profile-text">{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button>
+          <button ref={profileRef} className="os-profile" aria-haspopup="menu" aria-expanded={menu === 'account'} onClick={() => setMenu(m => m === 'account' ? '' : 'account')}><span className="os-avatar">{ws.user.name.slice(-2)}</span><span className="os-profile-text">{ws.user.name}<small>{roleNames[ws.user.role]}</small></span><ChevronDown size={13} /></button>
         </div>
       </header>
       <main className={`os-content ${currentPage === 'twin' ? 'is-twin' : ''}`}>
@@ -171,7 +175,23 @@ export default function App() {
     </div>
     {form && (securityForms.includes(form.type) ? <SecurityForm ws={ws} type={form.type} row={form.row} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} /> : <RecordForm ws={ws} type={form.type} row={form.row} initial={form.initial} onClose={() => setForm(null)} saved={async () => { await saved(); setForm(null); }} />)}
     {selected && !form && <RecordDetail key={selected.id} ws={ws} row={selected} canWrite={writable(selected.type)} onClose={() => setSelected(null)} saved={saved} onSelect={setSelected} edit={() => setForm({ type: selected.type, row: selected })} createOrder={() => { setForm({ type: 'workorders', initial: { name: `处理：${selected.data.name}`, alertId: selected.id, deviceId: selected.data.deviceId, priority: selected.data.priority, description: selected.data.description, assigneeId: selected.data.assigneeId } }); setSelected(null); }} />}
-    {profile && <Profile user={ws.user} onClose={() => setProfile(false)} saved={saved} logout={async () => { if (pageRef.current === 'engineering' && engineeringNavigationBlocked(false)) { setProfile(false); notifyEngineeringNavigationBlocked(); return; } await api('/logout', 'POST', {}); setProfile(false); setWs(null); }} />}
+    {menu === 'workspace' && <Popover anchor={orgRef.current} label="工作空间" className="os-menu-workspace" onClose={() => setMenu('')}>
+      <div className="os-menu-head"><span className="os-org-letter">{ws.organization.slice(0, 1)}<MiniIcon kind="site" /></span><span><strong>{ws.organization}</strong><small><i className={error ? 'is-error' : ''} />{error ? '连接异常，正在重试' : '工作空间已连接'} · v{ws.version}</small></span></div>
+      <div className="os-menu-tiles">{([['visits', '智慧办公', '访客 · 会议', UserRoundCheck], ['security', 'AI 安防', '视频 · 告警', ShieldCheck], ['workorders', '统一运维', '设备 · 工单', Wrench]] as const).map(([id, name, text, Icon]) => <button key={id} type="button" role="menuitem" onClick={() => { setMenu(''); navigate(id); }}><Icon size={17} /><strong>{name}</strong><small>{text}</small></button>)}</div>
+      <div className="os-menu-list">
+        <span className="os-menu-label">单位管理</span>
+        {([['spaces', '场所空间', Building2], ['employees', '组织人员', Users], ...(isAdmin ? [['users', '账号权限', KeyRound], ['audit', '操作审计', History]] : [])] as [string, string, typeof Users][]).map(([id, name, Icon]) => <button key={id} type="button" role="menuitem" onClick={() => { setMenu(''); navigate(id); }}><Icon size={16} />{name}<ChevronRight size={14} /></button>)}
+      </div>
+      <p className="os-menu-note">你在本单位的角色：{roleNames[ws.user.role]}</p>
+    </Popover>}
+    {menu === 'account' && <Popover anchor={profileRef.current} align="end" label="账号" className="os-menu-account" onClose={() => setMenu('')}>
+      <div className="os-menu-head"><span className="os-avatar">{ws.user.name.slice(-2)}</span><span><strong>{ws.user.name}</strong><small>{ws.user.username} · {roleNames[ws.user.role]}</small></span></div>
+      <div className="os-menu-list">
+        <button type="button" role="menuitem" onClick={() => { setMenu(''); setPasswordOpen(true); }}><KeyRound size={16} />修改密码<ChevronRight size={14} /></button>
+        <button type="button" role="menuitem" className="is-danger" onClick={() => { setMenu(''); void logout(); }}><LogOut size={16} />退出登录</button>
+      </div>
+    </Popover>}
+    {passwordOpen && <PasswordDialog user={ws.user} onClose={() => setPasswordOpen(false)} saved={saved} />}
     <AlarmDock ws={ws} refresh={refresh} select={setSelected} navigate={navigate} />
     {toast && <div key={toast} className="os-toast" role="status"><span><Check size={14} strokeWidth={2.6} /></span>{toast}</div>}
   </div>;
@@ -412,8 +432,8 @@ function ResetPassword({target,onClose,saved}:{target:User;onClose:()=>void;save
 function AuditPage({ search }: { search: string }) { const [rows, setRows] = useState<any[]>([]); const [error, setError] = useState(''); const load = useCallback(() => api('/audit').then(setRows).catch(e => setError(e.message)), []); useEffect(() => { void load(); }, [load]); return <><PageHeading eyebrow="PLATFORM / 操作留痕" title="操作审计" description="记录谁在什么时候做了什么，显示最近 200 条操作。"><button className="button secondary" onClick={() => void load()}><RefreshCw size={16} />刷新记录</button></PageHeading>{error && <div className="form-error">{error}</div>}<Panel title="审计记录"><div className="table-scroll"><table><thead><tr><th>操作时间</th><th>操作者</th><th>业务模块</th><th>操作内容</th></tr></thead><tbody>{rows.filter(r => `${r.actor_name}${r.summary}`.includes(search)).map(row => <tr key={row.id}><td className="nowrap">{prettyTime(row.at)}</td><td>{row.actor_name}</td><td>{modules[row.entity]?.name || ({ system: '系统', users: '账号权限', integrations: '服务接入' } as Record<string, string>)[row.entity] || row.entity}</td><td>{row.summary}</td></tr>)}</tbody></table></div>{!rows.length && <Empty title="暂无审计记录" description="账号和业务操作将自动留痕。" />}</Panel></>; }
 
 
-function Profile({ user, onClose, saved, logout }: { user: User; onClose: () => void; saved: (s?: string) => Promise<void>; logout: () => Promise<void> }) {
+function PasswordDialog({ user, onClose, saved }: { user: User; onClose: () => void; saved: (s?: string) => Promise<void> }) {
   const [error, setError] = useState(''); const [busy, setBusy] = useState(false);
   const submit = async (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); setBusy(true); const fd = new FormData(e.currentTarget); try { if (fd.get('password') !== fd.get('confirm')) throw new Error('两次新密码不一致'); await api('/password', 'POST', { current: fd.get('current'), password: fd.get('password') }); await saved('密码已修改，其他会话已失效'); onClose(); } catch (e: any) { setError(e.message); } finally { setBusy(false); } };
-  return <Modal title={user.name} subtitle={`${user.username} · ${roleNames[user.role]}`} onClose={onClose}><form onSubmit={submit}><div className="form-stack"><h3>修改密码</h3><label>当前密码<input name="current" type="password" required autoComplete="current-password" /></label><label>新密码<input name="password" type="password" required minLength={6} maxLength={128} autoComplete="new-password" /></label><label>确认新密码<input name="confirm" type="password" required minLength={6} autoComplete="new-password" /></label></div>{error && <div className="form-error" role="alert">{error}</div>}<div className="modal-footer"><button type="button" className="button danger-ghost" disabled={busy} onClick={() => logout().catch(e => setError(e.message))}><LogOut size={16} />退出登录</button><button className="button primary" disabled={busy}>{busy ? '正在修改…' : '修改密码'}</button></div></form></Modal>;
+  return <Modal title="修改密码" subtitle={`${user.name} · ${user.username}`} onClose={onClose}><form onSubmit={submit}><div className="form-stack"><label>当前密码<input name="current" type="password" required autoFocus autoComplete="current-password" /></label><label>新密码<input name="password" type="password" required minLength={6} maxLength={128} autoComplete="new-password" placeholder="至少 6 位" /></label><label>确认新密码<input name="confirm" type="password" required minLength={6} autoComplete="new-password" /></label></div>{error && <div className="form-error" role="alert">{error}</div>}<div className="modal-footer"><button type="button" className="button secondary" disabled={busy} onClick={onClose}>取消</button><button className="button primary" disabled={busy}>{busy ? '正在修改…' : '修改密码'}</button></div></form></Modal>;
 }

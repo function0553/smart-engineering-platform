@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowUpRight, Inbox, Check, ChevronRight } from 'lucide-react';
 import { modules, stateNames, prettyTime, type Row, type Workspace } from './model';
 import { fenceNames } from './security-model';
@@ -19,6 +20,49 @@ export function Brand({ light = false, model = false }: { light?: boolean; model
       </span>
     </div>
   );
+}
+
+/**
+ * Lightweight anchored menu / popover (apple.com-style): portalled to <body>, placed under
+ * its anchor, closes on outside press, Escape or Tab-out, and supports arrow-key movement
+ * between [role=menuitem] entries.
+ */
+export function Popover({ anchor, onClose, align = 'start', label, className = '', children }: { anchor: HTMLElement | null; onClose: () => void; align?: 'start' | 'end'; label: string; className?: string; children: ReactNode }) {
+  const panel = useRef<HTMLDivElement>(null);
+  const close = useRef(onClose); close.current = onClose;
+  const [pos, setPos] = useState<{ top: number; left?: number; right?: number; maxHeight: number } | null>(null);
+  useLayoutEffect(() => {
+    const place = () => {
+      if (!anchor) return;
+      const r = anchor.getBoundingClientRect(), w = panel.current?.offsetWidth || 280, vw = window.innerWidth;
+      const top = Math.round(r.bottom + 8), maxHeight = Math.max(160, window.innerHeight - top - 12);
+      setPos(align === 'end' ? { top, right: Math.max(8, Math.round(vw - r.right)), maxHeight } : { top, left: Math.round(Math.max(8, Math.min(r.left, vw - w - 8))), maxHeight });
+    };
+    place();
+    window.addEventListener('resize', place); window.addEventListener('scroll', place, true);
+    return () => { window.removeEventListener('resize', place); window.removeEventListener('scroll', place, true); };
+  }, [anchor, align]);
+  useEffect(() => {
+    const down = (e: PointerEvent) => { const t = e.target as Node; if (panel.current?.contains(t) || anchor?.contains(t)) return; close.current(); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close.current(); anchor?.focus(); } };
+    document.addEventListener('pointerdown', down, true); document.addEventListener('keydown', key, true);
+    const focusTimer = requestAnimationFrame(() => panel.current?.focus({ preventScroll: true }));
+    return () => { cancelAnimationFrame(focusTimer); document.removeEventListener('pointerdown', down, true); document.removeEventListener('keydown', key, true); };
+  }, [anchor]);
+  const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const items = [...(panel.current?.querySelectorAll<HTMLElement>('[role=menuitem]') || [])];
+    if (!items.length) return;
+    e.preventDefault();
+    const i = items.indexOf(document.activeElement as HTMLElement);
+    items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus();
+  };
+  return createPortal(
+    <div ref={panel} className={`os-menu ${align === 'end' ? 'is-end' : ''} ${className}`} role="dialog" aria-label={label} tabIndex={-1}
+      style={pos ? { top: pos.top, left: pos.left, right: pos.right, maxHeight: pos.maxHeight } : { opacity: 0 }}
+      onKeyDown={onKeyDown} onBlur={e => { if (e.relatedTarget && !panel.current?.contains(e.relatedTarget as Node) && !anchor?.contains(e.relatedTarget as Node)) close.current(); }}>
+      {children}
+    </div>, document.body);
 }
 
 export function Badge({ state, children }: { state: string; children?: ReactNode }) {
