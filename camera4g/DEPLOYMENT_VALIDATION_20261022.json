@@ -139,6 +139,7 @@
     "tcp_sender_attempt": "failed_not_sent: broadcast_readiness_timeout; camera negotiated UDP",
     "isolated_udp_submission": "25200 bytes, 158 packets, queue empty, BYE and cleanup confirmed",
     "onsite_playback_verified": false,
+    "onsite_playback_status": "not_heard; audible acceptance failed",
     "production_sender_changed": false,
     "camera_configuration_changed": false
   }

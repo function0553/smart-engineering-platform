@@ -66,6 +66,8 @@ bash camera4g/deploy/start-gpu.sh ppe
 
 活体模型已随附，`liveness_model_directory` 指向本目录的 `attendance/models/liveness`。RGB 活体输出需现场验证。语音依赖本次适配的 Monibuca 广播接口和现场听音验证文件；`submitted_unverified` 仅表示已提交，不能代替确认听到。
 
+2026-10-22 独立语音测试及重发后，用户反馈未听见，播音验收失败。2026-10-23 已从原部署资料和实际会话日志核实 UDP 目的地址及 252 局域网路由，当前播音尚未恢复，见 [语音链路复核](docs/VOICE_ROUTE_DIAGNOSIS_20261023.md)。
+
 `attendance/local_preview.py` 是现有业主本机 SSH 预览工具，保留历史服务器地址和 SSH 主机指纹，凭据从标准输入读取；迁移到不同服务器前应核对地址及可信指纹。该工具使用 Python `audioop`，需使用支持该模块的既有 Python 环境。
 
 ## 离线验证

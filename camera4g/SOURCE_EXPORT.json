@@ -511,13 +511,13 @@
       },
       {
         "file": "README.md",
-        "bytes": 8405,
-        "sha256": "bec801992a1c73970c0403811ef577cb2ceb43f04c3211965b933a36a0bbc4d0"
+        "bytes": 8418,
+        "sha256": "a76305ce2a0a76447a71f56c05f9795b20580f435dabdd3208af751aa04eba9f"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 5899,
-        "sha256": "5570327ef2f3bfcaae8c7cd49a070f2e5134d6bde8e57167ef9aec69a0f42b3e"
+        "bytes": 6186,
+        "sha256": "de6d3471ff52ed7c9698d18b2569a503d3d1d0911c8ef3064e163963abe1489f"
       },
       {
         "file": "camera4g/attendance/attendance_service.py",
@@ -581,8 +581,8 @@
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 11531,
-        "sha256": "9292c0adbefd831f47129edfd36442e05c5ef6b5cb9bd93fa255864c3def24a3"
+        "bytes": 12208,
+        "sha256": "d079ac2605cd33d4ca0383ca6b79aa70604de84eb2986891a22383b19764d79f"
       },
       {
         "file": "camera4g/docs/PPE_BACKEND_20261009.md",
@@ -624,18 +624,18 @@
       },
       {
         "file": "README.md",
-        "bytes": 8405,
-        "sha256": "bec801992a1c73970c0403811ef577cb2ceb43f04c3211965b933a36a0bbc4d0"
+        "bytes": 8418,
+        "sha256": "a76305ce2a0a76447a71f56c05f9795b20580f435dabdd3208af751aa04eba9f"
       },
       {
         "file": "camera4g/DEPLOYMENT_VALIDATION_20261022.json",
-        "bytes": 5801,
-        "sha256": "9954b6e6de7b442dc617b49a75cf7d398a9886acafdb524f21ea84d50c8f73dc"
+        "bytes": 5871,
+        "sha256": "6d0d63aa5d516abd7e524dd3e6d8f1031388ca65e609faa2a5139dc9812c62f8"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 5899,
-        "sha256": "5570327ef2f3bfcaae8c7cd49a070f2e5134d6bde8e57167ef9aec69a0f42b3e"
+        "bytes": 6186,
+        "sha256": "de6d3471ff52ed7c9698d18b2569a503d3d1d0911c8ef3064e163963abe1489f"
       },
       {
         "file": "camera4g/THIRD_PARTY_NOTICES.md",
@@ -834,13 +834,13 @@
       },
       {
         "file": "camera4g/docs/ATTENDANCE_GPU_252_20261022.md",
-        "bytes": 10904,
-        "sha256": "bbe49966706f1a95944b662694adf04a68585e7a183108ca0f6852b39a42e31b"
+        "bytes": 10966,
+        "sha256": "2788069ceeb6a2f5378045d94f5e68c60bd889e90af4cc67b16f412eb5de64d9"
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 11531,
-        "sha256": "9292c0adbefd831f47129edfd36442e05c5ef6b5cb9bd93fa255864c3def24a3"
+        "bytes": 12208,
+        "sha256": "d079ac2605cd33d4ca0383ca6b79aa70604de84eb2986891a22383b19764d79f"
       },
       {
         "file": "docs/superpowers/plans/2026-10-22-camera-attendance-integration.md",
@@ -909,9 +909,17 @@
     "files": [
       {
         "file": "camera4g/VOICE_CAMERA_TEST_20261022.json",
-        "bytes": 1337,
-        "sha256": "a0d6194dde84e9bbd769aed566d166a7703fa13910b6c0e1812798eea3e3626e"
+        "bytes": 1852,
+        "sha256": "9952f0bea45a2e1ac9eda6792330665e3d6096ec7891bd2bd93271e3c92f44e2"
+      },
+      {
+        "file": "camera4g/docs/VOICE_ROUTE_DIAGNOSIS_20261023.md",
+        "bytes": 3267,
+        "sha256": "fa4e193c2583e8fcb2f16545aff92b541a034a0bcb2b1f48ba629f52be49cf35"
       }
-    ]
+    ],
+    "onsite_playback_status": "not_heard",
+    "diagnosis_date": "2026-10-23",
+    "playback_restored": false
   }
 }

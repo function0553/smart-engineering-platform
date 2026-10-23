@@ -30,13 +30,25 @@
     "cleanup_complete": true
   },
   "onsite_playback": {
-    "status": "awaiting_human_confirmation",
-    "verified": false
+    "status": "not_heard",
+    "verified": false,
+    "human_feedback": "没听见",
+    "audible_acceptance": "failed",
+    "attempt_times_beijing": ["2026-10-22T19:44:12+08:00", "2026-10-22T19:47:26+08:00", "2026-10-22T19:59:21+08:00"]
   },
   "application_service_deployed": false,
   "production_sender_modified": false,
   "camera_configuration_changed": false,
   "attendance_record_created": false,
   "audio_saved_in_git": false,
+  "route_diagnosis": {
+    "date": "2026-10-23",
+    "camera_sdp_audio_destination": "192.168.1.100:15066",
+    "transport": "UDP",
+    "media_server_route": "direct LAN via eno4np1, source 192.168.1.252",
+    "public_4g_audio_return_verified": false,
+    "playback_restored": false,
+    "report": "docs/VOICE_ROUTE_DIAGNOSIS_20261023.md"
+  },
   "limitation": "UDP gateway send counters do not prove camera playback. Existing production Speaker requires TCP readiness; this isolated diagnostic does not change that requirement."
 }
