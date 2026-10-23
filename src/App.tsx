@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useLayoutEffect, useState, useRef, type FormEvent, type ReactNode, type PointerEvent as ReactPointerEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState, useRef, type FormEvent, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
-import { LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, Sparkles, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, UserRound, LockKeyhole, Building, LoaderCircle } from 'lucide-react';
+import { ChevronRight, LayoutDashboard, Building2, Users, Cctv, ScanFace, CalendarDays, UserRoundCheck, DoorOpen, ClipboardCheck, Bell, Wrench, Cpu, PlugZap, Zap, Megaphone, ShieldCheck, History, Search, Plus, ChevronDown, ArrowUpRight, ArrowRight, RefreshCw, Download, LogOut, Menu, X, Check, CircleHelp, Settings2, Shield, Layers, Cable, Activity, Video, KeyRound, Clock3, AlertTriangle, FileText, PanelLeftClose, PanelLeftOpen, Command, Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { api, modules, roleNames, stateActions, stateNames, localDate, localInput, prettyTime, type Row, type Workspace, type User, type Field } from './model';
 import { Brand, Badge, Empty, Modal, Panel, LinkButton, Steps, Table, cellValue, exportCsv } from './components';
 import VideoAnalysis from './VideoAnalysis';
@@ -107,7 +107,6 @@ export default function App() {
   const writable = (type: string) => canWrite && (!modules[type]?.adminOnly || isAdmin);
   const currentPage = adminPages.includes(page) && !isAdmin ? 'dashboard' : page;
   return <div className={`os-shell ${collapsed ? 'is-collapsed' : ''} ${currentPage === 'twin' ? 'is-twin' : ''} ${immersive && currentPage === 'twin' ? 'is-immersive' : ''}`}>
-    <div className="os-ambient" aria-hidden="true"><i /><i /><i /></div>
     {sidebar && <button className="os-shade" aria-label="收起导航" onClick={() => setSidebar(false)} />}
     <aside ref={sidebarRef} className={`os-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="侧边导航">
       <div className="os-sidebar-head">
@@ -188,7 +187,6 @@ function Auth({ setup, name, error: externalError, done }: { setup: boolean; nam
   const [usernameVal, setUsernameVal] = useState(setup ? '' : 'admin');
   const [passVal, setPassVal] = useState(setup ? '' : 'admin123456');
   const [confirmVal, setConfirmVal] = useState('');
-  const card = useRef<HTMLElement>(null);
 
   const fillQuickAdmin = () => {
     if (setup) {
@@ -223,63 +221,60 @@ function Auth({ setup, name, error: externalError, done }: { setup: boolean; nam
     }
   };
 
-  const tilt = (event: ReactPointerEvent<HTMLElement>) => {
-    const element = card.current; if (!element || event.pointerType !== 'mouse') return;
-    const rect = element.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - .5; const y = (event.clientY - rect.top) / rect.height - .5;
-    element.style.setProperty('--rx', `${(-y * 3).toFixed(2)}deg`); element.style.setProperty('--ry', `${(x * 4).toFixed(2)}deg`);
-    element.style.setProperty('--mx', `${event.clientX - rect.left}px`); element.style.setProperty('--my', `${event.clientY - rect.top}px`);
-  };
-  const resetTilt = () => { card.current?.style.setProperty('--rx', '0deg'); card.current?.style.setProperty('--ry', '0deg'); };
   const shownError = error || externalError;
   const features: [typeof Video, string, string][] = [[Video, '视频与智能分析', '摄像头接入 · 场景规则 · 识别证据'], [ShieldCheck, '布控与事件处置', '人像布控 · 区域防护 · 独立告警'], [Building2, '办公与运维协同', '人员空间 · 访客会议 · 维护工单']];
 
   return (
     <div className={`os-auth ${leaving ? 'is-leaving' : ''}`}>
-      <div className="os-auth-aurora" aria-hidden="true"><i /><i /><i /><i /></div>
-      <div className="os-auth-grain" aria-hidden="true" />
-      <header className="os-auth-top"><Brand light /><span className="os-auth-chip"><i />{setup ? '首次启动' : '安全连接'}</span></header>
-
-      <section className="os-auth-hero">
-        <span className="os-auth-eyebrow">SMART ENGINEERING PLATFORM</span>
-        <h1><span><b>让管理更有序，</b></span><span><b>让安全看得见。</b></span></h1>
-        <p>智慧办公与 AI 安防的统一工作平台。<br />一处登录，掌握项目、现场与安全的每一个细节。</p>
-        <ul className="os-auth-features">
-          {features.map(([Icon, title, detail], index) => <li key={title} style={{ animationDelay: `${0.55 + index * 0.09}s` }}><span><Icon size={18} strokeWidth={1.7} /></span><div><strong>{title}</strong><small>{detail}</small></div></li>)}
-        </ul>
-      </section>
-
-      <section ref={card} className="os-auth-card" onPointerMove={tilt} onPointerLeave={resetTilt}>
-        <div key={shake} className={`os-auth-card-inner ${shake ? 'is-shaking' : ''}`}>
-          <div className="os-auth-card-head">
-            <span className="os-auth-logo"><Layers size={22} strokeWidth={1.8} /></span>
-            <button type="button" className="os-quick-fill" onClick={fillQuickAdmin} title="一键填入默认账号与密码"><Sparkles size={13} />一键填入</button>
-          </div>
-          <h2>{setup ? '开始协同管理' : `登录${name}`}</h2>
-          <p className="os-auth-sub">{setup ? '首次启动：设置单位名称和首任管理员账号。' : '使用你的平台账号继续工作。'}</p>
-
-          <form onSubmit={submit} className="os-auth-form">
-            {setup && <>
-              <label className="os-field"><span>单位 / 项目名称</span><div><Building size={16} /><input name="organization" value={org} onChange={e => setOrg(e.target.value)} placeholder="例如：园区运营管理中心" required maxLength={100} /></div></label>
-              <label className="os-field"><span>管理员姓名</span><div><UserRound size={16} /><input name="name" value={adminName} onChange={e => setAdminName(e.target.value)} placeholder="输入你的姓名" required maxLength={60} autoComplete="name" /></div></label>
-            </>}
-            <label className="os-field"><span>账号</span><div><UserRound size={16} /><input name="username" value={usernameVal} onChange={e => setUsernameVal(e.target.value)} placeholder="3–40 位字母、数字或下划线" required pattern="[a-zA-Z0-9_.\-]{3,40}" autoComplete="username" autoFocus={setup ? undefined : !usernameVal} /></div></label>
-            <label className="os-field"><span>密码</span><div><LockKeyhole size={16} /><input name="password" type={reveal ? 'text' : 'password'} value={passVal} onChange={e => setPassVal(e.target.value)} placeholder={setup ? '至少 6 位' : '输入密码'} required minLength={setup ? 6 : 1} maxLength={128} autoComplete={setup ? 'new-password' : 'current-password'} /><button type="button" className="os-reveal" aria-label={reveal ? '隐藏密码' : '显示密码'} onClick={() => setReveal(value => !value)}>{reveal ? <EyeOff size={16} /> : <Eye size={16} />}</button></div></label>
-            {setup && <label className="os-field"><span>确认密码</span><div><LockKeyhole size={16} /><input name="confirm" type={reveal ? 'text' : 'password'} value={confirmVal} onChange={e => setConfirmVal(e.target.value)} placeholder="再次输入密码" required minLength={6} autoComplete="new-password" /></div></label>}
-
-            {shownError && <div className="os-auth-error" role="alert"><AlertTriangle size={15} />{shownError}</div>}
-
-            <button className={`os-auth-submit ${busy ? 'is-busy' : ''} ${leaving ? 'is-done' : ''}`} disabled={busy || leaving}>
-              <span className="os-auth-submit-label">{leaving ? '欢迎回来' : busy ? '正在验证…' : setup ? '创建工作空间并进入' : '进入工作空间'}</span>
-              {leaving ? <Check size={18} strokeWidth={2.6} /> : busy ? <LoaderCircle size={18} className="os-spin" /> : <ArrowRight size={18} />}
-            </button>
-          </form>
-
-          <div className="os-auth-foot"><ShieldCheck size={14} />{setup ? '没有预设密码，由你保管管理员账号。可随时在系统设置中重置。' : '账号权限由本单位管理员分配。如忘记密码可联系管理员重置。'}</div>
+      <header className="os-auth-nav">
+        <div className="os-auth-nav-inner">
+          <Brand />
+          <nav className="os-auth-nav-links" aria-label="平台能力"><span>智慧办公</span><span>AI 安防</span><span>工程管理</span><span>统一运维</span></nav>
+          <span className="os-auth-chip"><i />{setup ? '首次启动' : '安全连接'}</span>
         </div>
-      </section>
+      </header>
 
-      <footer className="os-auth-bottom"><span>智慧办公</span><i /><span>AI 安防</span><i /><span>统一运维</span></footer>
+      <main className="os-auth-main">
+        <section className="os-auth-hero">
+          <h1><span>让管理更有序。</span><span>让安全看得见。</span></h1>
+          <p>智慧办公与 AI 安防的统一工作平台。</p>
+        </section>
+
+        <section className="os-auth-card">
+          <div key={shake} className={`os-auth-card-inner ${shake ? 'is-shaking' : ''}`}>
+            <h2>{setup ? '开始协同管理' : `登录${name}`}</h2>
+            <p className="os-auth-sub">{setup ? '首次启动：设置单位名称和首任管理员账号。' : '使用你的平台账号继续工作。'}</p>
+
+            <form onSubmit={submit} className="os-auth-form">
+              {setup && <>
+                <label className="os-field"><input name="organization" value={org} onChange={e => setOrg(e.target.value)} placeholder=" " title="例如：园区运营管理中心" required maxLength={100} /><span>单位 / 项目名称</span></label>
+                <label className="os-field"><input name="name" value={adminName} onChange={e => setAdminName(e.target.value)} placeholder=" " required maxLength={60} autoComplete="name" /><span>管理员姓名</span></label>
+              </>}
+              <label className="os-field"><input name="username" value={usernameVal} onChange={e => setUsernameVal(e.target.value)} placeholder=" " title="3–40 位字母、数字、下划线、点或短横线" required pattern="[a-zA-Z0-9_.\-]{3,40}" autoComplete="username" autoFocus={setup ? undefined : !usernameVal} /><span>账号</span></label>
+              <label className="os-field has-action"><input name="password" type={reveal ? 'text' : 'password'} value={passVal} onChange={e => setPassVal(e.target.value)} placeholder=" " title={setup ? '至少 6 位' : undefined} required minLength={setup ? 6 : 1} maxLength={128} autoComplete={setup ? 'new-password' : 'current-password'} /><span>{setup ? '密码（至少 6 位）' : '密码'}</span><button type="button" className="os-reveal" aria-label={reveal ? '隐藏密码' : '显示密码'} onClick={() => setReveal(value => !value)}>{reveal ? <EyeOff size={17} /> : <Eye size={17} />}</button></label>
+              {setup && <label className="os-field"><input name="confirm" type={reveal ? 'text' : 'password'} value={confirmVal} onChange={e => setConfirmVal(e.target.value)} placeholder=" " required minLength={6} autoComplete="new-password" /><span>确认密码</span></label>}
+
+              {shownError && <div className="os-auth-error" role="alert"><AlertTriangle size={15} />{shownError}</div>}
+
+              <button className={`os-auth-submit ${busy ? 'is-busy' : ''} ${leaving ? 'is-done' : ''}`} disabled={busy || leaving}>
+                <span className="os-auth-submit-label">{leaving ? '欢迎回来' : busy ? '正在验证…' : setup ? '创建工作空间' : '登录'}</span>
+                {leaving ? <Check size={17} strokeWidth={2.4} /> : busy ? <LoaderCircle size={17} className="os-spin" /> : null}
+              </button>
+            </form>
+
+            <button type="button" className="os-quick-fill" onClick={fillQuickAdmin} title="一键填入默认账号与密码">一键填入默认账号 <ChevronRight size={14} /></button>
+          </div>
+        </section>
+
+        <ul className="os-auth-tiles">
+          {features.map(([Icon, title, detail], index) => <li key={title} style={{ animationDelay: `${0.42 + index * 0.08}s` }}><Icon size={26} strokeWidth={1.5} /><strong>{title}</strong><small>{detail}</small></li>)}
+        </ul>
+      </main>
+
+      <footer className="os-auth-footer">
+        <p><ShieldCheck size={13} />{setup ? '没有预设密码，由你保管管理员账号。可随时在系统设置中重置。' : '账号权限由本单位管理员分配。如忘记密码，请联系管理员重置。'}</p>
+        <p>Copyright © {new Date().getFullYear()} 智慧工程。保留所有权利。</p>
+      </footer>
     </div>
   );
 }
