@@ -265,3 +265,32 @@ html[data-vt] .twin-screen { view-transition-name: twin-stage; }
   .twin-left, .twin-right, .twin-bottom-grid { grid-template-columns: 1fr; } .twin-left > .twin-panel:last-child, .twin-right > .twin-panel:first-child { grid-column: auto; }
   .twin-kpis { grid-template-columns: repeat(2, 1fr); } .twin-foot > span:last-child { display: none; } .twin-org { display: none; }
 }
+
+/* ---------- Fit & flow ----------
+   The stage only locks to the viewport when there is room for it (tall + wide).
+   Otherwise it flows with the page so nothing is clipped behind the header. */
+.os-content.is-twin { container: twinwrap / inline-size; }
+.os-shell.is-immersive .os-main { overflow: auto; }
+@media (max-height: 800px) {
+  .twin-screen { height: auto; min-height: calc(100dvh - var(--topbar-h, 52px) - 28px); overflow: visible; }
+  .os-shell.is-immersive .twin-screen { height: auto; min-height: 100dvh; }
+  .twin-header { position: relative; }
+  .twin-body { min-height: 0; grid-template-rows: auto !important; }
+  .twin-left, .twin-right { overflow: visible !important; }
+}
+@container twinwrap (max-width: 1019px) {
+  .twin-screen { height: auto; min-height: 0; overflow: visible; }
+  .os-shell.is-immersive .twin-screen { height: auto; min-height: 100dvh; }
+  .twin-header { position: relative; }
+  .twin-body { display: flex; flex-direction: column; min-height: 0; gap: 14px; padding: 14px; }
+  .twin-center { order: 0; }
+  .twin-scene-area { min-height: 400px; }
+  .twin-left, .twin-right { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; overflow: visible !important; }
+  .twin-left { order: 1; } .twin-right { order: 2; }
+  .twin-left > .twin-panel:last-child:nth-child(odd), .twin-right > .twin-panel:first-child { grid-column: 1 / -1; }
+  .twin-bottom-grid { grid-template-columns: 1fr 1fr; } .twin-bottom-grid > .twin-panel:last-child { display: block; }
+  .twin-asset-list { max-height: 220px; }
+}
+@container twinwrap (max-width: 560px) {
+  .twin-left, .twin-right, .twin-bottom-grid { grid-template-columns: 1fr; }
+}

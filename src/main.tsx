@@ -4,6 +4,7 @@ import App from './App';
 import './style.css';
 import './workspace.css';
 import './apple.css';
+import './studio.css';
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

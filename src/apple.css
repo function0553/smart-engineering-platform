@@ -623,3 +623,18 @@ html:not(.vt-capable) .os-page { animation: osPageIn .55s var(--ease) backwards;
 .os-shell .mw-project-hero:hover { transform: scale(1.006); box-shadow: var(--e-3); }
 .os-shell .mw-project-hero > span, .os-shell .mw-project-hero p { color: rgba(255, 255, 255, .72); }
 .os-shell .ppe-player { background: #000; }
+
+/* Short windows (e.g. 125% scaling on a laptop): compact the sidebar so nothing hides behind the status card */
+.os-nav { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent); }
+@media (max-height: 760px) and (min-width: 761px) {
+  .os-sidebar-head { min-height: 52px; padding: 10px 12px 8px 18px; }
+  .os-org { margin-bottom: 6px; padding: 7px 9px; }
+  .os-org-letter { width: 28px; height: 28px; font-size: 13px; }
+  .os-nav-group { margin-top: 2px; }
+  .os-nav-heading { padding: 6px 10px 4px; }
+  .os-nav-item { min-height: 32px; }
+  .os-sidebar-foot { margin: 0 12px 10px; padding: 8px 12px; }
+  .os-foot-text small { display: none; }
+  .os-content, .os-shell main.os-content { padding-top: 28px; }
+  .os-shell .page-heading h1 { font-size: 34px; }
+}
