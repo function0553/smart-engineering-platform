@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Motion & mini models
+   - three.js mini architectural model (MiniScene) in the workbench hero and
+     the digital-twin empty state
+   - glossy "app icon" squircles that pop in, spring on hover and lean in 3D
+   - sliding segmented-control thumb (driven by motion.ts)
+   ========================================================================== */
+
+/* ---------- Mini scene host ---------- */
+.mini-scene { position: relative; display: block; pointer-events: none; }
+.mini-scene > canvas { display: block; width: 100% !important; height: 100% !important; animation: miniSceneIn 1.1s var(--ease, ease) both; }
+.mini-scene.is-fallback { display: grid; place-items: center; }
+@keyframes miniSceneIn { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+
+/* ---------- Workbench hero with model ---------- */
+.os-shell .mobile-workspace .mw-project-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 40%);
+  grid-template-rows: auto auto auto auto 1fr;
+  grid-template-areas: "eyebrow model" "title model" "text model" "flow model" "cta model";
+  min-height: 300px; isolation: isolate;
+}
+.os-shell .mobile-workspace .mw-project-hero > .mw-hero-cta { align-self: end; }
+.os-shell .mobile-workspace .mw-project-hero:has(.mw-hero-flow) p { margin-bottom: 20px; }
+.os-shell .mobile-workspace .mw-hero-model {
+  grid-area: model; align-self: stretch; min-height: 250px; margin: -40px -44px -40px -8px; z-index: -1;
+  background: radial-gradient(58% 42% at 54% 76%, #f2f2f5 0%, rgba(242, 242, 245, 0) 70%);
+}
+.os-shell .mobile-workspace .mw-project-hero.is-project h2 { font-size: 36px; }
+.os-shell .mobile-workspace .mw-project-hero.is-project > .mw-hero-eyebrow { color: #248a3d; }
+.os-shell .mobile-workspace .mw-project-hero.is-project > .mw-hero-eyebrow::before { content: ''; display: inline-block; width: 7px; height: 7px; margin: 0 8px 1px 0; border-radius: 50%; background: #34c759; box-shadow: 0 0 0 0 rgba(52, 199, 89, .5); animation: livePulse 2.4s ease-out infinite; vertical-align: middle; }
+.os-shell .mobile-workspace .mw-project-hero.is-project .mw-hero-cta { background: #1d1d1f; }
+.os-shell .mobile-workspace .mw-project-hero.is-project:hover .mw-hero-cta { background: #000; }
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(52, 199, 89, .45); } 70%, 100% { box-shadow: 0 0 0 7px rgba(52, 199, 89, 0); } }
+
+/* Flow becomes a compact row of chips under the text */
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow { align-self: start; gap: 26px; margin: 0 0 28px; }
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i { flex-direction: row; width: auto; gap: 8px; font-size: 14px; }
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow svg { width: 16px; height: 16px; padding: 9px; }
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:not(:last-child)::after {
+  top: 50%; left: calc(100% + 5px); width: 16px; height: 1.5px; border-radius: 2px;
+  background: linear-gradient(90deg, #d2d2d7 0 40%, #0071e3 50%, #d2d2d7 60% 100%) 0 0 / 300% 100%;
+  animation: flowDash 3.2s linear infinite;
+}
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:nth-child(2)::after { animation-delay: 1.07s; }
+@keyframes flowDash { from { background-position: 100% 0; } to { background-position: -50% 0; } }
+
+@media (min-width: 761px) and (max-width: 1000px) {
+  .os-shell .mobile-workspace .mw-project-hero { grid-template-columns: minmax(0, 1fr) minmax(210px, 36%); padding: 34px 36px; }
+  .os-shell .mobile-workspace .mw-hero-model { margin: -34px -36px -34px -8px; }
+  .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow { gap: 20px; }
+  .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:not(:last-child)::after { left: calc(100% + 3px); width: 14px; }
+}
+@media (max-width: 760px) {
+  .os-shell .mobile-workspace .mw-project-hero { grid-template-columns: 1fr; grid-template-rows: none; grid-template-areas: "model" "eyebrow" "title" "text" "flow" "cta"; min-height: 0; padding: 0 24px 28px; }
+  .os-shell .mobile-workspace .mw-hero-model { min-height: 0; height: 200px; margin: 0 -24px 4px; }
+  .os-shell .mobile-workspace .mw-project-hero.is-project h2 { font-size: 26px; }
+  .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow { gap: 18px; margin-bottom: 24px; }
+  .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i { width: auto; font-size: 13px; }
+  .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:not(:last-child)::after { left: calc(100% + 3px); width: 12px; }
+}
+
+/* ---------- Digital twin empty state ---------- */
+.twin-no-model .twin-scene-symbol { width: 260px; height: 184px; margin-bottom: 26px; border-radius: 36px; overflow: hidden; background: radial-gradient(70% 55% at 50% 78%, #f2f2f5 0%, #fff 72%); }
+.twin-no-model .twin-scene-symbol .twin-mini { position: absolute; inset: 0; }
+.twin-no-model .twin-scene-symbol .twin-mini.is-fallback { color: var(--t-1); }
+
+/* ---------- Glossy app-icon squircles ---------- */
+.os-shell .mobile-workspace :is(.mw-row, .mw-module-entry) > svg:first-child,
+.os-shell .mobile-workspace details.mw-management > summary > svg:first-child {
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .26) 0%, rgba(255, 255, 255, .06) 48%, rgba(0, 0, 0, .04) 100%);
+  box-shadow: inset 0 .5px 0 rgba(255, 255, 255, .35), 0 1px 1.5px rgba(0, 0, 0, .1), 0 6px 12px -6px color-mix(in srgb, var(--tint, #0071e3) 70%, transparent);
+  transform-origin: 50% 60%;
+  transition: transform .6s var(--spring, ease), box-shadow .45s var(--ease, ease);
+  will-change: transform;
+}
+.os-shell .mobile-workspace .mw-project-row > svg:first-child,
+.os-shell .mobile-workspace .mw-project-context > svg:first-child { background-image: linear-gradient(180deg, #48484a 0%, #1d1d1f 60%); box-shadow: inset 0 .5px 0 rgba(255, 255, 255, .25), 0 6px 12px -6px rgba(0, 0, 0, .45); transition: transform .6s var(--spring, ease); }
+
+/* Hover: the icon springs up like a picked-up object */
+.os-shell .mobile-workspace :is(.mw-row, .mw-module-entry, .mw-project-context):hover > svg:first-child {
+  transform: translateY(-2px) scale(1.08) rotate(-5deg);
+  box-shadow: inset 0 .5px 0 rgba(255, 255, 255, .35), 0 2px 3px rgba(0, 0, 0, .08), 0 12px 18px -8px color-mix(in srgb, var(--tint, #0071e3) 75%, transparent);
+}
+.os-shell .mobile-workspace :is(.mw-row, .mw-module-entry):active > svg:first-child { transform: scale(.94); transition-duration: .15s; }
+.os-shell .mobile-workspace .mw-business-group h2 svg { transition: transform .6s var(--spring, ease); }
+.os-shell .mobile-workspace .mw-business-group:hover h2 svg { transform: rotate(-8deg) scale(1.1); }
+
+/* ---------- 3D tilt (vars from motion.ts) ---------- */
+.os-shell .mobile-workspace :is(.mw-module-entry, .mw-project-row, .mw-action-tiles > .mw-row, .mw-todo-tiles > .mw-row).is-tilting,
+.os-auth-tiles > li.is-tilting {
+  transform: perspective(900px) rotateX(calc(var(--ty, 0) * -5deg)) rotateY(calc(var(--tx, 0) * 6deg)) scale(1.02);
+  transition: transform .18s ease-out, box-shadow .45s var(--ease, ease), background .2s;
+  box-shadow: calc(var(--tx, 0) * -6px) calc(6px + var(--ty, 0) * -4px) 22px rgba(0, 0, 0, .09);
+}
+.os-shell .mobile-workspace .mw-project-hero.is-tilting { transform: perspective(1400px) rotateX(calc(var(--ty, 0) * -1.4deg)) rotateY(calc(var(--tx, 0) * 1.8deg)); transition: transform .25s ease-out, box-shadow .5s var(--ease, ease); }
+.os-shell .mobile-workspace :is(.mw-module-entry, .mw-project-row, .mw-action-tiles > .mw-row, .mw-todo-tiles > .mw-row).is-tilting > svg:first-child,
+.os-auth-tiles > li.is-tilting > svg {
+  transform: translate(calc(var(--tx, 0) * 4px), calc(var(--ty, 0) * 3px - 2px)) scale(1.1) rotate(calc(var(--tx, 0) * -6deg));
+  transition: transform .22s ease-out, box-shadow .45s var(--ease, ease);
+}
+/* moving highlight that follows the pointer (tinted by the tile's group colour) */
+.os-shell .mobile-workspace :is(.mw-module-entry, .mw-project-row, .mw-action-tiles > .mw-row, .mw-todo-tiles > .mw-row) { position: relative; overflow: hidden; isolation: isolate; }
+.os-shell .mobile-workspace :is(.mw-module-entry, .mw-project-row, .mw-action-tiles > .mw-row, .mw-todo-tiles > .mw-row)::before {
+  content: '' !important; display: block !important; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--tint, #0071e3) 9%, transparent), transparent 70%);
+  transition: opacity .35s;
+}
+.os-auth-tiles > li { position: relative; overflow: hidden; isolation: isolate; }
+.os-auth-tiles > li::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(360px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 70%);
+  transition: opacity .35s;
+}
+.os-shell .mobile-workspace :is(.mw-module-entry, .mw-project-row, .mw-action-tiles > .mw-row, .mw-todo-tiles > .mw-row).is-tilting::before,
+.os-auth-tiles > li.is-tilting::before { opacity: 1; }
+.os-auth-tiles li svg { transition: transform .6s var(--spring, ease); }
+
+/* ---------- Segmented control sliding thumb (motion.ts) ---------- */
+.os-shell .site-simple-tabs[data-seg], .os-shell .reports-tabs[data-seg] { position: relative; isolation: isolate; }
+.os-shell :is(.site-simple-tabs, .reports-tabs).seg-ready::before {
+  content: ''; position: absolute; z-index: 0; left: 0; top: 0; width: var(--seg-w); height: var(--seg-h);
+  transform: translate(var(--seg-x), var(--seg-y)); opacity: var(--seg-o, 1);
+  border-radius: 980px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 3px 10px rgba(0, 0, 0, .06);
+  transition: transform .55s var(--spring-soft, ease), width .55s var(--spring-soft, ease), height .3s var(--ease, ease), opacity .2s; pointer-events: none;
+}
+.os-shell :is(.site-simple-tabs, .reports-tabs).seg-ready > * { position: relative; z-index: 1; }
+.os-shell :is(.site-simple-tabs, .reports-tabs).seg-ready > :is([aria-current], [aria-pressed=true]) { background: transparent !important; box-shadow: none !important; }
+@media (min-width: 761px) {
+  .os-shell .mobile-workspace .mw-bottom { isolation: isolate; }
+  .os-shell .mobile-workspace .mw-bottom.seg-ready::before {
+    content: ''; position: absolute; z-index: 0; left: 0; top: 0; width: var(--seg-w); height: var(--seg-h);
+    transform: translate(var(--seg-x), var(--seg-y)); opacity: var(--seg-o, 1);
+    border-radius: 980px; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .06), 0 3px 10px rgba(0, 0, 0, .06);
+    transition: transform .55s var(--spring-soft, ease), width .55s var(--spring-soft, ease), opacity .2s; pointer-events: none;
+  }
+  .os-shell .mobile-workspace .mw-bottom.seg-ready > a { position: relative; z-index: 1; }
+  .os-shell .mobile-workspace .mw-bottom.seg-ready > a[aria-current=page] { background: transparent; box-shadow: none; }
+}
+/* tab-bar icons bounce when they become active */
+.os-shell .mobile-workspace .mw-bottom a[aria-current=page] svg { animation: tabPop .55s var(--spring, ease); }
+@keyframes tabPop { 0% { transform: scale(.7); } 60% { transform: scale(1.12); } 100% { transform: none; } }
+
+/* ---------- Staggered entrance of icons ---------- */
+@keyframes iconPop { 0% { opacity: 0; transform: translateY(8px) scale(.55) rotate(-14deg); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes tileRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles) > * { animation: tileRise .6s var(--ease, ease) backwards; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles) > * > svg:first-child,
+.os-shell .mobile-workspace .mw-panel > .mw-project-row > svg:first-child { animation: iconPop .75s var(--spring, ease) backwards; animation-delay: .12s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(2), .os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(2) > svg:first-child { animation-delay: .05s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(2) > svg:first-child { animation-delay: .17s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(3) { animation-delay: .1s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(3) > svg:first-child { animation-delay: .22s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(4) { animation-delay: .15s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(4) > svg:first-child { animation-delay: .27s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(5) { animation-delay: .2s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(5) > svg:first-child { animation-delay: .32s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(n+6) { animation-delay: .25s; }
+.os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > :nth-child(n+6) > svg:first-child { animation-delay: .37s; }
+
+/* Hero flow icons take turns lifting, like work moving along the pipeline */
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow svg { animation: flowStep 3.2s var(--ease, ease) infinite; }
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:nth-child(2) svg { animation-delay: 1.07s; }
+.os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:nth-child(3) svg { animation-delay: 2.13s; }
+@keyframes flowStep { 0%, 30%, 100% { transform: none; box-shadow: none; } 10% { transform: translateY(-3px) scale(1.12); box-shadow: 0 6px 12px -6px rgba(0, 0, 0, .25); } }
+
+/* Empty-state icons float gently */
+.os-shell .os-page :is(.site-library-empty, .archive-empty) > svg,
+.os-shell .empty-state > svg:first-child { animation: softFloat 4.5s ease-in-out infinite; }
+@keyframes softFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+/* Sidebar: active icon pops, hover icon wiggles */
+.os-nav-item.active .os-nav-icon { animation: tabPop .55s var(--spring, ease); }
+.os-nav-item:hover .os-nav-icon svg { animation: navWiggle .6s var(--ease, ease); }
+@keyframes navWiggle { 0%, 100% { transform: none; } 30% { transform: rotate(-10deg); } 60% { transform: rotate(6deg); } }
+
+/* Refresh buttons spin a full turn */
+.os-shell .mobile-workspace .mw-icon-button svg { transition: transform .6s var(--spring, ease); }
+.os-shell .mobile-workspace .mw-icon-button[aria-label*="刷新"]:hover svg { transform: rotate(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mini-scene > canvas,
+  .os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > *,
+  .os-shell .mobile-workspace :is(.mw-module-grid, .mw-action-tiles, .mw-todo-tiles, .mw-panel) > * > svg:first-child,
+  .os-shell .mobile-workspace .mw-hero-flow svg, .os-shell .mobile-workspace .mw-hero-flow i::after,
+  .os-shell .os-page :is(.site-library-empty, .archive-empty) > svg, .os-shell .empty-state > svg:first-child,
+  .os-nav-item .os-nav-icon, .os-nav-item .os-nav-icon svg, .os-shell .mobile-workspace .mw-bottom a svg,
+  .os-shell .mobile-workspace .mw-project-hero.is-project > .mw-hero-eyebrow::before { animation: none !important; }
+  .os-shell :is(.site-simple-tabs, .reports-tabs, .mw-bottom).seg-ready::before { transition: none; }
+}
+
+/* ---------- Login feature tiles: glossy app icons ---------- */
+.os-auth-tiles li svg {
+  box-sizing: content-box; width: 24px; height: 24px; padding: 12px; border-radius: 14px; color: #fff; --ic: #0071e3;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .3) 0%, rgba(255, 255, 255, .04) 52%, rgba(0, 0, 0, .05) 100%), var(--ic);
+  box-shadow: inset 0 .5px 0 rgba(255, 255, 255, .4), 0 1px 2px rgba(0, 0, 0, .1), 0 12px 20px -12px var(--ic);
+  animation: iconPop .8s var(--spring, ease) backwards; animation-delay: .72s;
+}
+.os-auth-tiles li:nth-child(2) svg { --ic: #30b158; animation-delay: .8s; }
+.os-auth-tiles li:nth-child(3) svg { --ic: #d97757; animation-delay: .88s; }
+.os-auth-tiles li:hover svg { transform: translateY(-3px) scale(1.08) rotate(-6deg); }
+
+@media (max-width: 760px) {
+  .os-shell .mobile-workspace .mw-greeting { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .os-auth-tiles li svg { animation: none !important; }
+}
