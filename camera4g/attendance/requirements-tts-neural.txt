@@ -1,0 +1,4 @@
+# Install in a separate TTS venv, preserving the attendance CUDA environment.
+sherpa-onnx==1.12.26
+sherpa-onnx-core==1.12.26
+numpy==2.2.6

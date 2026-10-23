@@ -62,11 +62,11 @@ bash camera4g/deploy/start-gpu.sh ppe
 
 打卡启动方式：`bash deploy/start-gpu.sh attendance`，或直接 `python attendance/attendance_service.py --config /path/to/private/attendance.json`。监听用 `bind.host`/`bind.port` 配置；要求 ATTENDANCE_ADMIN_TOKEN。推荐由 GPU TLS 网关提供 `https://实际GPU域名:29482`；默认回环监听只供 GPU 本机网关使用，不是 252 调用地址。配置见 `attendance/config.example.json`。
 
-原版 facekit/face_engine 已恢复在 `attendance/vendor_original`，来源和原始 SHA-256 随附；`attendance/requirements-gpu.txt` 是按当前 GPU 环境记录的打卡依赖。权重通过 `attendance/face_runtime.py` 从受控源恢复/校验，不在 Git 再分发。gpu_id 默认 1、可配置；PPE 使用独立 device_id。姓名音频适配器在 GPU 本机运行，需 espeak-ng 与 ffmpeg。
+原版 facekit/face_engine 已恢复在 `attendance/vendor_original`，来源和原始 SHA-256 随附；`attendance/requirements-gpu.txt` 是按当前 GPU 环境记录的打卡依赖。权重通过 `attendance/face_runtime.py` 从受控源恢复/校验，不在 Git 再分发。gpu_id 默认 1、可配置；PPE 使用独立 device_id。姓名音频推荐使用 GPU 本机独立环境中的 sherpa-onnx / MeloTTS 中文模型与 ffmpeg，见 [安装和配置命令](docs/NEURAL_TTS_20261023.md)；原 espeak-ng 适配器保留作为历史方案。
 
 活体模型已随附，`liveness_model_directory` 指向本目录的 `attendance/models/liveness`。RGB 活体输出需现场验证。语音依赖本次适配的 Monibuca 广播接口和现场听音验证文件；`submitted_unverified` 仅表示已提交，不能代替确认听到。
 
-2026-10-22 独立语音测试及重发后，用户反馈未听见，播音验收失败。2026-10-23 已从原部署资料和实际会话日志核实 UDP 目的地址及 252 局域网路由，当前播音尚未恢复，见 [语音链路复核](docs/VOICE_ROUTE_DIAGNOSIS_20261023.md)。
+2026-10-22 独立语音测试及重发后，用户反馈未听见，播音验收失败。2026-10-23 已从原部署资料和实际会话日志核实 UDP 目的地址及 252 局域网路由，已恢复球机 TCP 主动语音，改用本地中文神经模型后，11:06:46 纯 4G 重发现场确认“完整清楚，可以使用”。安装、姓名音频准备命令和打卡启动脚本见 [神经语音说明](docs/NEURAL_TTS_20261023.md)；链路依据见 [语音链路复核](docs/VOICE_ROUTE_DIAGNOSIS_20261023.md)。
 
 `attendance/local_preview.py` 是现有业主本机 SSH 预览工具，保留历史服务器地址和 SSH 主机指纹，凭据从标准输入读取；迁移到不同服务器前应核对地址及可信指纹。该工具使用 Python `audioop`，需使用支持该模块的既有 Python 环境。
 

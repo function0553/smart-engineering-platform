@@ -511,13 +511,13 @@
       },
       {
         "file": "README.md",
-        "bytes": 8418,
-        "sha256": "a76305ce2a0a76447a71f56c05f9795b20580f435dabdd3208af751aa04eba9f"
+        "bytes": 8757,
+        "sha256": "a61d24e0ad31c08108481ae4dd4e10220a3b230c7b3c6cc820346222bb480350"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 6186,
-        "sha256": "de6d3471ff52ed7c9698d18b2569a503d3d1d0911c8ef3064e163963abe1489f"
+        "bytes": 6561,
+        "sha256": "0d95f52784a42d2c3a77138b4f3ed387301d0515b9944772a7ab04f2117ff7f3"
       },
       {
         "file": "camera4g/attendance/attendance_service.py",
@@ -526,8 +526,8 @@
       },
       {
         "file": "camera4g/attendance/config.example.json",
-        "bytes": 983,
-        "sha256": "3d4d263428e5772185636c1eaa02361c21376b8b659d92ad6531a2e7bff080e8"
+        "bytes": 1072,
+        "sha256": "40228c8b4d92cee05f0305164051e32026081a1b6e91bf451fb3a3ae652e59e5"
       },
       {
         "file": "camera4g/attendance/test_deployment_config.py",
@@ -536,8 +536,8 @@
       },
       {
         "file": "camera4g/deploy/README.md",
-        "bytes": 1251,
-        "sha256": "041f7bb8f2ce97db54a9108173afbb7841a28d9cc2767a8dba712c189594b92c"
+        "bytes": 1510,
+        "sha256": "f181a3e2d2438946bbef7fd3b6ac29cc6b2383d4b1f76dbb91521e25a51f6774"
       },
       {
         "file": "camera4g/deploy/camera4g-gpu@.service.example",
@@ -581,8 +581,8 @@
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 12208,
-        "sha256": "d079ac2605cd33d4ca0383ca6b79aa70604de84eb2986891a22383b19764d79f"
+        "bytes": 12790,
+        "sha256": "fdc537e3fd7833ccc6d8bda4f5da9e20201090bce23e2e2074fe13b27344bd9e"
       },
       {
         "file": "camera4g/docs/PPE_BACKEND_20261009.md",
@@ -624,18 +624,18 @@
       },
       {
         "file": "README.md",
-        "bytes": 8418,
-        "sha256": "a76305ce2a0a76447a71f56c05f9795b20580f435dabdd3208af751aa04eba9f"
+        "bytes": 8757,
+        "sha256": "a61d24e0ad31c08108481ae4dd4e10220a3b230c7b3c6cc820346222bb480350"
       },
       {
         "file": "camera4g/DEPLOYMENT_VALIDATION_20261022.json",
-        "bytes": 5871,
-        "sha256": "6d0d63aa5d516abd7e524dd3e6d8f1031388ca65e609faa2a5139dc9812c62f8"
+        "bytes": 6410,
+        "sha256": "21e451d573bccef47cfe38a3814b55d7e8faa3f9fa44108b0d25ad11f9c4aac8"
       },
       {
         "file": "camera4g/README.md",
-        "bytes": 6186,
-        "sha256": "de6d3471ff52ed7c9698d18b2569a503d3d1d0911c8ef3064e163963abe1489f"
+        "bytes": 6561,
+        "sha256": "0d95f52784a42d2c3a77138b4f3ed387301d0515b9944772a7ab04f2117ff7f3"
       },
       {
         "file": "camera4g/THIRD_PARTY_NOTICES.md",
@@ -659,8 +659,8 @@
       },
       {
         "file": "camera4g/attendance/config.example.json",
-        "bytes": 983,
-        "sha256": "3d4d263428e5772185636c1eaa02361c21376b8b659d92ad6531a2e7bff080e8"
+        "bytes": 1072,
+        "sha256": "40228c8b4d92cee05f0305164051e32026081a1b6e91bf451fb3a3ae652e59e5"
       },
       {
         "file": "camera4g/attendance/face-models.json",
@@ -804,8 +804,8 @@
       },
       {
         "file": "camera4g/deploy/README.md",
-        "bytes": 1251,
-        "sha256": "041f7bb8f2ce97db54a9108173afbb7841a28d9cc2767a8dba712c189594b92c"
+        "bytes": 1510,
+        "sha256": "f181a3e2d2438946bbef7fd3b6ac29cc6b2383d4b1f76dbb91521e25a51f6774"
       },
       {
         "file": "camera4g/deploy/attendance-upstream.example.json",
@@ -834,13 +834,13 @@
       },
       {
         "file": "camera4g/docs/ATTENDANCE_GPU_252_20261022.md",
-        "bytes": 10966,
-        "sha256": "2788069ceeb6a2f5378045d94f5e68c60bd889e90af4cc67b16f412eb5de64d9"
+        "bytes": 11529,
+        "sha256": "6f4b56f6e1bb9a19fc4106412dc14a741b3187986b6532087023a30980e8b5bd"
       },
       {
         "file": "camera4g/docs/GPU_252_HANDOFF_20261022.md",
-        "bytes": 12208,
-        "sha256": "d079ac2605cd33d4ca0383ca6b79aa70604de84eb2986891a22383b19764d79f"
+        "bytes": 12790,
+        "sha256": "fdc537e3fd7833ccc6d8bda4f5da9e20201090bce23e2e2074fe13b27344bd9e"
       },
       {
         "file": "docs/superpowers/plans/2026-10-22-camera-attendance-integration.md",
@@ -904,22 +904,45 @@
   "camera_voice_test_update": {
     "date": "2026-10-22",
     "isolated_udp_submission_performed": true,
-    "onsite_playback_verified": false,
+    "onsite_playback_verified": true,
     "production_sender_modified": false,
     "files": [
       {
         "file": "camera4g/VOICE_CAMERA_TEST_20261022.json",
-        "bytes": 1852,
-        "sha256": "9952f0bea45a2e1ac9eda6792330665e3d6096ec7891bd2bd93271e3c92f44e2"
+        "bytes": 9604,
+        "sha256": "9fb9bdc1944ddd1c11cdd614c95cfce2f8ef94799d5a147c61beaaadfa7e2b81"
       },
       {
         "file": "camera4g/docs/VOICE_ROUTE_DIAGNOSIS_20261023.md",
-        "bytes": 3267,
-        "sha256": "fa4e193c2583e8fcb2f16545aff92b541a034a0bcb2b1f48ba629f52be49cf35"
+        "bytes": 5323,
+        "sha256": "e849e0acfe88d0ae2d4463ab1b0e309c10b25ddd9deaf66aaeb77911e2368393"
+      },
+      {
+        "file": "camera4g/attendance/prepare_neural_voice.py",
+        "bytes": 2928,
+        "sha256": "52bd7711f3fbda17247dd40132792edaa5e7ac9a1b8fb2707d492fe929cb855f"
+      },
+      {
+        "file": "camera4g/attendance/requirements-tts-neural.txt",
+        "bytes": 138,
+        "sha256": "0489eb2bc22f8f7639293cfa8d33e95952394bd067216ca18550590f0bd683d8"
+      },
+      {
+        "file": "camera4g/docs/NEURAL_TTS_20261023.md",
+        "bytes": 4260,
+        "sha256": "89c846a5a86a1293b4f0e9d7b88f5034b0a48d7db30ff897c91054a902fd3c25"
+      },
+      {
+        "file": "camera4g/TTS_NEURAL_VALIDATION_20261023.json",
+        "bytes": 6375,
+        "sha256": "6a2b1b91b2d991501ee07699d166c75a80ed493b9c077d6f3024b48daef121f9"
       }
     ],
-    "onsite_playback_status": "not_heard",
+    "onsite_playback_status": "heard_clear",
     "diagnosis_date": "2026-10-23",
-    "playback_restored": false
+    "playback_restored": true,
+    "camera_configuration_changed": true,
+    "neural_tts_installed": true,
+    "quality_accepted_at": "2026-10-23T11:06:46+08:00"
   }
 }

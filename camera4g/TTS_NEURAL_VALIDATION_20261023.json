@@ -1,0 +1,184 @@
+{
+  "date": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "installation": {
+    "engine": "sherpa-onnx 1.12.26",
+    "model": "vits-melo-tts-zh_en",
+    "archive_sha256": "e58351ed7149f290a54534538badd4077cdbe6fddc964b24d0bee870415d1514",
+    "files": {
+      "model.onnx": {
+        "bytes": 170429550,
+        "sha256": "bf30582eb1b012250a35b1a4a80e7dfbcf8485e7bb9de0d95efbbeef0e4ad86d"
+      },
+      "lexicon.txt": {
+        "bytes": 6837671,
+        "sha256": "7236884b02435ac5d10cf69b4be40a61b45aa676b5300f0e412f185748fee528"
+      },
+      "tokens.txt": {
+        "bytes": 655,
+        "sha256": "d18664a7e12bd7ea1022ddaf951e534e136815016c5a809d6b64156bffb4369d"
+      },
+      "LICENSE": {
+        "bytes": 1053,
+        "sha256": "88a50e5a02bbc2a5c2f084dc19da751aa97b1690f5fda76cd8005c8634d1ca70"
+      }
+    },
+    "venv": "/data/4g-camera-inference/venv-tts-neural",
+    "adapter": "/data/4g-camera-inference/tts-neural-20261023/prepare_neural_voice.py",
+    "model_dir": "/data/4g-camera-inference/tts-neural-20261023/vits-melo-tts-zh_en",
+    "existing_cuda_venv_modified": false,
+    "service_restarted": false
+  },
+  "source": {
+    "model_url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-melo-tts-zh_en.tar.bz2",
+    "model_license": "MIT",
+    "model_weights_in_git": false
+  },
+  "synthesis_contract": "voice_audio.prepare_voice with subprocess timeout 30 seconds",
+  "tests": [
+    {
+      "test": "GPU local neural synthesis to pure 4G camera",
+      "tested_at_utc": "2026-10-23T03:05:18Z",
+      "voice_text": "语音测试打卡成功",
+      "engine": "sherpa-onnx 1.12.26 / MeloTTS Chinese",
+      "synthesis_seconds": 4.6343604259964195,
+      "source_bytes": 14118,
+      "audio_duration_seconds": 1.76475,
+      "delivery": {
+        "status": "submitted_unverified",
+        "reason": null,
+        "session_id": "f387b92d-8588-45d3-9a06-bef0c48b57b0",
+        "payload_bytes_sent": 14400,
+        "source_bytes": 14118,
+        "transport": "TCP",
+        "cleanup_complete": true,
+        "bye_confirmed": true,
+        "stop_code": 0,
+        "playback_verified": false,
+        "connection_prepared": false,
+        "timing_ms": {
+          "invite_received": 1368.930762000673,
+          "transport_ready": 2098.16654700262,
+          "websocket_bound": 2209.523782999895,
+          "first_audio_submitted": 2209.7317189982277,
+          "total_delivery_and_cleanup": 4206.158993001736
+        }
+      },
+      "final_broadcast_status": {
+        "code": 0,
+        "data": {
+          "ackFirmwareCompatibility": true,
+          "ackReady": true,
+          "byeAttempted": true,
+          "byeConfirmed": true,
+          "channelId": "34020000001320000012",
+          "cleanupReason": "local_resources_closed",
+          "deviceId": "34020000001320000012",
+          "failureReason": "",
+          "inviteReceived": true,
+          "localCleanupComplete": true,
+          "packetsSent": 90,
+          "payloadBytesSent": 14400,
+          "payloadType": 0,
+          "playbackVerified": false,
+          "queuePackets": 0,
+          "remoteBye": false,
+          "senderDone": true,
+          "senderStarted": true,
+          "sessionId": "f387b92d-8588-45d3-9a06-bef0c48b57b0",
+          "stopped": true,
+          "tcpConnected": true,
+          "transcodePCMA": true,
+          "transport": "TCP",
+          "wsBound": false
+        }
+      },
+      "playback_verified": false,
+      "attendance_record_created": false,
+      "gallery_accessed": false,
+      "service_restarted": false
+    },
+    {
+      "test": "GPU local neural synthesis to pure 4G camera",
+      "tested_at_utc": "2026-10-23T03:06:46Z",
+      "voice_text": "语音测试打卡成功",
+      "engine": "sherpa-onnx 1.12.26 / MeloTTS Chinese",
+      "synthesis_seconds": 5.2845074360011495,
+      "source_bytes": 14118,
+      "audio_duration_seconds": 1.76475,
+      "delivery": {
+        "status": "submitted_unverified",
+        "reason": null,
+        "session_id": "37245d8a-e458-49f3-a629-4d4811d5d477",
+        "payload_bytes_sent": 14400,
+        "source_bytes": 14118,
+        "transport": "TCP",
+        "cleanup_complete": true,
+        "bye_confirmed": true,
+        "stop_code": 0,
+        "playback_verified": false,
+        "connection_prepared": false,
+        "timing_ms": {
+          "invite_received": 1478.4253319958225,
+          "transport_ready": 1798.0182469982537,
+          "websocket_bound": 1907.9376679947018,
+          "first_audio_submitted": 1908.1759119944763,
+          "total_delivery_and_cleanup": 3914.1247989973635
+        }
+      },
+      "final_broadcast_status": {
+        "code": 0,
+        "data": {
+          "ackFirmwareCompatibility": true,
+          "ackReady": true,
+          "byeAttempted": true,
+          "byeConfirmed": true,
+          "channelId": "34020000001320000012",
+          "cleanupReason": "local_resources_closed",
+          "deviceId": "34020000001320000012",
+          "failureReason": "",
+          "inviteReceived": true,
+          "localCleanupComplete": true,
+          "packetsSent": 90,
+          "payloadBytesSent": 14400,
+          "payloadType": 0,
+          "playbackVerified": false,
+          "queuePackets": 0,
+          "remoteBye": false,
+          "senderDone": true,
+          "senderStarted": true,
+          "sessionId": "37245d8a-e458-49f3-a629-4d4811d5d477",
+          "stopped": true,
+          "tcpConnected": true,
+          "transcodePCMA": true,
+          "transport": "TCP",
+          "wsBound": false
+        }
+      },
+      "playback_verified": false,
+      "attendance_record_created": false,
+      "gallery_accessed": false,
+      "service_restarted": false
+    }
+  ],
+  "onsite_playback": {
+    "status": "heard_clear",
+    "verified": true,
+    "human_feedback": "完整清楚，可以使用",
+    "audible_acceptance": "passed",
+    "transport": "TCP",
+    "tested_at_beijing": "2026-10-23T11:06:46+08:00",
+    "session_id": "37245d8a-e458-49f3-a629-4d4811d5d477"
+  },
+  "attendance_regression": {
+    "command": "python -m unittest discover -p test_*.py",
+    "cwd": "camera4g/attendance",
+    "passed": 49,
+    "failed": 0
+  },
+  "application_service_deployed": false,
+  "active_attendance_config_changed": false,
+  "existing_person_audio_replaced": false,
+  "camera_reboot_persistence_verified": false,
+  "audio_saved_in_git": false
+}

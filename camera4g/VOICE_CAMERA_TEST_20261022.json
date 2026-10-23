@@ -30,15 +30,17 @@
     "cleanup_complete": true
   },
   "onsite_playback": {
-    "status": "not_heard",
-    "verified": false,
-    "human_feedback": "没听见",
-    "audible_acceptance": "failed",
-    "attempt_times_beijing": ["2026-10-22T19:44:12+08:00", "2026-10-22T19:47:26+08:00", "2026-10-22T19:59:21+08:00"]
+    "status": "heard_clear",
+    "verified": true,
+    "human_feedback": "完整清楚，可以使用",
+    "audible_acceptance": "passed",
+    "transport": "TCP",
+    "tested_at_beijing": "2026-10-23T11:06:46+08:00",
+    "session_id": "37245d8a-e458-49f3-a629-4d4811d5d477"
   },
   "application_service_deployed": false,
   "production_sender_modified": false,
-  "camera_configuration_changed": false,
+  "camera_configuration_changed": true,
   "attendance_record_created": false,
   "audio_saved_in_git": false,
   "route_diagnosis": {
@@ -46,9 +48,241 @@
     "camera_sdp_audio_destination": "192.168.1.100:15066",
     "transport": "UDP",
     "media_server_route": "direct LAN via eno4np1, source 192.168.1.252",
-    "public_4g_audio_return_verified": false,
-    "playback_restored": false,
-    "report": "docs/VOICE_ROUTE_DIAGNOSIS_20261023.md"
+    "public_4g_audio_return_verified": true,
+    "playback_restored": true,
+    "report": "docs/VOICE_ROUTE_DIAGNOSIS_20261023.md",
+    "tcp_transport_restored": true,
+    "clear_speech_accepted": true
   },
-  "limitation": "UDP gateway send counters do not prove camera playback. Existing production Speaker requires TCP readiness; this isolated diagnostic does not change that requirement."
+  "limitation": "UDP gateway send counters do not prove camera playback. Existing production Speaker requires TCP readiness; this isolated diagnostic does not change that requirement.",
+  "udp_onsite_playback": {
+    "status": "not_heard",
+    "verified": false,
+    "human_feedback": "没听见",
+    "audible_acceptance": "failed",
+    "attempt_times_beijing": [
+      "2026-10-22T19:44:12+08:00",
+      "2026-10-22T19:47:26+08:00",
+      "2026-10-22T19:59:21+08:00"
+    ]
+  },
+  "last_updated": "2026-10-23",
+  "camera_tcp_restore": {
+    "management_source": "original 2026-10-19 ops_bridge.py",
+    "target": "192.168.1.11",
+    "physical_interface_index": 18,
+    "http_status": 200,
+    "camera_configuration_changed": true,
+    "identity": {
+      "BoardType": "20847",
+      "DeviceTypeName": "H5AI-50PSS-AI/GS",
+      "SoftWareVersion": "2.2.1-20260811"
+    },
+    "serial_sha256": "dad372a249c56372ee73db0d9d5ad3a241aa7dc8d87e639175b07373ba5c5a08",
+    "device_id": "34020000001320000012",
+    "before": "udp",
+    "desired": "tcpActive",
+    "put_http": 200,
+    "read_http": 200,
+    "verified": true,
+    "after": "tcpActive",
+    "only_changed_field": "VoiceTalkTransportType"
+  },
+  "tcp_test": {
+    "test": "GPU synthesis to 4G camera",
+    "tested_at_utc": "2026-10-23T02:49:37Z",
+    "device_id": "34020000001320000012",
+    "channel_id": "34020000001320000012",
+    "voice_text": "语音测试打卡成功",
+    "source_bytes": 24645,
+    "audio_duration_seconds": 3.080625,
+    "delivery": {
+      "status": "submitted_unverified",
+      "reason": null,
+      "session_id": "8ea429c2-2d41-41bd-877e-559dc26c9f69",
+      "payload_bytes_sent": 25200,
+      "source_bytes": 24645,
+      "transport": "TCP",
+      "cleanup_complete": true,
+      "bye_confirmed": true,
+      "stop_code": 0,
+      "playback_verified": false,
+      "connection_prepared": false,
+      "timing_ms": {
+        "invite_received": 1223.5807390025002,
+        "transport_ready": 2050.635277002584,
+        "websocket_bound": 2158.0749220011057,
+        "first_audio_submitted": 2158.267261002038,
+        "total_delivery_and_cleanup": 5467.522946004465
+      }
+    },
+    "final_broadcast_status": {
+      "code": 0,
+      "data": {
+        "ackFirmwareCompatibility": true,
+        "ackReady": true,
+        "byeAttempted": true,
+        "byeConfirmed": true,
+        "channelId": "34020000001320000012",
+        "cleanupReason": "local_resources_closed",
+        "deviceId": "34020000001320000012",
+        "failureReason": "",
+        "inviteReceived": true,
+        "localCleanupComplete": true,
+        "packetsSent": 158,
+        "payloadBytesSent": 25200,
+        "payloadType": 0,
+        "playbackVerified": false,
+        "queuePackets": 0,
+        "remoteBye": false,
+        "senderDone": true,
+        "senderStarted": true,
+        "sessionId": "8ea429c2-2d41-41bd-877e-559dc26c9f69",
+        "stopped": true,
+        "tcpConnected": true,
+        "transcodePCMA": true,
+        "transport": "TCP",
+        "wsBound": false
+      }
+    },
+    "attendance_record_created": false,
+    "gallery_accessed": false,
+    "service_restarted": false,
+    "playback_verified": false
+  },
+  "tcp_espeak_onsite_playback": {
+    "status": "heard_unclear",
+    "verified": false,
+    "human_feedback": "整句都有，但中文发音含糊或机械",
+    "audible_acceptance": "failed_quality",
+    "transport": "TCP",
+    "tested_at_beijing": "2026-10-23T10:49:37+08:00"
+  },
+  "neural_tcp_tests": [
+    {
+      "test": "GPU local neural synthesis to pure 4G camera",
+      "tested_at_utc": "2026-10-23T03:05:18Z",
+      "voice_text": "语音测试打卡成功",
+      "engine": "sherpa-onnx 1.12.26 / MeloTTS Chinese",
+      "synthesis_seconds": 4.6343604259964195,
+      "source_bytes": 14118,
+      "audio_duration_seconds": 1.76475,
+      "delivery": {
+        "status": "submitted_unverified",
+        "reason": null,
+        "session_id": "f387b92d-8588-45d3-9a06-bef0c48b57b0",
+        "payload_bytes_sent": 14400,
+        "source_bytes": 14118,
+        "transport": "TCP",
+        "cleanup_complete": true,
+        "bye_confirmed": true,
+        "stop_code": 0,
+        "playback_verified": false,
+        "connection_prepared": false,
+        "timing_ms": {
+          "invite_received": 1368.930762000673,
+          "transport_ready": 2098.16654700262,
+          "websocket_bound": 2209.523782999895,
+          "first_audio_submitted": 2209.7317189982277,
+          "total_delivery_and_cleanup": 4206.158993001736
+        }
+      },
+      "final_broadcast_status": {
+        "code": 0,
+        "data": {
+          "ackFirmwareCompatibility": true,
+          "ackReady": true,
+          "byeAttempted": true,
+          "byeConfirmed": true,
+          "channelId": "34020000001320000012",
+          "cleanupReason": "local_resources_closed",
+          "deviceId": "34020000001320000012",
+          "failureReason": "",
+          "inviteReceived": true,
+          "localCleanupComplete": true,
+          "packetsSent": 90,
+          "payloadBytesSent": 14400,
+          "payloadType": 0,
+          "playbackVerified": false,
+          "queuePackets": 0,
+          "remoteBye": false,
+          "senderDone": true,
+          "senderStarted": true,
+          "sessionId": "f387b92d-8588-45d3-9a06-bef0c48b57b0",
+          "stopped": true,
+          "tcpConnected": true,
+          "transcodePCMA": true,
+          "transport": "TCP",
+          "wsBound": false
+        }
+      },
+      "playback_verified": false,
+      "attendance_record_created": false,
+      "gallery_accessed": false,
+      "service_restarted": false
+    },
+    {
+      "test": "GPU local neural synthesis to pure 4G camera",
+      "tested_at_utc": "2026-10-23T03:06:46Z",
+      "voice_text": "语音测试打卡成功",
+      "engine": "sherpa-onnx 1.12.26 / MeloTTS Chinese",
+      "synthesis_seconds": 5.2845074360011495,
+      "source_bytes": 14118,
+      "audio_duration_seconds": 1.76475,
+      "delivery": {
+        "status": "submitted_unverified",
+        "reason": null,
+        "session_id": "37245d8a-e458-49f3-a629-4d4811d5d477",
+        "payload_bytes_sent": 14400,
+        "source_bytes": 14118,
+        "transport": "TCP",
+        "cleanup_complete": true,
+        "bye_confirmed": true,
+        "stop_code": 0,
+        "playback_verified": false,
+        "connection_prepared": false,
+        "timing_ms": {
+          "invite_received": 1478.4253319958225,
+          "transport_ready": 1798.0182469982537,
+          "websocket_bound": 1907.9376679947018,
+          "first_audio_submitted": 1908.1759119944763,
+          "total_delivery_and_cleanup": 3914.1247989973635
+        }
+      },
+      "final_broadcast_status": {
+        "code": 0,
+        "data": {
+          "ackFirmwareCompatibility": true,
+          "ackReady": true,
+          "byeAttempted": true,
+          "byeConfirmed": true,
+          "channelId": "34020000001320000012",
+          "cleanupReason": "local_resources_closed",
+          "deviceId": "34020000001320000012",
+          "failureReason": "",
+          "inviteReceived": true,
+          "localCleanupComplete": true,
+          "packetsSent": 90,
+          "payloadBytesSent": 14400,
+          "payloadType": 0,
+          "playbackVerified": false,
+          "queuePackets": 0,
+          "remoteBye": false,
+          "senderDone": true,
+          "senderStarted": true,
+          "sessionId": "37245d8a-e458-49f3-a629-4d4811d5d477",
+          "stopped": true,
+          "tcpConnected": true,
+          "transcodePCMA": true,
+          "transport": "TCP",
+          "wsBound": false
+        }
+      },
+      "playback_verified": false,
+      "attendance_record_created": false,
+      "gallery_accessed": false,
+      "service_restarted": false
+    }
+  ],
+  "neural_tts_report": "TTS_NEURAL_VALIDATION_20261023.json"
 }

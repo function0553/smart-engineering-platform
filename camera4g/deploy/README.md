@@ -14,3 +14,5 @@
 拓扑、安装、systemd、HTTPS 网关和接口契约见 [GPU 与 252 交接文档](../docs/GPU_252_HANDOFF_20261022.md)。
 
 打卡需要配置 `attendance-upstream.example.json` 和 CAMERA4G_ATTENDANCE_CONFIG_FILE；GPU 原引擎、模型恢复、姓名音频依赖和 252 API 见 [打卡接入说明](../docs/ATTENDANCE_GPU_252_20261022.md)。
+
+姓名语音推荐使用已完成纯 4G 听音验收的本地中文神经模型，独立环境安装命令与 `voice_prepare_command` 配置见 [神经语音说明](../docs/NEURAL_TTS_20261023.md)。打卡启动命令仍为 `bash start-gpu.sh attendance`。

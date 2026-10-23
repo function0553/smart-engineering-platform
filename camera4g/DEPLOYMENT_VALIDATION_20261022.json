@@ -131,16 +131,28 @@
     "duration_seconds": 3.097125,
     "voice_played": false,
     "new_application_service_deployed": false,
-    "validation": "TTS_VALIDATION_20261022.json"
+    "validation": "TTS_VALIDATION_20261022.json",
+    "date": "2026-10-22"
   },
   "camera_voice_test": {
     "record": "VOICE_CAMERA_TEST_20261022.json",
     "gpu_synthesis_passed": true,
-    "tcp_sender_attempt": "failed_not_sent: broadcast_readiness_timeout; camera negotiated UDP",
+    "tcp_sender_attempt": "2026-10-23: TCP connected; neural voice 14400 bytes, 90 packets; onsite clear speech accepted",
     "isolated_udp_submission": "25200 bytes, 158 packets, queue empty, BYE and cleanup confirmed",
-    "onsite_playback_verified": false,
-    "onsite_playback_status": "not_heard; audible acceptance failed",
+    "onsite_playback_verified": true,
+    "onsite_playback_status": "heard_clear; audible acceptance passed 2026-10-23 11:06:46 Asia/Shanghai",
     "production_sender_changed": false,
-    "camera_configuration_changed": false
+    "camera_configuration_changed": true,
+    "transport": "TCP",
+    "neural_tts_report": "TTS_NEURAL_VALIDATION_20261023.json",
+    "initial_tcp_sender_attempt_20261022": "failed_not_sent: broadcast_readiness_timeout; camera negotiated UDP"
+  },
+  "gpu_neural_tts": {
+    "date": "2026-10-23",
+    "installed": true,
+    "local_synthesis_passed": true,
+    "onsite_speech_accepted": true,
+    "new_application_service_deployed": false,
+    "validation": "TTS_NEURAL_VALIDATION_20261023.json"
   }
 }

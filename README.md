@@ -52,14 +52,18 @@ cd /opt/hyc
 /opt/camera4g/venv/bin/python -m pip install -r camera4g/ppe/requirements-cuda.txt
 ```
 
-打卡原版 facekit/face_engine 最小源码已恢复到 `camera4g/attendance/vendor_original/`，启动脚本自动加载。完整打卡依赖见 `camera4g/attendance/requirements-gpu.txt`。SCRFD/ArcFace 权重沿用 GPU 受控原文件，用下方命令校验；权重不随 Git 再分发。GPU 已安装 espeak-ng 和 ffmpeg，并验证中文姓名音频生成；独立 UDP 诊断及重发后，用户反馈未听见，**本次球机播音验收失败**，正式发送器仍要求 TCP。下方安装命令供新机器恢复环境使用，详细步骤见 [打卡接入与模型恢复](camera4g/docs/ATTENDANCE_GPU_252_20261022.md)。
+打卡原版 facekit/face_engine 最小源码已恢复到 `camera4g/attendance/vendor_original/`，启动脚本自动加载。完整打卡依赖见 `camera4g/attendance/requirements-gpu.txt`。SCRFD/ArcFace 权重沿用 GPU 受控原文件，用下方命令校验；权重不随 Git 再分发。详细步骤见 [打卡接入与模型恢复](camera4g/docs/ATTENDANCE_GPU_252_20261022.md)。
+
+2026-10-23 已恢复球机 TCP 主动语音，并在 GPU 服务器安装独立中文神经语音环境。11:06:46 纯 4G 重发后，现场确认“完整清楚，可以使用”。下方是新机器的依赖安装命令；模型下载、摘要校验、姓名音频配置及启动命令见 [神经语音说明](camera4g/docs/NEURAL_TTS_20261023.md)。
 
 ```sh
 cd /opt/hyc
 /opt/camera4g/venv/bin/python -m pip install -r camera4g/attendance/requirements-gpu.txt
 python3 camera4g/attendance/face_runtime.py --model-directory /data/edge-face/releases/20260924-scrfd-arcface/models
-# GPU 部署管理员安装姓名音频所需系统工具
-sudo apt-get install -y espeak-ng ffmpeg
+# GPU 部署管理员安装独立中文神经语音环境，模型按上方说明恢复
+sudo apt-get install -y python3-venv ffmpeg
+python3 -m venv /opt/camera4g/venv-tts-neural
+/opt/camera4g/venv-tts-neural/bin/python -m pip install -r camera4g/attendance/requirements-tts-neural.txt
 ```
 
 将以下模板复制到服务器私有目录并填写真实值；已有部署应保留原配置与数据。
@@ -138,6 +142,6 @@ GPU 新增 `/api/attendance/changes?after=0&limit=200` 增量接口，252 持久
 - [算法目录说明](camera4g/README.md)：依赖、模型和交付范围。
 - [本次验证记录](camera4g/DEPLOYMENT_VALIDATION_20261022.json)：包含最新打卡专项、跨语言接口联调和原 PPE 回归结果；全仓测试仍有受控业务资产缺失。
 
-本次为代码和文档交付，已验证原版 GPU 合成图推理，未执行远端上线。新版本部署、252 到 GPU 的 HTTPS 连通和现场语音效果仍需上线核验。
+新版算法应用尚未部署。252 到 GPU 的 HTTPS 连通，以及录入到自动打卡播音的完整业务流程仍需上线核验；原版 GPU 合成图推理与独立 GPU 合成到球机纯 4G 播放已分别完成验证。
 
 仓库保留的智慧工程平台本地运行、安卓构建和资产说明见 [PLATFORM_README.md](PLATFORM_README.md)。
