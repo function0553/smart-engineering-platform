@@ -25,20 +25,36 @@ final class EngineeringViewController: UIViewController, WKNavigationDelegate, W
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "智慧工程"
-        view.backgroundColor = .systemBackground
-        navigationController?.navigationBar.tintColor = UIColor(red: 37/255, green: 99/255, blue: 235/255, alpha: 1)
+        // Match the web workspace canvas (#f5f5f7) and Apple system blue (#0071e3).
+        let canvas = UIColor(red: 245/255, green: 245/255, blue: 247/255, alpha: 1)
+        view.backgroundColor = canvas
+        navigationController?.navigationBar.tintColor = UIColor(red: 0, green: 113/255, blue: 227/255, alpha: 1)
+        let barAppearance = UINavigationBarAppearance()
+        barAppearance.configureWithDefaultBackground()
+        barAppearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterialLight)
+        barAppearance.backgroundColor = canvas.withAlphaComponent(0.72)
+        barAppearance.shadowColor = UIColor.black.withAlphaComponent(0.08)
+        barAppearance.titleTextAttributes = [.font: UIFont.systemFont(ofSize: 17, weight: .semibold), .foregroundColor: UIColor(red: 29/255, green: 29/255, blue: 31/255, alpha: 1)]
+        navigationItem.standardAppearance = barAppearance
+        navigationItem.scrollEdgeAppearance = barAppearance
+        navigationItem.compactAppearance = barAppearance
         navigationItem.leftBarButtonItem = back
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "更多", style: .plain, target: self, action: #selector(showMenu))
         // Download temporary files are never an account-independent in-app archive.
         try? FileManager.default.removeItem(at: downloadsRoot)
         try? FileManager.default.createDirectory(at: downloadsRoot, withIntermediateDirectories: true)
         let configuration = WKWebViewConfiguration()
+        // Lets the shared mobile page hide its own top bar under the native navigation bar.
+        configuration.applicationNameForUserAgent = "Mobile/15E148 SmartEngineering-iOS"
         configuration.allowsInlineMediaPlayback = true
         configuration.websiteDataStore = .default()
         web = WKWebView(frame: .zero, configuration: configuration)
         web.navigationDelegate = self
         web.uiDelegate = self
         web.allowsBackForwardNavigationGestures = true
+        web.isOpaque = false
+        web.backgroundColor = canvas
+        web.scrollView.backgroundColor = canvas
         web.translatesAutoresizingMaskIntoConstraints = false
         web.accessibilityIdentifier = "engineeringWebView"
         view.addSubview(web)

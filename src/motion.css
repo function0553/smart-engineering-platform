@@ -59,10 +59,10 @@
   .os-shell .mobile-workspace .mw-project-hero .mw-hero-flow i:not(:last-child)::after { left: calc(100% + 3px); width: 12px; }
 }
 
-/* Without WebGL the model column would stay empty: fall back to the single-column hero */
+/* Without WebGL (or in the native apps, which skip the model) fall back to the single-column hero */
 .os-shell .mobile-workspace .mw-hero-model.is-fallback { display: none; }
-.os-shell .mobile-workspace .mw-project-hero:has(> .mw-hero-model.is-fallback) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "eyebrow" "title" "text" "flow" "cta"; min-height: 0; }
-@media (max-width: 760px) { .os-shell .mobile-workspace .mw-project-hero:has(> .mw-hero-model.is-fallback) { padding-top: 28px; } }
+.os-shell .mobile-workspace .mw-project-hero:not(:has(> .mw-hero-model:not(.is-fallback))) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "eyebrow" "title" "text" "flow" "cta"; min-height: 0; }
+@media (max-width: 760px) { .os-shell .mobile-workspace .mw-project-hero:not(:has(> .mw-hero-model:not(.is-fallback))) { padding-top: 28px; } }
 
 /* ---------- Digital twin empty state ---------- */
 .twin-no-model .twin-scene-symbol { width: 260px; height: 184px; margin-bottom: 26px; border-radius: 36px; overflow: hidden; background: radial-gradient(70% 55% at 50% 78%, #f2f2f5 0%, #fff 72%); }

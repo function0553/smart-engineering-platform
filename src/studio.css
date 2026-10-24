@@ -365,3 +365,8 @@
   .os-shell .os-page .report-history-summary > .report-field { flex-direction: column; align-items: stretch; gap: 8px; white-space: normal; }
   .os-shell .os-page :is(.site-library-filters, .section-daily-selector, .report-sheet) { padding: 18px; }
 }
+
+@media (max-width: 520px) {
+  .os-shell .os-page .report-heading { flex-direction: column; align-items: stretch; gap: 16px; }
+  .os-shell .os-page .report-heading > .button { width: 100%; justify-content: center; white-space: normal; padding: 12px 20px; }
+}
