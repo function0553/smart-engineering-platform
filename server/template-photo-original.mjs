@@ -3,7 +3,9 @@ import sharp from 'sharp';
 /** Decode bounded canonical base64 without a repeated capture group that overflows on phone-size photos. */
 export function readTemplatePhotoBytes(base64) {
   if (typeof base64 !== 'string' || base64.length > 4*Math.ceil(5*1024*1024/3)) throw new Error('单张照片限5MB，请选择5MB以内的原图');
-  if (base64.length%4 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) throw new Error('照片编码无效');
+  // The canonical round-trip below already rejects every non-alphabet or misplaced "=" character with the same
+  // message, so a separate whole-string regex scan (~17 ms per phone photo) is not needed.
+  if (base64.length%4) throw new Error('照片编码无效');
   const bytes=Buffer.from(base64,'base64');
   if (bytes.toString('base64')!==base64) throw new Error('照片编码无效');
   if (!bytes.length || bytes.length>5*1024*1024) throw new Error('单张照片限5MB，请选择5MB以内的原图');
@@ -31,4 +33,19 @@ export async function prepareTemplatePhoto(photo) {
     if (!width || !height || width>16000 || height>16000 || !((width===photo.width&&height===photo.height)||(width===photo.height&&height===photo.width))) throw new Error('照片尺寸与原图不一致，请重新选择');
   }
   return {...photo, mime:png?'image/png':'image/jpeg'};
+}
+
+/** Prepare photos a few at a time; results keep input order and the first failing photo's error wins, as in a sequential loop. */
+export async function prepareTemplatePhotos(photos, limit = 3) {
+  const prepared = new Array(photos.length), errors = new Map();
+  let next = 0;
+  const worker = async () => {
+    while (next < photos.length && !errors.size) {
+      const index = next++;
+      try { prepared[index] = await prepareTemplatePhoto(photos[index]); } catch (error) { errors.set(index, error); }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limit, photos.length) }, worker));
+  if (errors.size) throw errors.get(Math.min(...errors.keys()));
+  return prepared;
 }

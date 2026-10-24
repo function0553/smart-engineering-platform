@@ -45,7 +45,8 @@ export function generatePhotoArchive(data, images) {
   const drawing = photo => {
     if (!photo) return '<w:p></w:p>';
     const number = pictureId++, extension = photo.mime === 'image/png' ? 'png' : 'jpeg', filename = `archive-${photo.id}.${extension}`, rid = `rIdArchive${number}`;
-    parts['word/media/' + filename] = new Uint8Array(photo.bytes);
+    // Original PNG/JPEG bytes are stored without a second deflate; extracted bytes are identical.
+    parts['word/media/' + filename] = [new Uint8Array(photo.bytes), { level: 0 }];
     rels = rels.replace('</Relationships>', `<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${filename}"/></Relationships>`);
     if (!types.includes(`Extension="${extension}"`)) types = types.replace('</Types>', `<Default Extension="${extension}" ContentType="${photo.mime}"/></Types>`);
     const fit = Math.min(2_460_000 / photo.width, 1_570_000 / photo.height), cx = Math.round(photo.width * fit), cy = Math.round(photo.height * fit);

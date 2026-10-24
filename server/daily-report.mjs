@@ -1,4 +1,4 @@
-import {prepareTemplatePhoto,readTemplatePhotoBytes} from './template-photo-original.mjs';
+import {prepareTemplatePhotos,readTemplatePhotoBytes} from './template-photo-original.mjs';
 import { readFileSync } from 'node:fs';
 import { z } from 'zod';
 import { unzipSync, zipSync, strFromU8, strToU8 } from 'fflate';
@@ -78,7 +78,8 @@ function photoContent(photos, parts) {
     if (png ? bytes.length < 24 || !bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : bytes[0] !== 255 || bytes[1] !== 216 || bytes.lastIndexOf(Buffer.from([255,217])) < 2) throw new Error('照片内容与类型不一致，请重新选择PNG或JPEG图片');
     const extension = png ? 'png' : 'jpg', filename = `daily-report-${i + 1}.${extension}`, rid = `rIdDailyReport${i + 1}`;
     if (png && (bytes.readUInt32BE(16) !== photo.width || bytes.readUInt32BE(20) !== photo.height)) throw new Error('照片尺寸与文件不一致');
-    parts[`word/media/${filename}`] = bytes;
+    // PNG/JPEG data is already compressed; storing it avoids a slow second deflate. Extracted bytes are identical.
+    parts[`word/media/${filename}`] = [bytes, { level: 0 }];
     relationships = relationships.replace('</Relationships>', `<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${filename}"/></Relationships>`);
     if (!types.includes(`Extension="${extension}"`)) types = types.replace('</Types>', `<Default Extension="${extension}" ContentType="${photo.mime}"/></Types>`);
     const factor = Math.min(2_950_000 / photo.width, 3_800_000 / photo.height);
@@ -125,7 +126,7 @@ export function mountDailyReportRoutes(app, { auth, writer, mobileAuth, weatherS
         const fresh = await weatherService({ date:parsed.data.reportDate, latitude, longitude });
         parsed.data.weather = fresh.condition; parsed.data.weatherInfo = fresh;
       }
-      for(let i=0;i<parsed.data.photos.length;i++)parsed.data.photos[i]=await prepareTemplatePhoto(parsed.data.photos[i]);
+      parsed.data.photos=await prepareTemplatePhotos(parsed.data.photos);
       let stillAuthorized=false;authorize(req,res,()=>writer(req,res,()=>{stillAuthorized=true;}));if(!stillAuthorized)return;
       const bytes = generateDailyReport(parsed.data);
       const filename = `施工日报_${parsed.data.reportDate}.docx`;

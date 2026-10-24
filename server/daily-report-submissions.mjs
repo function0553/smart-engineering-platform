@@ -1,4 +1,4 @@
-import {prepareTemplatePhoto} from './template-photo-original.mjs';
+import {prepareTemplatePhotos} from './template-photo-original.mjs';
 import {documentScope} from './project-document-scope.mjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
@@ -30,7 +30,7 @@ export function mountDailyReportSubmissionRoutes(app, { store, auth, mobileAuth,
     const parsed = dailyReportSchema.safeParse(envelope.data);
     if (!parsed.success) return res.status(400).json({ error: '请检查日报内容', fields: parsed.error.issues.map(issue => ({ path: issue.path.join('.'), message: issue.message })) });
     if(envelope.projectId)projectAccess(req.actor,envelope.projectId,true);
-    try { for(let i=0;i<parsed.data.photos.length;i++)parsed.data.photos[i]=await prepareTemplatePhoto(parsed.data.photos[i]); }
+    try { parsed.data.photos=await prepareTemplatePhotos(parsed.data.photos); }
     catch(error){fail(400,error.message);}
     let stillAuthorized=false;authorize(req,res,()=>writer(req,res,()=>{stillAuthorized=true;}));if(!stillAuthorized)return;
     const fingerprint = hash(JSON.stringify(envelope.projectId?{projectId:envelope.projectId,data:parsed.data}:parsed.data));

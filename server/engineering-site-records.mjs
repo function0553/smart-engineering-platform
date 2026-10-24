@@ -638,10 +638,14 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
       const evidence={record:initial.record.data,location:initial.record.snapshot,metadata,templateSha256:sitePhotoTemplateHash,layoutSha256:sitePhotoLayoutHash,steps:siteWorkSteps,files:selected.map(f=>({id:f.id,name:f.name,sha256:f.sha256,byteCount:f.byte_count,stepId:f.step_id})),missingSteps:siteWorkSteps.filter(s=>!selected.some(f=>f.step_id===s.id)).map(s=>s.id)};
       const snapshotJson=JSON.stringify(evidence);
       if(preflightAction&&db.prepare('SELECT COUNT(*) n FROM engineering_site_word_exports WHERE record_id=?').get(initial.record.id).n>=50&&!db.prepare('SELECT 1 FROM engineering_site_word_exports WHERE record_id=? AND snapshot=?').get(initial.record.id,snapshotJson))fail(409,'此份资料已有50个Word历史版本，当前表格无法新增归档版本；请另建后续资料，原件及历史继续保留');
-      const photos=selected.map(f=>{const p=finalPath(f.id);if(!existsSync(p)||lstatSync(p).isSymbolicLink()||statSync(p).size!==f.byte_count||fileHash(p)!==f.sha256)fail(503,'代表照片存储或摘要异常，请检查原件');return {...f,bytes:readFileSync(p)};});
+      // A saved version with this exact snapshot is returned unchanged below, so rendering it again would be discarded.
+      const unchanged=!readOnly&&!!db.prepare('SELECT 1 FROM engineering_site_word_exports WHERE record_id=? AND snapshot=?').get(initial.record.id,snapshotJson);
       let document;
-      try { document=await generateSitePhotoDocument(metadata,photos); } catch { fail(422,'代表照片无法解码或尺寸过大，请预览核查后换选有效照片'); }
-      if(document.length>16*1048576) fail(413,'生成文档超过16 MiB，请换选较小代表照片');
+      if(!unchanged){
+        const photos=selected.map(f=>{const p=finalPath(f.id);if(!existsSync(p)||lstatSync(p).isSymbolicLink()||statSync(p).size!==f.byte_count||fileHash(p)!==f.sha256)fail(503,'代表照片存储或摘要异常，请检查原件');return {...f,bytes:readFileSync(p)};});
+        try { document=await generateSitePhotoDocument(metadata,photos); } catch { fail(422,'代表照片无法解码或尺寸过大，请预览核查后换选有效照片'); }
+        if(document.length>16*1048576) fail(413,'生成文档超过16 MiB，请换选较小代表照片');
+      }
       const finalCheck=c=>{
         checkVersion(c.record,b.version);
         checkPhotoWordBasis(c,basisFingerprint);
@@ -654,6 +658,7 @@ export function mountEngineeringSiteRecordRoutes(app, { store, auth, mobileAuth,
         finalCheck(c);
         const same=db.prepare('SELECT id,sequence FROM engineering_site_word_exports WHERE record_id=? AND snapshot=?').get(c.record.id,snapshotJson);
         if(same)return {id:c.record.id,exportId:same.id,sequence:same.sequence,version:c.record.version,unchanged:true};
+        if(!document)fail(409,'项目或资料已变化，请刷新后生成');
         const count=db.prepare('SELECT COUNT(*) n FROM engineering_site_word_exports WHERE record_id=?').get(c.record.id).n;
         if(count>=50)fail(409,'每份资料最多保留50个Word版本，请另建后续资料');
         const id=randomUUID(),sequence=count+1,name='现场施工步骤照片_'+c.record.data.recordDate+'_v'+sequence+'.docx';
