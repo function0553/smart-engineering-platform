@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { hasWebGL, markWebGLUnavailable } from './webgl';
 
 /**
  * Icon-sized three.js models for the sidebar header.
@@ -24,11 +25,11 @@ export default function MiniIcon({ kind, className = '' }: Props) {
 
   useEffect(() => {
     const el = host.current;
-    if (!el) return;
+    if (!el || !hasWebGL()) return;
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
-    } catch { return; }
+    } catch { markWebGLUnavailable(); return; }
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     renderer.setPixelRatio(Math.min(3, Math.max(2, window.devicePixelRatio || 1)));
     renderer.outputColorSpace = THREE.SRGBColorSpace;

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { hasWebGL, markWebGLUnavailable } from './webgl';
 
 /**
  * A tiny white "architectural model" of a construction site: a glass tower that
@@ -22,10 +23,11 @@ export default function MiniScene({ className = '', floors = 5, fallback = null 
   useEffect(() => {
     const el = host.current;
     if (!el) return;
+    if (!hasWebGL()) { setFailed(true); return; }
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
-    } catch { setFailed(true); return; }
+    } catch { markWebGLUnavailable(); setFailed(true); return; }
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;

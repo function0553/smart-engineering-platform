@@ -273,6 +273,9 @@
   .os-shell .mobile-workspace { margin: -4px -2px 0; }
   .os-shell .mobile-workspace .mw-header h1 { font-size: 30px; }
   .os-shell .mobile-workspace .mw-content { padding: 20px 0 24px; }
+  /* short tabs (待办 / 我的) must not leave the tab bar floating mid-screen */
+  .os-shell .mobile-workspace { min-height: calc(100vh - 68px); min-height: calc(100dvh - 68px); }
+  .os-shell .mobile-workspace .mw-content { flex: 1 0 auto; }
   .os-shell .mobile-workspace .mw-bottom { order: 3; margin: 0 -16px; padding: 6px 8px max(8px, env(safe-area-inset-bottom)); border: 0; border-top: .5px solid rgba(0, 0, 0, .12); border-radius: 0; background: rgba(250, 250, 252, .86); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
   .os-shell .mobile-workspace .mw-bottom a { font-size: 10.5px; font-weight: 500; color: #8e8e93; }
   .os-shell .mobile-workspace .mw-bottom a[aria-current=page] { color: #0071e3; }
