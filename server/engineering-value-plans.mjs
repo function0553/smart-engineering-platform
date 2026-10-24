@@ -177,8 +177,9 @@ export function createEngineeringValuePlans({ store, access, active, mutate, his
     CREATE INDEX IF NOT EXISTS engineering_value_plans_project ON engineering_value_plans(project_id,state,approved_seq);`);
   const pending = (pid, cid) => !!db.prepare("SELECT 1 FROM engineering_value_plans WHERE project_id=? AND state IN ('draft','submitted')" + (cid ? ' AND contract_id=?' : '')).get(...(cid ? [pid, cid] : [pid]));
   const rows = pid => db.prepare('SELECT * FROM engineering_value_plans WHERE project_id=? ORDER BY created_at DESC,id DESC').all(pid).map(parse);
-  const sources = project => ({ project, plans: rows(project.id), items: getItems(project.id).map(row => ({ ...row, voided: voided(row.id) })), boq: boq.projectView(project.id), baselines: baselines.snapshot(project.id) });
-  const view = (project, options) => buildEngineeringValuePlansView(sources(project), options);
+  // `all` lets the project detail pass its read-only getItems snapshot instead of reloading every item.
+  const sources = (project, all) => ({ project, plans: rows(project.id), items: (all || getItems(project.id)).map(row => ({ ...row, voided: voided(row.id) })), boq: boq.projectView(project.id), baselines: baselines.snapshot(project.id) });
+  const view = (project, options, all) => buildEngineeringValuePlansView(sources(project, all), options);
   const authorized = (req, write = true) => { const context = access(req, write); if (!financial(context.role)) fail(403, '没有项目目标产值经营权限'); return context; };
   const openContract = (pid, cid) => { const contract = getItem(pid, cid, 'contracts'); if (contract.state !== 'approved') fail(409, '目标方案须关联已批准且未关闭的合同'); return contract; };
   const getPlan = (pid, vid) => { const row = parse(db.prepare('SELECT * FROM engineering_value_plans WHERE id=? AND project_id=?').get(vid, pid)); if (!row) fail(404, '目标产值方案不存在或不属于本项目'); return row; };

@@ -1,5 +1,5 @@
 import {prepareTemplatePhoto} from './template-photo-original.mjs';
-import {documentScope,requireDocumentProject} from './project-document-scope.mjs';
+import {documentScope} from './project-document-scope.mjs';
 import { createHash, randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { dailyReportSchema, generateDailyReport } from './daily-report.mjs';

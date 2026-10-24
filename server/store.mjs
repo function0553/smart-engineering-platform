@@ -6,6 +6,16 @@ import { randomUUID } from 'node:crypto';
 export function openStore(filename) {
   if (filename !== ':memory:') mkdirSync(dirname(filename), { recursive: true });
   const db = new DatabaseSync(filename, { timeout: 5000 });
+  // Routes prepare the same SQL for every row and request; reuse compiled statements (bounded LRU).
+  // SQLite transparently re-prepares a cached statement after schema changes, so results are unchanged.
+  const compile = db.prepare.bind(db), statements = new Map();
+  db.prepare = sql => {
+    let statement = statements.get(sql);
+    if (statement) { statements.delete(sql); statements.set(sql, statement); return statement; }
+    statement = compile(sql); statements.set(sql, statement);
+    if (statements.size > 2000) statements.delete(statements.keys().next().value);
+    return statement;
+  };
   db.exec(`
     PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;
     CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);

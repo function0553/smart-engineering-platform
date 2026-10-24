@@ -76,7 +76,7 @@ export function createEngineeringSupplierFinance({store,access,active,mutate,his
   const creditAmount=settlementId=>sum(db.prepare("SELECT amount FROM engineering_supplier_credits WHERE settlement_id=? AND state='approved'").all(settlementId).map(row=>row.amount));
   const effectiveSettlement=row=>row.state==='approved'&&!voided(row.id)?row.data.amount-creditAmount(row.id):0;
   const effectiveCost=row=>row.state==='approved'&&!reversed('cost',row.id)?row.data.amount-refundedAmount(row.id):0;
-  const projectView=pid=>buildEngineeringSupplierFinance({projectId:pid,items:getItems(pid).map(row=>({...row,voided:['settlements','measurements','variations'].includes(row.kind)&&voided(row.id),reversed:row.kind==='costs'&&reversed('cost',row.id)})),returns:returnRows(pid),credits:rows('credits',pid),refunds:rows('refunds',pid)});
+  const projectView=(pid,all)=>buildEngineeringSupplierFinance({projectId:pid,items:(all||getItems(pid)).map(row=>({...row,voided:['settlements','measurements','variations'].includes(row.kind)&&voided(row.id),reversed:row.kind==='costs'&&reversed('cost',row.id)})),returns:returnRows(pid),credits:rows('credits',pid),refunds:rows('refunds',pid)});
   function authorized(req){const context=access(req,true);if(!financial(context.role))fail(403,'没有供应商抵减及退款权限');return context;}
   function pending(pid,contractId){
     const matches=row=>row.state==='submitted'&&(!contractId||getItem(pid,row.purchase_id,'purchases').data.contractId===contractId);

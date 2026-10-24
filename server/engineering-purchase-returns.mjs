@@ -125,8 +125,8 @@ export function createEngineeringPurchaseReturns({ store, access, active, mutate
   const pending = (pid, contractId) => !!db.prepare("SELECT 1 FROM engineering_purchase_returns r JOIN engineering_items i ON i.id=r.purchase_id WHERE r.project_id=? AND r.state IN ('submitted','approved')" + (contractId ? " AND json_extract(i.data,'$.contractId')=?" : '')).get(...(contractId ? [pid, contractId] : [pid]));
   const receivedDelta = iid => integer(db.prepare("SELECT COALESCE(SUM(json_extract(j.value,'$.quantity')),0) n FROM engineering_purchase_returns r,json_each(r.snapshot,'$.lines') j WHERE r.purchase_id=? AND r.state='dispatched'").get(iid).n);
   const stockDelta = mid => -integer(db.prepare("SELECT COALESCE(SUM(json_extract(j.value,'$.quantity')),0) n FROM engineering_purchase_returns r,json_each(r.snapshot,'$.lines') j WHERE r.state='dispatched' AND json_extract(j.value,'$.materialId')=?").get(mid).n);
-  function projectView(pid) {
-    const fulfillment = purchases.projectView(pid);
+  // The project detail passes the fulfillment it already built from the same snapshot.
+  function projectView(pid, fulfillment = purchases.projectView(pid)) {
     return { returns: fulfillment.returns, receipts: fulfillment.returnReceipts };
   }
   function eligibleOrder(pid, iid) {

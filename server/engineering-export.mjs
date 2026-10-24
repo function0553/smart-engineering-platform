@@ -16,7 +16,7 @@ const labels={dispatched:'已实际发退',supplier_return:'供应商退货',pla
 const label=value=>labels[value]||value||'';
 const yes=value=>value?'是':'否';
 const approved=row=>['approved','closed'].includes(row.state)&&!row.voided&&!row.reversed;
-const money=value=>({value,kind:'money'}),quantity=value=>({value,kind:'quantity'}),date=value=>({value,kind:'date'}),time=value=>({value,kind:'time'});
+const money=value=>({value,kind:'money'}),date=value=>({value,kind:'date'}),time=value=>({value,kind:'time'});
 const col=(label,key,kind='text',width=20)=>({label,key,kind,width});
 function safeText(value){
   const text=Array.from(String(value??'')).filter(char=>{const n=char.codePointAt(0);return n===9||n===10||n===13||n>=0x20&&n<=0xD7FF||n>=0xE000&&n<=0xFFFD||n>=0x10000&&n<=0x10FFFF;}).join('');

@@ -7,11 +7,16 @@ const schema = z.object({ package:z.literal('cn.smartengineering.dailyreport'),v
   minAndroidApi:z.number().int().min(26),size:z.number().int().positive().max(16*1024*1024),sha256:z.string().regex(/^[0-9a-f]{64}$/),notes:z.array(z.string().max(300)).max(12),publishedAt:z.iso.datetime() }).strict();
 
 export function mountAppUpdateRoutes(app, directory = resolve('server/mobile-updates')) {
+  // Every app launch checks for updates: re-hash the APK (up to 16 MB) only after the manifest text or the APK file changes.
+  let verified = { key: '', manifest: null };
   const release = () => {
     const manifestPath=resolve(directory,'manifest.json'),apkPath=resolve(directory,'latest.apk');
     if(!existsSync(manifestPath)||!existsSync(apkPath))return null;
-    const manifest=schema.parse(JSON.parse(readFileSync(manifestPath,'utf8')));
-    if(statSync(apkPath).size!==manifest.size || createHash('sha256').update(readFileSync(apkPath)).digest('hex')!==manifest.sha256)throw new Error('发布包校验失败');
+    const text=readFileSync(manifestPath,'utf8'),stat=statSync(apkPath),key=`${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}:${stat.ino}\n${text}`;
+    if(verified.key===key)return {manifest:verified.manifest,apkPath};
+    const manifest=schema.parse(JSON.parse(text));
+    if(stat.size!==manifest.size || createHash('sha256').update(readFileSync(apkPath)).digest('hex')!==manifest.sha256)throw new Error('发布包校验失败');
+    verified={key,manifest};
     return {manifest,apkPath};
   };
   for(const base of ['/api/app-update','/api/mobile/app-update']) {

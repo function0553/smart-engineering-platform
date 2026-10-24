@@ -150,7 +150,8 @@ export function createEngineeringBoq({ store, access, active, mutate, history, g
   }
   const view = (pid, cid) => projection(pid, cid);
   function projectView(pid) {
-    const contracts = getItems(pid).filter(row => row.kind === 'contracts').map(row => projection(pid, row.id));
+    // Only contract ids are needed: same rows and order as getItems(pid) filtered to contracts, without parsing every item.
+    const contracts = db.prepare("SELECT id FROM engineering_items WHERE project_id=? AND kind='contracts' ORDER BY created_at DESC,id DESC").all(pid).map(row => projection(pid, row.id));
     const rows = db.prepare('SELECT * FROM engineering_boq_revisions WHERE project_id=? ORDER BY created_at DESC,id DESC').all(pid).map(parse);
     return { contracts, revisions: rows.map(row => ({ ...row, voided: !!row.variation_id && voided(row.variation_id) })) };
   }

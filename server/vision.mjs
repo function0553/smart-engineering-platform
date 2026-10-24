@@ -1,6 +1,6 @@
 import { randomBytes, createHash, createCipheriv, createDecipheriv, randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs';
-import { dirname, join, resolve, isAbsolute, extname } from 'node:path';
+import { join, resolve, isAbsolute, extname } from 'node:path';
 import { spawn, execFileSync } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { z } from 'zod';

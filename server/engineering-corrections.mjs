@@ -26,7 +26,8 @@ export function createEngineeringCorrections({ store, access, active, mutate, hi
   const snapshot = row => ({ title: row.data.title, amount: row.data.amount, contractId: row.data.contractId, createdBy: row.created_by, editedBy: row.edited_by || '', data: row.data, version: row.version, createdAt: row.created_at, updatedAt: row.updated_at });
   const block = (row, reason) => ({ id: row.id, kind: row.kind, title: row.data.title, reason });
 
-  function eligibility(pid, row, ignoreCorrectionId) {
+  // `snapshot` is the caller's current getItems(pid) result; detail views pass it to avoid reloading every item per row.
+  function eligibility(pid, row, ignoreCorrectionId, snapshot) {
     const blockers = [];
     const project = db.prepare('SELECT state FROM engineering_projects WHERE id=?').get(pid);
     if (project?.state !== 'active') blockers.push({ reason: '项目须处于施工中；请先恢复施工后办理经营纠错' });
@@ -36,7 +37,7 @@ export function createEngineeringCorrections({ store, access, active, mutate, hi
     if (!targetKinds.includes(row.kind)) return { allowed: false, blockers };
     const contract = getItem(pid, row.data.contractId, 'contracts');
     if (!['approved', 'closed'].includes(contract.state)) blockers.push(block(contract, '关联合同当前不允许经营纠错'));
-    const all = getItems(pid);
+    const all = snapshot || getItems(pid);
     if (row.kind === 'settlements') {
       for (const cost of all.filter(item => item.kind === 'costs' && item.data.settlementId === row.id && item.state !== 'cancelled')) {
         if (['draft', 'submitted'].includes(cost.state)) blockers.push(block(cost, '关联收支尚在办理，请先作废草稿或退回后作废'));
@@ -66,9 +67,9 @@ export function createEngineeringCorrections({ store, access, active, mutate, hi
     if (!financial(context.role)) fail(403, '没有经营纠错权限');
     return context;
   }
-  function view(pid, row) {
+  function view(pid, row, snapshot) {
     const result = { ...row, voided: targetKinds.includes(row.kind) && voided(row.id) };
-    if (targetKinds.includes(row.kind)) result.correctionEligibility = eligibility(pid, row);
+    if (targetKinds.includes(row.kind)) result.correctionEligibility = eligibility(pid, row, undefined, snapshot);
     return result;
   }
   function mount(app, base, authorize, writer) {

@@ -193,17 +193,19 @@ export function createEngineeringReplacements({ store, access, active, mutate, h
     CREATE INDEX IF NOT EXISTS engineering_history_project_action_item_at ON engineering_history(project_id,action,item_id,at DESC);`);
   const pending = (pid, cid) => !!db.prepare("SELECT 1 FROM engineering_replacements WHERE project_id=? AND state='submitted'" + (cid ? ' AND contract_id=?' : '')).get(...(cid ? [pid, cid] : [pid]));
   const getVersion = (pid, rid) => { const row = parse(db.prepare('SELECT * FROM engineering_replacements WHERE project_id=? AND id=?').get(pid, rid)); if (!row) fail(404, '更正关联版本不存在或不属于本项目'); return row; };
-  function sources(project) {
-    const rawItems = getItems(project.id), correctionRows = corrections.list(project.id, 'admin');
+  // `all` lets the project detail pass its read-only getItems snapshot instead of reloading every item.
+  function sources(project, all) {
+    const rawItems = all || getItems(project.id), correctionRows = corrections.list(project.id, 'admin');
     const actors = new Map(), approvals = new Map();
     if (correctionRows.some(row => row.state === 'approved') && rawItems.some(row => kinds.includes(row.kind))) {
       const actorRows = db.prepare(`SELECT id,name FROM users WHERE id IN (
         SELECT created_by FROM engineering_items WHERE project_id=? AND kind IN ('variations','measurements','settlements')
         UNION SELECT edited_by FROM engineering_items WHERE project_id=? AND kind IN ('variations','measurements','settlements'))`).all(project.id, project.id);
       for (const row of actorRows) actors.set(row.id, row.name);
+      // likelihood() returns its condition unchanged; it only keeps this lookup on the action index.
       const approvalRows = db.prepare(`SELECT h.item_id,h.actor_id,h.actor_name,h.at FROM engineering_history h
         JOIN engineering_items i ON i.id=h.item_id AND i.project_id=h.project_id
-        WHERE h.project_id=? AND h.action='approved' AND i.kind IN ('variations','measurements','settlements')
+        WHERE h.project_id=? AND likelihood(h.action='approved',0.0625) AND i.kind IN ('variations','measurements','settlements')
         ORDER BY h.at DESC,h.id DESC`).all(project.id);
       for (const row of approvalRows) if (!approvals.has(row.item_id)) approvals.set(row.item_id, row);
     }
@@ -212,7 +214,7 @@ export function createEngineeringReplacements({ store, access, active, mutate, h
     return { project, items, corrections: correctionRows, boq: boq.projectView(project.id),
       versions: db.prepare('SELECT * FROM engineering_replacements WHERE project_id=? ORDER BY created_at DESC,id DESC').all(project.id).map(parse) };
   }
-  const view = (project, options) => buildEngineeringReplacementsView(sources(project), options);
+  const view = (project, options, all) => buildEngineeringReplacementsView(sources(project, all), options);
   const authorized = (req, write = true) => { const context = access(req, write); if (!financial(context.role)) fail(403, '没有经营更正关联权限'); return context; };
   function checkSource(context, correctionId) {
     const correction = context.correctionById.get(correctionId);

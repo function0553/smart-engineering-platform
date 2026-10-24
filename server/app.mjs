@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { z } from 'zod';
 import { openStore } from './store.mjs';
-import { resources, algorithms } from './catalog.mjs';
+import { resources } from './catalog.mjs';
 import { BusinessError, fail, createRecord, updateRecord, changeState, deleteRecord, deviceStatus, attendanceSummary } from './service.mjs';
 import { mountModelRoutes } from './models.mjs';
 import { receiveCapture, receiveDetection, addNotification, mountSecurityRoutes } from './security.mjs';
@@ -150,11 +150,13 @@ export function createApp({ database = resolve('.data/workspace.sqlite'), baseUr
   });
   app.delete('/api/records/:type/:id', auth, admin, (req, res) => { moduleAuth(req); const version = z.number().int().positive().parse(req.body.version); store.transaction(() => deleteRecord(store, req.actor, req.params.type, req.params.id, version)); res.json({ ok: true }); });
   app.get('/api/users', auth, admin, (req, res) => {
-    const assignments=store.db.prepare(`SELECT m.user_id,m.role AS projectRole,p.id AS projectId,p.data,p.state AS projectState,g.data AS grantData,c.enabled
+    // Group once by user (keeps project order) instead of scanning every assignment for each user.
+    const assignments=new Map();
+    for(const m of store.db.prepare(`SELECT m.user_id,m.role AS projectRole,p.id AS projectId,p.data,p.state AS projectState,g.data AS grantData,c.enabled
       FROM engineering_members m JOIN engineering_projects p ON p.id=m.project_id
       LEFT JOIN engineering_site_access_grants g ON g.project_id=m.project_id AND g.user_id=m.user_id
-      LEFT JOIN engineering_site_access_config c ON c.project_id=m.project_id ORDER BY p.created_at,p.id`).all();
-    res.set('Cache-Control','private, no-store').json(store.db.prepare('SELECT id,username,name,role,active,created_at FROM users ORDER BY created_at').all().map(u=>({...u,projectAssignments:assignments.filter(m=>m.user_id===u.id).map(m=>{
+      LEFT JOIN engineering_site_access_config c ON c.project_id=m.project_id ORDER BY p.created_at,p.id`).all()){const list=assignments.get(m.user_id);if(list)list.push(m);else assignments.set(m.user_id,[m]);}
+    res.set('Cache-Control','private, no-store').json(store.db.prepare('SELECT id,username,name,role,active,created_at FROM users ORDER BY created_at').all().map(u=>({...u,projectAssignments:(assignments.get(u.id)||[]).map(m=>{
       const permission=siteRecordService.accountPermission({id:u.id,role:u.role},m.projectId);
       return {projectId:m.projectId,projectName:JSON.parse(m.data).name,projectRole:permission.projectRole,configuredProjectRole:m.projectRole,projectState:m.projectState,siteRole:siteTemplates[permission.template]?.name||'自定义岗位',reviewEnabled:permission.enabled,expired:!!permission.expired,customized:!!m.grantData};
     })})));
@@ -286,7 +288,8 @@ export function createApp({ database = resolve('.data/workspace.sqlite'), baseUr
     if (error instanceof SecurityConfigError) return res.status(400).json({ error: error.message });
     if (error.type === 'entity.too.large') return res.status(413).json({ error: '请求内容过大' });
     if (error instanceof SyntaxError && 'body' in error) return res.status(400).json({ error: 'JSON 格式错误' });
-    if (error.code?.startsWith('ERR_SQLITE') && /UNIQUE constraint/.test(error.message)) return res.status(409).json({ error: '编号或账号已存在，请使用不同的值' });
+    // Some libraries (e.g. zip errors) use numeric codes; only SQLite string codes are checked here.
+    if (typeof error.code === 'string' && error.code.startsWith('ERR_SQLITE') && /UNIQUE constraint/.test(error.message)) return res.status(409).json({ error: '编号或账号已存在，请使用不同的值' });
     console.error('Request failed', { path: req.path, name: error.name, code: error.code || 'internal_error' });
     res.status(500).json({ error: '服务暂时无法处理该请求，请稍后重试' });
   });

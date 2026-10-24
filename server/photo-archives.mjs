@@ -1,5 +1,5 @@
 import {prepareTemplatePhoto} from './template-photo-original.mjs';
-import {documentScope,documentProjects,requireDocumentProject} from './project-document-scope.mjs';
+import {documentScope,documentProjects} from './project-document-scope.mjs';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import { fail } from './service.mjs';

@@ -72,7 +72,7 @@ export function createEngineeringCostControl({store,access,active,mutate,history
   const links=pid=>db.prepare('SELECT * FROM engineering_task_wbs WHERE project_id=? ORDER BY task_id').all(pid);
   const rows=pid=>db.prepare('SELECT * FROM engineering_cost_records WHERE project_id=? ORDER BY created_at DESC,id DESC').all(pid).map(parse);
   const stock=pid=>db.prepare('SELECT * FROM engineering_stock WHERE project_id=? ORDER BY created_at,id').all(pid).map(s=>({...s,reversed:reversed('stock',s.id)}));
-  const view=pid=>buildEngineeringCostView({projectId:pid,nodes:nodes(pid),links:links(pid),records:rows(pid),items:getItems(pid),stock:stock(pid)});
+  const view=(pid,all)=>buildEngineeringCostView({projectId:pid,nodes:nodes(pid),links:links(pid),records:rows(pid),items:all||getItems(pid),stock:stock(pid)});
   const publicView=pid=>({nodes:nodes(pid),links:links(pid)});
   const getNode=(pid,nid)=>{const n=nodes(pid).find(n=>n.id===nid);if(!n)fail(400,'施工部位不存在或不属于本项目');return n;};
   const record=(pid,rid,kind)=>{const r=rows(pid).find(r=>r.id===rid);if(!r||kind&&r.kind!==kind)fail(404,'成本办理不存在或不属于本项目');return r;};

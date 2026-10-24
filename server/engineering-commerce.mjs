@@ -35,9 +35,9 @@ export function createEngineeringCommerce({ getItems, getItem, voided = () => fa
   function contractSummary(pid, contractId, replacement, snapshot) {
     const contract = getItem(pid, contractId, 'contracts');
     // At approval, replace the current draft/submitted row in the calculation without changing persisted originals.
-    const all = (snapshot || getItems(pid)).filter(row => row.id !== replacement?.id && !voided(row.id));
-    if (replacement) all.push({ ...replacement, state: 'approved' });
-    const related = all.filter(row => row.data.contractId === contractId);
+    // Match the contract before the per-row voided lookup; the summed rows are unchanged.
+    const related = (snapshot || getItems(pid)).filter(row => row.id !== replacement?.id && row.data.contractId === contractId && !voided(row.id));
+    if (replacement && replacement.data.contractId === contractId) related.push({ ...replacement, state: 'approved' });
     const changes = related.filter(row => row.kind === 'variations' && row.state === 'approved');
     const settlements = related.filter(row => row.kind === 'settlements' && row.state === 'approved');
     const originalAmount = contract.data.amount;
@@ -58,7 +58,7 @@ export function createEngineeringCommerce({ getItems, getItem, voided = () => fa
   function measurementSummary(pid, measurementId, replacement, snapshot) {
     const measurement = getItem(pid, measurementId, 'measurements');
     if (voided(measurementId)) return { measuredAmount: 0, settledAmount: 0, remainingSettlementAmount: 0, originalMeasuredAmount: measurement.data.amount };
-    const settlements = (snapshot || getItems(pid)).filter(row => row.id !== replacement?.id && row.kind === 'settlements' && row.state === 'approved' && !voided(row.id) && row.data.measurementId === measurementId);
+    const settlements = (snapshot || getItems(pid)).filter(row => row.id !== replacement?.id && row.kind === 'settlements' && row.state === 'approved' && row.data.measurementId === measurementId && !voided(row.id));
     if (replacement?.kind === 'settlements' && replacement.data.measurementId === measurementId) settlements.push({...replacement,state:'approved'});
     const settledAmount = settlements.reduce((value,row)=>value+effectiveSettlementAmount(row),0);
     return { measuredAmount: measurement.data.amount, settledAmount, remainingSettlementAmount: measurement.data.amount - settledAmount };
